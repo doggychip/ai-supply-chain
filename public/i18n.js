@@ -356,6 +356,12 @@ function t(key) {
   if (I18N_LANG === 'en') return key;
   var entry = I18N[key];
   if (entry && entry.zh) return entry.zh;
+  // Try normalized lookup (replace various dash types with standard em-dash)
+  var normalized = key.replace(/[\u2012\u2013\u2014\u2015\u2212—–-]+/g, '\u2014');
+  if (normalized !== key) {
+    entry = I18N[normalized];
+    if (entry && entry.zh) return entry.zh;
+  }
   return key;
 }
 
@@ -445,8 +451,8 @@ function applyI18n() {
     el.textContent = t(orig);
   });
 
-  // Translate any element with matching text content in subtitles/descriptions
-  document.querySelectorAll('.sec-sub, .section-sub, .card-sub, .subtitle, .section-desc').forEach(function(el) {
+  // Translate descriptions and subtitles with broad matching
+  document.querySelectorAll('.sec-sub, .section-sub, .card-sub, .subtitle').forEach(function(el) {
     var orig = el.getAttribute('data-i18n') || el.textContent.trim();
     if (I18N[orig]) {
       if (!el.getAttribute('data-i18n')) el.setAttribute('data-i18n', orig);
