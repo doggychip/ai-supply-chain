@@ -230,6 +230,66 @@ img,svg{display:block;max-width:100%}
 .flow-legend{display:flex;flex-wrap:wrap;gap:var(--space-3);justify-content:center;margin-bottom:var(--space-4)}
 .flow-legend-item{display:flex;align-items:center;gap:var(--space-2);font-size:10px;color:var(--muted)}
 .flow-legend-dot{width:10px;height:10px;border-radius:3px}
+
+/* ── CONVICTION LIST ── */
+.cv-tier{margin-bottom:var(--space-8)}
+.cv-tier-header{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-lg);margin-bottom:var(--space-4);border-left:4px solid var(--tier-accent,var(--green))}
+.cv-tier-header .cv-tier-label{font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tier-accent,var(--green))}
+.cv-tier-header .cv-tier-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.cv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4)}
+.cv-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-4)}
+@media(max-width:1100px){.cv-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.cv-grid,.cv-grid-2{grid-template-columns:1fr}}
+
+.cv-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3);position:relative;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.cv-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.35);border-color:var(--card-accent,var(--border))}
+.cv-card.cv-t1{border-color:color-mix(in srgb,var(--green) 40%,var(--border));box-shadow:0 0 20px color-mix(in srgb,var(--green) 8%,transparent)}
+.cv-card.cv-t1:hover{border-color:var(--green);box-shadow:0 0 30px color-mix(in srgb,var(--green) 18%,transparent)}
+.cv-card.cv-t2{border-color:color-mix(in srgb,var(--blue) 30%,var(--border))}
+.cv-card.cv-t2:hover{border-color:var(--blue);box-shadow:0 0 24px color-mix(in srgb,var(--blue) 12%,transparent)}
+.cv-card.cv-t3{border-color:color-mix(in srgb,var(--orange) 30%,var(--border))}
+.cv-card.cv-t3:hover{border-color:var(--orange);box-shadow:0 0 24px color-mix(in srgb,var(--orange) 12%,transparent)}
+.cv-card.cv-avoid{border-color:color-mix(in srgb,var(--red) 35%,var(--border))}
+.cv-card.cv-avoid:hover{border-color:var(--red);box-shadow:0 0 24px color-mix(in srgb,var(--red) 12%,transparent)}
+
+.cv-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3)}
+.cv-card-info{flex:1;min-width:0}
+.cv-card-ticker{font-family:var(--font-mono);font-size:var(--text-lg);font-weight:700;color:var(--primary);cursor:pointer;letter-spacing:.02em}
+.cv-card-ticker:hover{text-decoration:underline}
+.cv-card-company{font-size:var(--text-xs);color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Score ring */
+.cv-score-ring{position:relative;width:60px;height:60px;flex-shrink:0}
+.cv-score-ring svg{width:60px;height:60px;transform:rotate(-90deg)}
+.cv-score-ring .ring-bg{fill:none;stroke:var(--s4);stroke-width:5}
+.cv-score-ring .ring-fg{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.16,1,.3,1)}
+.cv-score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:16px;font-weight:700;line-height:1}
+.cv-score-num small{font-size:8px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+
+.cv-price-row{display:flex;align-items:baseline;gap:var(--space-2);font-size:var(--text-sm)}
+.cv-price{font-weight:700;font-variant-numeric:tabular-nums}
+.cv-price-chg{font-size:var(--text-xs);font-weight:600}
+.cv-price-chg.up{color:var(--success)}
+.cv-price-chg.dn{color:var(--error)}
+
+.cv-analyst-row{display:flex;flex-wrap:wrap;gap:var(--space-2);font-size:10px;color:var(--muted);align-items:center}
+.cv-analyst-row .badge{font-size:9px}
+
+.cv-signals{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.cv-signal-tag{font-size:9px;padding:2px 7px;border-radius:var(--radius-sm);font-weight:600;background:color-mix(in srgb,var(--primary) 10%,transparent);color:var(--primary)}
+
+.cv-thesis{font-size:10px;color:var(--muted);line-height:1.6}
+
+.cv-dots{display:flex;gap:var(--space-3);margin-top:auto;padding-top:var(--space-2)}
+.cv-dot{display:flex;flex-direction:column;align-items:center;gap:2px}
+.cv-dot-circle{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff}
+.cv-dot-circle.g{background:var(--green)}
+.cv-dot-circle.y{background:var(--warn)}
+.cv-dot-circle.r{background:var(--red)}
+.cv-dot-label{font-size:8px;color:var(--faint);font-weight:700;letter-spacing:.04em}
+
+.cv-avoid-reason{font-size:var(--text-xs);color:var(--muted);line-height:1.6;display:flex;align-items:flex-start;gap:var(--space-2)}
+.cv-avoid-reason .warn-icon{color:var(--error);font-size:var(--text-sm);flex-shrink:0}
 </style>
 </head>
 <body>
@@ -279,6 +339,7 @@ img,svg{display:block;max-width:100%}
 <div class="sb-section">
 <div class="sb-section-title">Analysis</div>
 <button class="sb-item" onclick="nav(this,'s-watchlist')"><span class="dot" style="background:var(--gold)"></span>Master Watchlist</button>
+<button class="sb-item" onclick="nav(this,'s-conviction')"><span class="dot" style="background:var(--green)"></span>Conviction List</button>
 <button class="sb-item" onclick="nav(this,'s-timeline')"><span class="dot" style="background:var(--primary)"></span>Catalysts 2026–28</button>
 </div>
 
@@ -919,6 +980,426 @@ img,svg{display:block;max-width:100%}
   </div>
 </div>
 </div>
+
+<!-- ════ CONVICTION LIST ════ -->
+<div id="s-conviction" class="section">
+<div class="section-header">
+  <div>
+    <div class="section-title">🎯 Conviction List — Top Picks by Signal Strength</div>
+    <div class="section-desc">Ranked by fundamentals, analyst consensus, options flow, volume, and technicals · Updated Apr 16, 2026</div>
+  </div>
+</div>
+
+<!-- TIER 1 — HIGHEST CONVICTION -->
+<div class="cv-tier">
+  <div class="cv-tier-header" style="--tier-accent:var(--green);background:color-mix(in srgb,var(--green) 6%,var(--surface))">
+    <div><div class="cv-tier-label" style="color:var(--green)">TIER 1 — HIGHEST CONVICTION</div><div class="cv-tier-sub">Strong Buy + Major Catalyst + Confirmed Options Flow</div></div>
+  </div>
+  <div class="cv-grid">
+
+    <!-- MU -->
+    <div class="cv-card cv-t1">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">MU</div>
+          <div class="cv-card-company">Micron Technology</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--green)" stroke-dasharray="157.08" stroke-dashoffset="3.14"/></svg>
+          <div class="cv-score-num">98<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$448.28</span><span class="cv-price-chg dn">−22.09 (−4.74%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $521 &middot; Median $533 &middot; <span style="color:var(--success)">+16.1% upside</span> &middot; 87.5% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">HBM4 Sold Out</span>
+        <span class="cv-signal-tag">Zacks #1</span>
+        <span class="cv-signal-tag">81% GM Guide</span>
+        <span class="cv-signal-tag">P/E 21x Cheapest</span>
+        <span class="cv-signal-tag">Sole US HBM4</span>
+      </div>
+      <div class="cv-thesis">HBM4 100% sold out under binding contracts. FQ3 guide $33.5B + 81% GM. Sole US HBM4 supplier. Net income ratio 41.5%, Zacks #1 Strong Buy.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- AVGO -->
+    <div class="cv-card cv-t1">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">AVGO</div>
+          <div class="cv-card-company">Broadcom Inc.</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--green)" stroke-dasharray="157.08" stroke-dashoffset="6.28"/></svg>
+          <div class="cv-score-num">96<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$392.32</span><span class="cv-price-chg up">+10.21 (+2.68%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $490 &middot; Median $493 &middot; <span style="color:var(--success)">+24.8% upside</span> &middot; 87.5% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">$565K Call Spread</span>
+        <span class="cv-signal-tag">PEG 0.5x</span>
+        <span class="cv-signal-tag">6 XPU Customers</span>
+        <span class="cv-signal-tag">Zacks #1</span>
+        <span class="cv-signal-tag">$100B AI Target</span>
+      </div>
+      <div class="cv-thesis">$565K call spread (380–400 Apr 24). PEG 0.5x vs 1.2x median. 6 XPU customers. $100B AI chip target 2027. Zacks #1.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- NVDA -->
+    <div class="cv-card cv-t1">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">NVDA</div>
+          <div class="cv-card-company">NVIDIA Corporation</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--green)" stroke-dasharray="157.08" stroke-dashoffset="7.85"/></svg>
+          <div class="cv-score-num">95<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$196.48</span><span class="cv-price-chg up">+0.70 (+0.36%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $276 &middot; Median $275 &middot; <span style="color:var(--success)">+40.5% upside</span> &middot; 100% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">100% Bullish</span>
+        <span class="cv-signal-tag">AI Options Bellwether</span>
+        <span class="cv-signal-tag">FY27 $370B+</span>
+        <span class="cv-signal-tag">Platform Monopoly</span>
+      </div>
+      <div class="cv-thesis">Benchmark AI options vehicle. 100% analyst Strong Buy. FY27 consensus $370B+. $276 avg PT = +41% upside.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TIER 2 — HIGH CONVICTION -->
+<div class="cv-tier">
+  <div class="cv-tier-header" style="--tier-accent:var(--blue);background:color-mix(in srgb,var(--blue) 6%,var(--surface))">
+    <div><div class="cv-tier-label" style="color:var(--blue)">TIER 2 — HIGH CONVICTION</div><div class="cv-tier-sub">Strong Fundamentals + Momentum — Proven Names with Clear Catalysts</div></div>
+  </div>
+  <div class="cv-grid">
+
+    <!-- ANET -->
+    <div class="cv-card cv-t2">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">ANET</div>
+          <div class="cv-card-company">Arista Networks</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--blue)" stroke-dasharray="157.08" stroke-dashoffset="15.71"/></svg>
+          <div class="cv-score-num">90<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$153.10</span><span class="cv-price-chg dn">−2.56 (−1.66%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $184 &middot; <span style="color:var(--success)">+20.4% upside</span> &middot; 100% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">100% Bullish</span>
+        <span class="cv-signal-tag">AI Center $3.25B</span>
+        <span class="cv-signal-tag">800G Shipping</span>
+      </div>
+      <div class="cv-thesis">100% bullish consensus. AI Center target raised $3.25B. 800G shipping.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- APH -->
+    <div class="cv-card cv-t2">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">APH</div>
+          <div class="cv-card-company">Amphenol Corporation</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--blue)" stroke-dasharray="157.08" stroke-dashoffset="18.85"/></svg>
+          <div class="cv-score-num">88<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$147.09</span><span class="cv-price-chg dn">−2.93 (−1.97%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $173 &middot; <span style="color:var(--success)">+17.3% upside</span> &middot; 100% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">100% Bullish</span>
+        <span class="cv-signal-tag">Triple-Digit DC Growth</span>
+        <span class="cv-signal-tag">CommScope CCS</span>
+      </div>
+      <div class="cv-thesis">100% bullish. Triple-digit DC organic growth. CommScope CCS closed.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle r">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- MRVL -->
+    <div class="cv-card cv-t2">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">MRVL</div>
+          <div class="cv-card-company">Marvell Technology</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--blue)" stroke-dasharray="157.08" stroke-dashoffset="20.42"/></svg>
+          <div class="cv-score-num">87<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$132.13</span><span class="cv-price-chg dn">−1.15 (−0.86%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $137 &middot; <span style="color:var(--success)">+3.7% upside</span> &middot; 77.8% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">Barclays Upgrade</span>
+        <span class="cv-signal-tag">Celestial AI</span>
+        <span class="cv-signal-tag">FY26 $8.2B (+42%)</span>
+        <span class="cv-signal-tag">Photonic Fabric</span>
+      </div>
+      <div class="cv-thesis">Barclays upgrade to Overweight. Celestial AI acquisition. FY26 $8.2B (+42%). Photonic Fabric.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- TSM -->
+    <div class="cv-card cv-t2">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">TSM</div>
+          <div class="cv-card-company">Taiwan Semiconductor</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--blue)" stroke-dasharray="157.08" stroke-dashoffset="22.0"/></svg>
+          <div class="cv-score-num">86<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$374.37</span><span class="cv-price-chg dn">−5.08 (−1.34%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $392 &middot; <span style="color:var(--success)">+4.7% upside</span> &middot; 80% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">CoWoS Monopoly</span>
+        <span class="cv-signal-tag">N2 in HVM</span>
+        <span class="cv-signal-tag">Q1 $35.71B (+35%)</span>
+      </div>
+      <div class="cv-thesis">CoWoS monopoly. N2 in HVM. Q1 $35.71B (+35%). Foundational to entire AI stack.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- GEV -->
+    <div class="cv-card cv-t2">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">GEV</div>
+          <div class="cv-card-company">GE Vernova</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--blue)" stroke-dasharray="157.08" stroke-dashoffset="23.56"/></svg>
+          <div class="cv-score-num">85<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$983.62</span><span class="cv-price-chg dn">−8.85 (−0.90%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $983 &middot; <span style="color:var(--muted)">−0.1% upside</span> &middot; 87.5% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">83 GW Backlog</span>
+        <span class="cv-signal-tag">100 GW Target</span>
+        <span class="cv-signal-tag">$150B Backlog</span>
+        <span class="cv-signal-tag">Near ATH</span>
+      </div>
+      <div class="cv-thesis">83 GW gas turbine backlog → 100 GW target. $150B total backlog. Power bottleneck play.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TIER 3 — SPECULATIVE HIGH-GROWTH -->
+<div class="cv-tier">
+  <div class="cv-tier-header" style="--tier-accent:var(--orange);background:color-mix(in srgb,var(--orange) 6%,var(--surface))">
+    <div><div class="cv-tier-label" style="color:var(--orange)">TIER 3 — SPECULATIVE HIGH-GROWTH</div><div class="cv-tier-sub">Elevated Risk/Reward — Smaller Names with Explosive Upside Potential</div></div>
+  </div>
+  <div class="cv-grid">
+
+    <!-- CRDO -->
+    <div class="cv-card cv-t3">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">CRDO</div>
+          <div class="cv-card-company">Credo Technology</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--orange)" stroke-dasharray="157.08" stroke-dashoffset="28.27"/></svg>
+          <div class="cv-score-num">82<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$165.36</span><span class="cv-price-chg up">+3.36 (+2.11%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $183 &middot; PT $200 &middot; <span style="color:var(--success)">+10.7% upside</span> &middot; 80% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">200%+ Growth</span>
+        <span class="cv-signal-tag">~70% AEC Share</span>
+        <span class="cv-signal-tag">DustPhotonics</span>
+        <span class="cv-signal-tag">PT $200</span>
+      </div>
+      <div class="cv-thesis">200%+ revenue growth. ~70% AEC share. DustPhotonics (silicon photonics). PT $200.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- LITE -->
+    <div class="cv-card cv-t3">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">LITE</div>
+          <div class="cv-card-company">Lumentum Holdings</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--orange)" stroke-dasharray="157.08" stroke-dashoffset="31.42"/></svg>
+          <div class="cv-score-num">80<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$814.87</span><span class="cv-price-chg dn">−39.93 (−4.68%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-blue">Buy</span> Avg PT $784 &middot; <span style="color:var(--error)">−3.8% to PT</span> &middot; 71.4% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">$5M Call Sweeps!</span>
+        <span class="cv-signal-tag">NVDA $2B Investment</span>
+        <span class="cv-signal-tag">$2B/Quarter Target</span>
+      </div>
+      <div class="cv-thesis">$5M+ call sweeps targeting $820 Apr 17. NVDA $2B investment. $2B/quarter target.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- VRT -->
+    <div class="cv-card cv-t3">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">VRT</div>
+          <div class="cv-card-company">Vertiv Holdings</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--orange)" stroke-dasharray="157.08" stroke-dashoffset="34.56"/></svg>
+          <div class="cv-score-num">78<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$298.39</span><span class="cv-price-chg dn">−11.85 (−3.82%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-green">Strong Buy</span> Avg PT $295 &middot; <span style="color:var(--error)">−1.0% (at PT)</span> &middot; 80% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">$15B Backlog</span>
+        <span class="cv-signal-tag">+252% Orders</span>
+        <span class="cv-signal-tag">At Consensus PT</span>
+      </div>
+      <div class="cv-thesis">$15B record backlog. +252% organic order growth. But trading at consensus PT.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle g">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+    <!-- CRWV -->
+    <div class="cv-card cv-t3">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">CRWV</div>
+          <div class="cv-card-company">CoreWeave</div>
+        </div>
+        <div class="cv-score-ring">
+          <svg viewBox="0 0 60 60"><circle class="ring-bg" cx="30" cy="30" r="25"/><circle class="ring-fg" cx="30" cy="30" r="25" stroke="var(--orange)" stroke-dasharray="157.08" stroke-dashoffset="39.27"/></svg>
+          <div class="cv-score-num">75<small>/100</small></div>
+        </div>
+      </div>
+      <div class="cv-price-row"><span class="cv-price">$118.45</span><span class="cv-price-chg up">+1.17 (+1.00%)</span></div>
+      <div class="cv-analyst-row"><span class="badge b-blue">Buy</span> Avg PT $128 &middot; <span style="color:var(--success)">+8.3% upside</span> &middot; 71.4% Bullish</div>
+      <div class="cv-signals">
+        <span class="cv-signal-tag">$66.8B Backlog</span>
+        <span class="cv-signal-tag">Meta $35.2B</span>
+        <span class="cv-signal-tag">No GAAP Earnings</span>
+        <span class="cv-signal-tag">Post-IPO</span>
+      </div>
+      <div class="cv-thesis">$66.8B contract backlog. Meta $35.2B deal. But no GAAP earnings yet — speculative.</div>
+      <div class="cv-dots">
+        <div class="cv-dot"><div class="cv-dot-circle y">F</div><div class="cv-dot-label">Fund</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">O</div><div class="cv-dot-label">Opts</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle y">T</div><div class="cv-dot-label">Tech</div></div>
+        <div class="cv-dot"><div class="cv-dot-circle g">V</div><div class="cv-dot-label">Vol</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- AVOID -->
+<div class="cv-tier">
+  <div class="cv-tier-header" style="--tier-accent:var(--red);background:color-mix(in srgb,var(--red) 6%,var(--surface))">
+    <div><div class="cv-tier-label" style="color:var(--red)">⚠️ AVOID</div><div class="cv-tier-sub">Structural risks outweigh near-term upside — steer clear or reduce exposure</div></div>
+  </div>
+  <div class="cv-grid-2">
+
+    <!-- SMCI -->
+    <div class="cv-card cv-avoid">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">SMCI</div>
+          <div class="cv-card-company">Super Micro Computer</div>
+        </div>
+        <div style="font-size:28px;flex-shrink:0">⛔</div>
+      </div>
+      <div class="cv-avoid-reason"><span class="warn-icon">⚠️</span> Co-founder indicted March 2026. Revenue declining. Share shifting to Dell/HPE.</div>
+    </div>
+
+    <!-- INTC -->
+    <div class="cv-card cv-avoid">
+      <div class="cv-card-top">
+        <div class="cv-card-info">
+          <div class="cv-card-ticker lticker">INTC</div>
+          <div class="cv-card-company">Intel Corporation</div>
+        </div>
+        <div style="font-size:28px;flex-shrink:0">⛔</div>
+      </div>
+      <div class="cv-avoid-reason"><span class="warn-icon">⚠️</span> 77.8% Hold consensus. Trading 12% above avg PT $57. Foundry pivot uncertain.</div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /s-conviction -->
 
 </div><!-- /content -->
 </main>
