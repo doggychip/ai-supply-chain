@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Infrastructure — Full Value Chain Research Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--text-xs:clamp(.72rem,.68rem+.2vw,.8rem);
+--text-sm:clamp(.8rem,.75rem+.25vw,.9rem);
+--text-base:clamp(.9rem,.85rem+.25vw,1rem);
+--text-lg:clamp(1rem,.9rem+.5vw,1.3rem);
+--text-xl:clamp(1.3rem,1rem+1vw,1.9rem);
+--space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;
+--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;
+--radius-sm:.3rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;
+--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
+--ease:180ms cubic-bezier(.16,1,.3,1);
+}
+[data-theme="dark"]{
+--bg:#0d0f14;--surface:#13151d;--s2:#181a24;--s3:#1c1f2a;--s4:#22253a;
+--div:#252836;--border:#2e3148;
+--text:#dde0f0;--muted:#7a7e96;--faint:#454868;
+--primary:#5b9cf6;--pri-h:#3b7de8;
+--success:#56cc84;--warn:#f0ad4e;--error:#f07070;
+--cyan:#56d4e8;--purple:#a87ef0;--orange:#f5a454;--gold:#e8c44a;
+--green:#56cc84;--red:#f07070;--blue:#5b9cf6;--teal:#4fc4cf;
+--shadow:0 4px 20px rgba(0,0,0,.5);--shadow-sm:0 1px 4px rgba(0,0,0,.3);
+}
+[data-theme="light"]{
+--bg:#f2f3f7;--surface:#fff;--s2:#f8f9fc;--s3:#eef0f6;--s4:#e5e8f0;
+--div:#dde1ec;--border:#ccd0e0;
+--text:#1a1d2e;--muted:#5c617a;--faint:#9498b0;
+--primary:#2563eb;--pri-h:#1d50cc;
+--success:#2d7a4a;--warn:#b45309;--error:#c0392b;
+--cyan:#0891b2;--purple:#7c3aed;--orange:#c2570a;--gold:#b45309;
+--green:#2d7a4a;--red:#c0392b;--blue:#2563eb;--teal:#0f766e;
+--shadow:0 4px 20px rgba(0,0,0,.1);--shadow-sm:0 1px 4px rgba(0,0,0,.06);
+}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--text);background:var(--bg);display:flex;overflow:hidden;height:100vh}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+img,svg{display:block;max-width:100%}
+
+/* ── SIDEBAR ── */
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;z-index:20}
+.sb-logo{padding:var(--space-5) var(--space-4) var(--space-4);border-bottom:1px solid var(--div)}
+.sb-logo .name{font-size:var(--text-sm);font-weight:700;display:flex;align-items:center;gap:var(--space-2)}
+.sb-logo .name svg{color:var(--primary)}
+.sb-logo .sub{font-size:var(--text-xs);color:var(--muted);margin-top:2px}
+.sb-section{padding:var(--space-3) var(--space-2)}
+.sb-section-title{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;font-weight:700;padding:var(--space-1) var(--space-2) var(--space-2)}
+.sb-item{display:flex;align-items:center;gap:var(--space-2);padding:6px var(--space-3);border-radius:var(--radius-md);font-size:var(--text-xs);color:var(--muted);width:100%;text-align:left;cursor:pointer;border:none;background:none}
+.sb-item:hover,.sb-item.active{background:var(--s3);color:var(--text)}
+.sb-item.active{color:var(--primary);font-weight:600}
+.sb-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sb-footer{margin-top:auto;padding:var(--space-3) var(--space-4);border-top:1px solid var(--div);display:flex;justify-content:space-between;align-items:center}
+.theme-btn{width:30px;height:30px;border-radius:var(--radius-md);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px}
+.theme-btn:hover{background:var(--s3)}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;min-width:0;height:100vh}
+.topbar{position:sticky;top:0;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:var(--space-3) var(--space-6);display:flex;align-items:center;justify-content:space-between;z-index:10}
+.topbar h1{font-size:var(--text-lg);font-weight:700;letter-spacing:-.02em}
+.topbar-pills{display:flex;gap:var(--space-2);align-items:center}
+.pill{font-size:10px;padding:3px 10px;border-radius:var(--radius-sm);background:var(--s3);color:var(--muted);font-weight:600;letter-spacing:.04em}
+.pill.live{background:color-mix(in srgb,var(--success) 15%,transparent);color:var(--success)}
+
+.content{padding:var(--space-5) var(--space-6) var(--space-12)}
+.section{margin-bottom:var(--space-8);scroll-margin-top:60px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4)}
+.section-title{font-size:var(--text-lg);font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:var(--space-2)}
+.section-desc{font-size:var(--text-xs);color:var(--muted);margin-top:2px}
+
+/* ── GRID ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4)}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4)}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-4)}
+.g2-3{display:grid;grid-template-columns:2fr 3fr;gap:var(--space-4)}
+.g3-2{display:grid;grid-template-columns:3fr 2fr;gap:var(--space-4)}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5);overflow:hidden}
+.card-title{font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:var(--space-3);display:flex;align-items:center;gap:var(--space-2)}
+.card-chart{position:relative;height:220px;width:100%}
+
+/* ── KPI ── */
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5)}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
+.kpi-value{font-size:var(--text-xl);font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi-delta{font-size:var(--text-xs);margin-top:4px;color:var(--muted)}
+.kpi-delta .up{color:var(--success)}
+.kpi-delta .dn{color:var(--error)}
+.kpi-delta .nt{color:var(--warn)}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-sm);white-space:nowrap}
+.b-red{background:color-mix(in srgb,var(--red) 15%,transparent);color:var(--red)}
+.b-orange{background:color-mix(in srgb,var(--orange) 15%,transparent);color:var(--orange)}
+.b-gold{background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold)}
+.b-green{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
+.b-blue{background:color-mix(in srgb,var(--blue) 15%,transparent);color:var(--blue)}
+.b-purple{background:color-mix(in srgb,var(--purple) 15%,transparent);color:var(--purple)}
+.b-teal{background:color-mix(in srgb,var(--teal) 15%,transparent);color:var(--teal)}
+.b-muted{background:var(--s3);color:var(--muted)}
+
+/* ── MEGA TABLE ── */
+.mega-table-wrap{overflow-x:auto}
+.mega-table{width:100%;border-collapse:collapse;font-size:var(--text-xs)}
+.mega-table thead th{text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:var(--space-2) var(--space-3);border-bottom:2px solid var(--div);background:var(--surface);white-space:nowrap;position:sticky;top:0}
+.mega-table tbody td{padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--div);vertical-align:middle}
+.mega-table tbody tr:hover td{background:var(--s2)}
+.ticker{font-family:var(--font-mono);font-weight:600;font-size:10px;color:var(--primary);letter-spacing:.02em}
+.co-name{font-weight:600;font-size:var(--text-xs);white-space:nowrap}
+.thesis-text{font-size:10px;color:var(--muted);max-width:320px;line-height:1.5}
+.metric-val{font-family:var(--font-mono);font-size:10px;font-weight:600;white-space:nowrap}
+.layer-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:var(--radius-sm)}
+
+/* ── SUPPLY BAR ── */
+.sbar-row{display:grid;grid-template-columns:160px 1fr 52px 100px;align-items:center;gap:var(--space-3);padding:var(--space-2) 0}
+.sbar-label{font-size:var(--text-xs);font-weight:600}
+.sbar-track{height:6px;background:var(--s4);border-radius:3px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:3px;transition:width 1.4s cubic-bezier(.16,1,.3,1)}
+.sbar-pct{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--muted);text-align:right}
+.sbar-note{font-size:10px;color:var(--muted)}
+
+/* ── STOCK CARD ── */
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-3)}
+.sc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-2)}
+.sc-name{font-size:var(--text-sm);font-weight:700}
+.sc-ticker{font-family:var(--font-mono);font-size:10px;color:var(--primary);font-weight:600;margin-top:1px}
+.sc-thesis{font-size:10px;color:var(--muted);line-height:1.6}
+.sc-metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sc-metric{display:flex;flex-direction:column;gap:1px}
+.sc-metric-label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700}
+.sc-metric-val{font-size:var(--text-xs);font-weight:700;font-variant-numeric:tabular-nums}
+.sc-tags{display:flex;flex-wrap:wrap;gap:4px}
+.sc-tag{font-size:9px;padding:2px 6px;border-radius:var(--radius-sm);background:var(--s3);color:var(--muted);font-weight:600}
+.risk-track{height:3px;background:var(--s4);border-radius:2px;overflow:hidden;margin-top:2px}
+.risk-fill{height:100%;border-radius:2px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--div);margin-bottom:var(--space-4)}
+.tab-btn{padding:var(--space-2) var(--space-4);font-size:var(--text-xs);font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab-btn.active{color:var(--primary);border-color:var(--primary)}
+.tab-btn:hover:not(.active){color:var(--text)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── METRICS ROWS ── */
+.mr{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--div);font-size:var(--text-xs)}
+.mr:last-child{border-bottom:none}
+.mr-label{color:var(--muted)}
+.mr-val{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+
+/* ── TIMELINE ── */
+.tl{padding-left:var(--space-5);position:relative}
+.tl::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:var(--div)}
+.tl-item{position:relative;padding-bottom:var(--space-4)}
+.tl-item::before{content:'';position:absolute;left:calc(-1 * var(--space-5) + 2px);top:5px;width:8px;height:8px;border-radius:50%;background:var(--primary);border:2px solid var(--surface)}
+.tl-date{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:2px;font-family:var(--font-mono)}
+.tl-text{font-size:var(--text-xs);line-height:1.5}
+
+/* ── LAYER MAP ── */
+.layer-map{display:flex;flex-direction:column;gap:var(--space-2)}
+.layer-row{display:grid;grid-template-columns:180px 1fr;gap:var(--space-3);align-items:start;background:var(--s2);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-3)}
+.layer-name{font-size:var(--text-xs);font-weight:700;display:flex;align-items:center;gap:var(--space-2)}
+.layer-num{width:22px;height:22px;border-radius:var(--radius-sm);background:var(--s4);color:var(--muted);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.layer-tickers{display:flex;flex-wrap:wrap;gap:6px}
+.lticker{font-family:var(--font-mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--primary);cursor:pointer}
+.lticker:hover{background:var(--s3)}
+
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.sidebar{width:200px}}
+@media(max-width:800px){.sidebar{display:none}.g4,.g3,.g2,.g2-3,.g3-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ════════ SIDEBAR ════════ -->
+<aside class="sidebar">
+<div class="sb-logo">
+  <div class="name">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    AI Value Chain
+  </div>
+  <div class="sub">Full Ecosystem Research · Apr 2026</div>
+</div>
+
+<div class="sb-section">
+<div class="sb-section-title">Overview</div>
+<button class="sb-item active" onclick="nav(this,'s-macro')"><span class="dot" style="background:var(--primary)"></span>Macro Dashboard</button>
+<button class="sb-item" onclick="nav(this,'s-map')"><span class="dot" style="background:var(--teal)"></span>Value Chain Map</button>
+<button class="sb-item" onclick="nav(this,'s-bottleneck')"><span class="dot" style="background:var(--red)"></span>Bottleneck Radar</button>
+</div>
+
+<div class="sb-section">
+<div class="sb-section-title">Silicon Stack</div>
+<button class="sb-item" onclick="nav(this,'s-gpu')"><span class="dot" style="background:var(--purple)"></span>GPU / Accelerators</button>
+<button class="sb-item" onclick="nav(this,'s-asic')"><span class="dot" style="background:var(--blue)"></span>Custom ASIC</button>
+<button class="sb-item" onclick="nav(this,'s-foundry')"><span class="dot" style="background:var(--teal)"></span>Foundry + Packaging</button>
+<button class="sb-item" onclick="nav(this,'s-equip')"><span class="dot" style="background:var(--cyan)"></span>Semi Equipment</button>
+<button class="sb-item" onclick="nav(this,'s-memory')"><span class="dot" style="background:var(--orange)"></span>Memory / HBM</button>
+</div>
+
+<div class="sb-section">
+<div class="sb-section-title">Infrastructure</div>
+<button class="sb-item" onclick="nav(this,'s-networking')"><span class="dot" style="background:var(--green)"></span>Networking / Optics</button>
+<button class="sb-item" onclick="nav(this,'s-servers')"><span class="dot" style="background:var(--gold)"></span>Server OEM</button>
+<button class="sb-item" onclick="nav(this,'s-power')"><span class="dot" style="background:var(--warn)"></span>Power & Cooling</button>
+<button class="sb-item" onclick="nav(this,'s-energy')"><span class="dot" style="background:var(--yellow,#ffe066)"></span>Energy / Nuclear</button>
+<button class="sb-item" onclick="nav(this,'s-dc')"><span class="dot" style="background:var(--muted)"></span>Data Center REITs</button>
+</div>
+
+<div class="sb-section">
+<div class="sb-section-title">Cloud Layer</div>
+<button class="sb-item" onclick="nav(this,'s-neoclouds')"><span class="dot" style="background:var(--red)"></span>Pivot Plays (IREN/CIFR/NBIS)</button>
+<button class="sb-item" onclick="nav(this,'s-crwv')"><span class="dot" style="background:var(--orange)"></span>Neoclouds</button>
+<button class="sb-item" onclick="nav(this,'s-hyperscalers')"><span class="dot" style="background:var(--blue)"></span>Hyperscalers</button>
+</div>
+
+<div class="sb-section">
+<div class="sb-section-title">Analysis</div>
+<button class="sb-item" onclick="nav(this,'s-watchlist')"><span class="dot" style="background:var(--gold)"></span>Master Watchlist</button>
+<button class="sb-item" onclick="nav(this,'s-timeline')"><span class="dot" style="background:var(--primary)"></span>Catalysts 2026–28</button>
+</div>
+
+<div class="sb-footer">
+  <span style="font-size:10px;color:var(--faint)">~55 companies tracked</span>
+  <button class="theme-btn" id="toggleTheme" title="Toggle theme">☀</button>
+</div>
+</aside>
+
+<!-- ════════ MAIN ════════ -->
+<main class="main">
+<div class="topbar">
+  <h1>AI Infrastructure — Complete Value Chain Research</h1>
+  <div class="topbar-pills">
+    <span class="pill live">● LIVE DATA</span>
+    <span class="pill">14 Layers</span>
+    <span class="pill">~55 Companies</span>
+    <span class="pill">Apr 16, 2026</span>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ════ MACRO ════ -->
+<div id="s-macro" class="section">
+<div class="section-header">
+  <div><div class="section-title">📊 Macro Dashboard</div><div class="section-desc">The numbers that anchor the entire thesis</div></div>
+</div>
+<div class="g4" style="margin-bottom:var(--space-4)">
+  <div class="kpi"><div class="kpi-label">Hyperscaler Capex 2026E</div><div class="kpi-value" style="color:var(--primary)">$650B+</div><div class="kpi-delta"><span class="up">↑ 40%+ YoY</span> · MSFT/GOOGL/META/AMZN/ORCL</div></div>
+  <div class="kpi"><div class="kpi-label">Global AI Infra Spend →2028</div><div class="kpi-value" style="color:var(--cyan)">~$3T</div><div class="kpi-delta"><span class="nt">Morgan Stanley est.</span></div></div>
+  <div class="kpi"><div class="kpi-label">DC Power Load 2028E</div><div class="kpi-value" style="color:var(--orange)">153 GW</div><div class="kpi-delta"><span class="up">↑ 87%</span> · from 82 GW in 2025</div></div>
+  <div class="kpi"><div class="kpi-label">US DC Builds Delayed/Canceled</div><div class="kpi-value" style="color:var(--error)">~50%</div><div class="kpi-delta"><span class="dn">Power & components shortage</span></div></div>
+  <div class="kpi"><div class="kpi-label">HBM Market 2026E</div><div class="kpi-value" style="color:var(--orange)">$54.6B</div><div class="kpi-delta"><span class="up">↑ 58% YoY</span> · 2027E: $91.7B</div></div>
+  <div class="kpi"><div class="kpi-label">CoWoS Supply/Demand Gap</div><div class="kpi-value" style="color:var(--error)">−200K wfr</div><div class="kpi-delta"><span class="dn">Demand 1.1M vs supply ~900K</span></div></div>
+  <div class="kpi"><div class="kpi-label">NVIDIA FY26 Revenue</div><div class="kpi-value" style="color:var(--success)">$215.9B</div><div class="kpi-delta"><span class="up">↑ 65% YoY</span> · Q1 FY27 guide: $78B</div></div>
+  <div class="kpi"><div class="kpi-label">SMCI Export Indictment Impact</div><div class="kpi-value" style="color:var(--warn)">−33%</div><div class="kpi-delta"><span class="dn">Co-founder indicted Mar 2026</span></div></div>
+</div>
+<div class="g2">
+  <div class="card"><div class="card-title">US Data Center Power Demand (TWh)</div><div class="card-chart"><canvas id="cPower"></canvas></div></div>
+  <div class="card"><div class="card-title">HBM Market Size ($B) — Supply vs Demand</div><div class="card-chart"><canvas id="cHBM"></canvas></div></div>
+</div>
+</div>
+
+<!-- ════ VALUE CHAIN MAP ════ -->
+<div id="s-map" class="section">
+<div class="section-header">
+  <div><div class="section-title">🗺 Complete Value Chain Map</div><div class="section-desc">14 layers from energy to cloud — click a ticker to see it in context below</div></div>
+</div>
+<div class="layer-map">
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">1</span>GPU / Accelerators</div><div class="layer-tickers"><span class="lticker">NVDA</span><span class="lticker">AMD</span><span class="lticker">ARM</span><span class="lticker">INTC</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">2</span>Custom ASIC + NIC</div><div class="layer-tickers"><span class="lticker">AVGO</span><span class="lticker">MRVL</span><span class="lticker">ALAB</span><span class="lticker">CRDO</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">3</span>Foundry + Packaging</div><div class="layer-tickers"><span class="lticker">TSM</span><span class="lticker">005930.KS</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">4</span>Semi Equipment</div><div class="layer-tickers"><span class="lticker">ASML</span><span class="lticker">AMAT</span><span class="lticker">LRCX</span><span class="lticker">KLAC</span><span class="lticker">TER</span><span class="lticker">AEIS</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">5</span>Memory (HBM)</div><div class="layer-tickers"><span class="lticker">MU</span><span class="lticker">000660.KS</span><span class="lticker">005930.KS</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">6</span>Networking / Switching</div><div class="layer-tickers"><span class="lticker">ANET</span><span class="lticker">CRDO</span><span class="lticker">ALAB</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">7</span>Optics / Photonics</div><div class="layer-tickers"><span class="lticker">LITE</span><span class="lticker">COHR</span><span class="lticker">MRVL</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">8</span>Interconnect / Copper</div><div class="layer-tickers"><span class="lticker">APH</span><span class="lticker">CRDO</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">9</span>Server OEM / Integration</div><div class="layer-tickers"><span class="lticker">SMCI</span><span class="lticker">DELL</span><span class="lticker">HPE</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">10</span>Power Delivery + Cooling</div><div class="layer-tickers"><span class="lticker">VRT</span><span class="lticker">ETN</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">11</span>Power Generation</div><div class="layer-tickers"><span class="lticker">GEV</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">12</span>Energy / Nuclear</div><div class="layer-tickers"><span class="lticker">CEG</span><span class="lticker">VST</span><span class="lticker">OKLO</span><span class="lticker">BWXT</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">13</span>Data Center REITs</div><div class="layer-tickers"><span class="lticker">EQIX</span><span class="lticker">DLR</span><span class="lticker">IRM</span></div></div>
+  <div class="layer-row"><div class="layer-name"><span class="layer-num">14</span>AI Cloud / Neoclouds</div><div class="layer-tickers"><span class="lticker">CRWV</span><span class="lticker">NBIS</span><span class="lticker">IREN</span><span class="lticker">CIFR</span></div></div>
+</div>
+</div>
+
+<!-- ════ BOTTLENECK RADAR ════ -->
+<div id="s-bottleneck" class="section">
+<div class="section-header">
+  <div><div class="section-title">🔴 Bottleneck Radar</div><div class="section-desc">Capacity utilization as % of demand — higher = more constrained = more pricing power</div></div>
+</div>
+<div class="g2-3">
+  <div class="card">
+    <div class="card-title">Supply Tightness vs Demand (2026)</div>
+    <div class="card-chart" style="height:280px"><canvas id="cRadar"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Constraint Map</div>
+    <div class="sbar-row"><span class="sbar-label">HBM Memory</span><div class="sbar-track"><div class="sbar-fill" style="width:97%;background:var(--red)"></div></div><span class="sbar-pct">97%</span><span class="sbar-note"><span class="badge b-red">Sold Out</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">CoWoS Packaging</span><div class="sbar-track"><div class="sbar-fill" style="width:93%;background:var(--red)"></div></div><span class="sbar-pct">93%</span><span class="sbar-note"><span class="badge b-red">Bottleneck</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">GPU Compute</span><div class="sbar-track"><div class="sbar-fill" style="width:88%;background:var(--red)"></div></div><span class="sbar-pct">88%</span><span class="sbar-note"><span class="badge b-red">Very Tight</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">Grid Power</span><div class="sbar-track"><div class="sbar-fill" style="width:90%;background:var(--red)"></div></div><span class="sbar-pct">90%</span><span class="sbar-note"><span class="badge b-red">Critical</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">Optics / EML</span><div class="sbar-track"><div class="sbar-fill" style="width:84%;background:var(--orange)"></div></div><span class="sbar-pct">84%</span><span class="sbar-note"><span class="badge b-orange">Shortage</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">Power Delivery (VRT/ETN)</span><div class="sbar-track"><div class="sbar-fill" style="width:80%;background:var(--orange)"></div></div><span class="sbar-pct">80%</span><span class="sbar-note"><span class="badge b-orange">Strained</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">Gas Turbines (GEV)</span><div class="sbar-track"><div class="sbar-fill" style="width:82%;background:var(--orange)"></div></div><span class="sbar-pct">82%</span><span class="sbar-note"><span class="badge b-orange">Strained</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">Networking (Ethernet)</span><div class="sbar-track"><div class="sbar-fill" style="width:72%;background:var(--gold)"></div></div><span class="sbar-pct">72%</span><span class="sbar-note"><span class="badge b-gold">Tight</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">Server OEM (post-SMCI)</span><div class="sbar-track"><div class="sbar-fill" style="width:70%;background:var(--gold)"></div></div><span class="sbar-pct">70%</span><span class="sbar-note"><span class="badge b-gold">Opportunity</span></span></div>
+    <div class="sbar-row"><span class="sbar-label">DC REIT Capacity</span><div class="sbar-track"><div class="sbar-fill" style="width:60%;background:var(--green)"></div></div><span class="sbar-pct">60%</span><span class="sbar-note"><span class="badge b-green">Adequate</span></span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ GPU ════ -->
+<div id="s-gpu" class="section">
+<div class="section-header"><div><div class="section-title">🟣 Layer 1 — GPU / AI Accelerators</div><div class="section-desc">The primary demand driver; NVDA dominant but AMD and ARM gaining share</div></div></div>
+<div class="g3" style="margin-bottom:var(--space-4)">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">NVIDIA</div><div class="sc-ticker">NVDA · NASDAQ</div></div><span class="badge b-green">Platform Leader</span></div>
+    <div class="sc-thesis">Irreplaceable GPU platform. Blackwell shipping, Vera Rubin in H2 2026. Controls CoWoS allocation, CUDA ecosystem moat, HBM procurement. FY27 consensus: $300B+</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">FY26 Revenue</span><span class="sc-metric-val">$215.9B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">YoY Growth</span><span class="sc-metric-val" style="color:var(--success)">+65%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Q1 FY27 Guide</span><span class="sc-metric-val">$78.0B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Non-GAAP GM</span><span class="sc-metric-val">75.2%</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">CoWoS Anchor</span><span class="sc-tag">HBM Buyer</span><span class="sc-tag">CUDA Lock-in</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Advanced Micro Devices</div><div class="sc-ticker">AMD · NASDAQ</div></div><span class="badge b-blue">#2 GPU</span></div>
+    <div class="sc-thesis">MI350 ramping with Meta as largest AI GPU customer (~42% AMD alloc). MI450 / Helios rack-scale for H2 2026. Oracle 27K-node cluster with MI355X. ROCm maturing. 2nm MI400 in 2027.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Q4 FY26 DC Rev</span><span class="sc-metric-val">$5.38B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">YoY Growth</span><span class="sc-metric-val" style="color:var(--success)">+39%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Key Customer</span><span class="sc-metric-val">Meta (42%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">GPU Price (MI450)</span><span class="sc-metric-val">~$40-55K</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">CUDA Alternative</span><span class="sc-tag">ROCm Risk</span><span class="sc-tag">HBM3E Leader</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Arm Holdings</div><div class="sc-ticker">ARM · NASDAQ</div></div><span class="badge b-purple">Emerging</span></div>
+    <div class="sc-thesis">AGI CPU launched Mar 2026: agentic AI inference at data center scale. Meta + OpenAI as anchor customers. TSMC 3nm. Projects $15B/yr revenue by 2031, total $25B ARR. IP royalties still grow 2x in 5 yrs.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">AGI CPU Rev Target</span><span class="sc-metric-val">$15B/yr (2031)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Total Rev Target</span><span class="sc-metric-val">$25B/yr</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">EPS Target</span><span class="sc-metric-val">$9/share</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Production</span><span class="sc-metric-val">TSMC 3nm</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">New Chip Maker</span><span class="sc-tag">Meta/OpenAI Backed</span><span class="sc-tag">Inference Focus</span></div>
+  </div>
+</div>
+<div class="card"><div class="card-title">GPU / Accelerator Revenue Ramp ($B)</div><div class="card-chart" style="height:200px"><canvas id="cGPU"></canvas></div></div>
+</div>
+
+<!-- ════ ASIC ════ -->
+<div id="s-asic" class="section">
+<div class="section-header"><div><div class="section-title">🔵 Layer 2 — Custom ASIC + Connectivity</div><div class="section-desc">Broadcom/Marvell building hyperscaler custom chips; Astera/Credo dominating cluster connectivity</div></div></div>
+<div class="g2" style="margin-bottom:var(--space-4)">
+  <div class="card">
+    <div class="card-title">AVGO AI Revenue Quarterly ($B)</div>
+    <div class="card-chart"><canvas id="cAVGO"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">MRVL + ALAB + CRDO Revenue YoY Growth (%)</div>
+    <div class="card-chart"><canvas id="cAsic2"></canvas></div>
+  </div>
+</div>
+<div class="g2">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Broadcom</div><div class="sc-ticker">AVGO · NASDAQ</div></div><span class="badge b-green">Strong Buy</span></div>
+    <div class="sc-thesis">Custom ASIC kingmaker — Google TPUs, Meta MTIA. >$100B AI revenue by 2027 guided. Q2 AI guide $10.7B (+28% QoQ). $73B backlog. Networking (Tomahawk, Jericho) + VMware adds subscription revenue.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Q1 FY26 AI Rev</span><span class="sc-metric-val">$8.4B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">YoY Growth</span><span class="sc-metric-val" style="color:var(--success)">+106%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Q2 AI Guide</span><span class="sc-metric-val">$10.7B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">2027 AI Target</span><span class="sc-metric-val">>$100B</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Google TPU</span><span class="sc-tag">Meta MTIA</span><span class="sc-tag">Ethernet AI Switch</span><span class="sc-tag">VMware</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Marvell Technology</div><div class="sc-ticker">MRVL · NASDAQ</div></div><span class="badge b-blue">Accelerating</span></div>
+    <div class="sc-thesis">Custom silicon scaled 0→$1.5B in FY26. FY27 guide ~$11B (+34%). DC 74% of revenue. Celestial AI ($3.25B) adds photonic fabric. Key: interconnect growing "like GPU spend." All FY27 custom silicon POs in hand.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">FY26 Revenue</span><span class="sc-metric-val">$8.2B (+42%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">FY27 Guide</span><span class="sc-metric-val">~$11B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Custom Silicon</span><span class="sc-metric-val">$1.5B (+100%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">DC % of Rev</span><span class="sc-metric-val">74%</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Custom XPU</span><span class="sc-tag">Celestial AI Photonics</span><span class="sc-tag">High PO Visibility</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Astera Labs</div><div class="sc-ticker">ALAB · NASDAQ</div></div><span class="badge b-teal">High Growth</span></div>
+    <div class="sc-thesis">PCIe/CXL retimers and Scorpio fabric switches embedded in NVIDIA Blackwell ecosystem. NVLink Fusion expanding opens 3rd-party ASIC market for ALAB. UALink solutions H2 2026. Amazon warrant deal a risk.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Q4 2025 Rev</span><span class="sc-metric-val">$270.6M</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">YoY Growth</span><span class="sc-metric-val" style="color:var(--success)">+92%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">FY25 Revenue</span><span class="sc-metric-val">$852.5M (+115%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">GAAP GM</span><span class="sc-metric-val">75.6%</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">NVLink Fusion</span><span class="sc-tag">CXL Leader</span><span class="sc-tag">Cust. Concentration Risk</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Credo Technology</div><div class="sc-ticker">CRDO · NASDAQ</div></div><span class="badge b-green">Strong Buy</span></div>
+    <div class="sc-thesis">Active Electrical Cable (AEC) monopolist — replacing DAC cables in AI clusters. Q3 FY26 $407M (+201% YoY). Q4 guide $425-435M. Dual exposure: AEC + optical DSPs + PCIe. Zacks #1 rated. Revenue scaling faster than ALAB.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Q3 FY26 Rev</span><span class="sc-metric-val">$407M (+201%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Q4 Guide</span><span class="sc-metric-val">$425-435M</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Net Income</span><span class="sc-metric-val" style="color:var(--success)">$157.1M</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Non-GAAP GM</span><span class="sc-metric-val">68%+</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">AEC Leader</span><span class="sc-tag">Optical DSP</span><span class="sc-tag">Profitable</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ FOUNDRY + SEMI EQUIP ════ -->
+<div id="s-foundry" class="section">
+<div class="section-header"><div><div class="section-title">🔵 Layers 3 & 4 — Foundry + Semi Equipment</div></div></div>
+<div class="g2">
+  <div class="card">
+    <div class="card-title">TSMC & Foundry Metrics</div>
+    <div class="mr"><span class="mr-label">Q1 2026 Revenue Growth</span><span class="mr-val">+35% YoY</span></div>
+    <div class="mr"><span class="mr-label">2026 Capex Plan</span><span class="mr-val">$52–56B</span></div>
+    <div class="mr"><span class="mr-label">CoWoS Capacity 2026</span><span class="mr-val">~90K wfpm</span></div>
+    <div class="mr"><span class="mr-label">CoWoS Capacity 2027</span><span class="mr-val">~130K wfpm</span></div>
+    <div class="mr"><span class="mr-label">NVDA CoWoS Allocation</span><span class="mr-val">>50% of 2026 supply</span></div>
+    <div class="mr"><span class="mr-label">2nm Revenue Start</span><span class="mr-val">2026 (H2)</span></div>
+    <div class="mr"><span class="mr-label">AP8 Arizona Fab</span><span class="mr-val">Ramping 2026–2027</span></div>
+    <div class="mr"><span class="mr-label">AI Revenue CAGR 2024–2029E</span><span class="mr-val">~60%</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Semi Equipment — 6-Month Performance & Thesis</div>
+    <div class="mr"><span class="mr-label">ASML</span><span class="mr-val"><span class="badge b-blue">Only EUV/High-NA</span> · $1B+/machine</span></div>
+    <div class="mr"><span class="mr-label">AMAT</span><span class="mr-val"><span class="badge b-green">+65%</span> · Broadest WFE exposure</span></div>
+    <div class="mr"><span class="mr-label">LRCX</span><span class="mr-val"><span class="badge b-green">+65%</span> · Etch/deposition leader</span></div>
+    <div class="mr"><span class="mr-label">KLAC</span><span class="mr-val"><span class="badge b-teal">+36%</span> · Process control monopoly</span></div>
+    <div class="mr"><span class="mr-label">TER (Teradyne)</span><span class="mr-val"><span class="badge b-purple">+119%</span> · Chip testing leader</span></div>
+    <div class="mr"><span class="mr-label">AEIS (Advanced Energy)</span><span class="mr-val"><span class="badge b-purple">+87%</span> · Power for fabs</span></div>
+    <div class="mr" style="padding-top:var(--space-3)"><span class="mr-label" style="font-style:italic;font-size:10px">Equipment = upstream capex beneficiary. All four majors retreated recently — potential dip-buy window.</span><span class="mr-val"></span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ MEMORY ════ -->
+<div id="s-memory" class="section">
+<div class="section-header"><div><div class="section-title">🟠 Layer 5 — Memory (HBM)</div><div class="section-desc">Structural shortage; Micron FY26 HBM capacity 100% sold out under binding contracts</div></div></div>
+<div class="g3">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Micron Technology</div><div class="sc-ticker">MU · NASDAQ</div></div><span class="badge b-green">Sold Out</span></div>
+    <div class="sc-thesis">Sole US HBM4 supplier. FQ3 guide $33.5B rev + ~81% GM — extraordinary for a historically cyclical memory co. 5-yr supply commitment agreements. HBM4 shipped to NVDA Blackwell. HBM becoming specialty vs commodity.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">FQ2 Revenue</span><span class="sc-metric-val">$23.9B (+196%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">FQ2 GAAP GM</span><span class="sc-metric-val">74.4%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">FQ3 Rev Guide</span><span class="sc-metric-val">$33.5B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">FQ3 GM Guide</span><span class="sc-metric-val">~81%</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">HBM4 Sold Out CY26</span><span class="sc-tag">US Sovereign Play</span><span class="sc-tag">5-yr SCAs</span></div>
+    <div><span style="font-size:9px;color:var(--faint);text-transform:uppercase;font-weight:700">Cyclicality Risk</span><div class="risk-track"><div class="risk-fill" style="width:40%;background:var(--gold)"></div></div></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">SK Hynix</div><div class="sc-ticker">000660.KS · KRX</div></div><span class="badge b-green">#1 HBM Share</span></div>
+    <div class="sc-thesis">#1 HBM supplier with 57-62% market share. Mass-production leader in HBM4 and HBM4E. Primary NVDA HBM supplier through Blackwell. 2026 sold out. HBM4E begins 2027. Korean ADR accessible via HXSCF.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">HBM Market Share</span><span class="sc-metric-val">57-62%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">HBM4 Status</span><span class="sc-metric-val">Mass Production</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">HBM4E Timeline</span><span class="sc-metric-val">2027</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Access (US)</span><span class="sc-metric-val">HXSCF (OTC)</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">NVDA Primary Supplier</span><span class="sc-tag">HBM4E Leader</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">HBM Market Share 2026E & Revenue Growth</div>
+    <div class="card-chart" style="height:180px"><canvas id="cHBMshare"></canvas></div>
+    <div style="margin-top:var(--space-3)">
+      <div class="mr"><span class="mr-label">HBM Total Market 2026E</span><span class="mr-val" style="color:var(--success)">$54.6B (+58%)</span></div>
+      <div class="mr"><span class="mr-label">HBM Total Market 2027E</span><span class="mr-val" style="color:var(--success)">$91.7B (+68%)</span></div>
+      <div class="mr"><span class="mr-label">HBM as % of DRAM</span><span class="mr-val">~32% (2026E)</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════ NETWORKING ════ -->
+<div id="s-networking" class="section">
+<div class="section-header"><div><div class="section-title">🟢 Layers 6–8 — Networking, Optics & Interconnect</div></div></div>
+<div class="g3">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Arista Networks</div><div class="sc-ticker">ANET · NYSE</div></div><span class="badge b-green">Dominant</span></div>
+    <div class="sc-thesis">Surpassed Cisco in data center switching share. AI Ethernet leader — 2/3 of AI cluster switching. Raised 2026 AI networking target to $3.25B. EOS software moat. FY25 $9B (+29%); total sales may cross $10B in CY26.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">FY25 Revenue</span><span class="sc-metric-val">$9.0B (+29%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">AI Rev 2026 Target</span><span class="sc-metric-val">$3.25B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">AI % of Sales</span><span class="sc-metric-val">>30%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Market Position</span><span class="sc-metric-val">#1 AI Ethernet</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">AI Ethernet Leader</span><span class="sc-tag">Software Moat (EOS)</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Lumentum + Coherent</div><div class="sc-ticker">LITE / COHR · NASDAQ</div></div><span class="badge b-orange">NVDA-Backed</span></div>
+    <div class="sc-thesis">NVIDIA invested $2B each into Lumentum AND Coherent in early 2026 with multi-year purchasing commitments + capacity reservation rights. This is the HBM playbook applied to photonics — strategic scarcity reservation for Rubin/future GPU generations.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">NVDA Investment (each)</span><span class="sc-metric-val">$2B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Deal Type</span><span class="sc-metric-val">Equity + Purchasing</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Duration</span><span class="sc-metric-val">Multi-year</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Thesis</span><span class="sc-metric-val">Optics = next bottleneck</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">EML Laser Shortage</span><span class="sc-tag">Capacity Reserved</span><span class="sc-tag">Strategic Scarcity</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Amphenol + Credo</div><div class="sc-ticker">APH / CRDO · NYSE/NASDAQ</div></div><span class="badge b-teal">Interconnect</span></div>
+    <div class="sc-thesis">APH: co-packaged copper & AI interconnect; 5-yr return ~319%. CRDO: dominates Active Electrical Cables replacing DAC in AI clusters — 200%+ revenue growth. Both benefit from GPU cluster scaling; every new rack needs cables + connectors.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">CRDO Q3 Rev</span><span class="sc-metric-val">$407M (+201%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">APH 5-yr Return</span><span class="sc-metric-val">~319%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Key Product</span><span class="sc-metric-val">AEC Cables</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Market Position</span><span class="sc-metric-val">AEC Monopoly (CRDO)</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Per-Rack Content</span><span class="sc-tag">Linear Scale w/ GPUs</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ SERVERS ════ -->
+<div id="s-servers" class="section">
+<div class="section-header"><div><div class="section-title">🟡 Layer 9 — Server OEM / Integration</div><div class="section-desc">SMCI legal crisis creates share opportunity for DELL and HPE</div></div></div>
+<div class="g3">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Dell Technologies</div><div class="sc-ticker">DELL · NYSE</div></div><span class="badge b-green">Gaining Share</span></div>
+    <div class="sc-thesis">Q4 FY26 AI server rev $8.95B (+342% YoY). FY27 guide ~$50B AI servers. $43B backlog. 4,000+ AI customers including cloud + enterprise + govt. Strong cash generation: Q4 OCF $4.67B (+699%). SMCI crisis creates further opportunity.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Q4 FY26 AI Rev</span><span class="sc-metric-val">$8.95B (+342%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">AI Server Backlog</span><span class="sc-metric-val">$43B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">FY27 AI Rev Guide</span><span class="sc-metric-val">~$50B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Q4 OCF</span><span class="sc-metric-val">$4.67B (+699%)</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">SMCI Beneficiary</span><span class="sc-tag">Broad Customer Base</span><span class="sc-tag">Strong Cash Gen</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Super Micro Computer</div><div class="sc-ticker">SMCI · NASDAQ</div></div><span class="badge b-red">Legal Risk</span></div>
+    <div class="sc-thesis">Co-founder + 2 associates indicted Mar 2026 for illegal export of $2.5B AI servers to China. Stock -33% on news, -60% in 6 months. Q2 FY26 rev $12.7B (+123%, beat). 63% revenue concentration in 1 customer. Board investigation underway.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Q2 FY26 Revenue</span><span class="sc-metric-val">$12.7B (+123%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Stock vs 6M Ago</span><span class="sc-metric-val" style="color:var(--error)">−60%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">FY26 Rev Guide</span><span class="sc-metric-val">$40B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Legal Status</span><span class="sc-metric-val" style="color:var(--error)">Board investigation</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Export Control Risk</span><span class="sc-tag">Class Action Filed</span><span class="sc-tag">Customer Concentration</span></div>
+    <div><span style="font-size:9px;color:var(--faint);text-transform:uppercase;font-weight:700">Legal / Regulatory Risk</span><div class="risk-track"><div class="risk-fill" style="width:90%;background:var(--red)"></div></div></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">HPE</div><div class="sc-ticker">HPE · NYSE</div></div><span class="badge b-blue">SMCI Beneficiary</span></div>
+    <div class="sc-thesis">Positioned to capture SMCI displaced enterprise contracts. AI backlog growing. Q1 FY26 showed networking strength. AI Factory announcements at NVIDIA GTC 2026 alongside Dell. Trails Dell in scale but diversified server + networking portfolio.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Positioning</span><span class="sc-metric-val">SMCI Share Gainer</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">AI Backlog</span><span class="sc-metric-val">Growing</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">GTC Announcement</span><span class="sc-metric-val">AI Factory (Mar 2026)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Risk</span><span class="sc-metric-val">Trails DELL at scale</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Diversified</span><span class="sc-tag">Networking+Compute</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ POWER & COOLING ════ -->
+<div id="s-power" class="section">
+<div class="section-header"><div><div class="section-title">⚡ Layer 10–11 — Power Delivery, Cooling & Generation</div><div class="section-desc">Power is the #1 gating factor; Vertiv/Eaton/GE Vernova all have record backlogs</div></div></div>
+<div class="g3">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Vertiv Holdings</div><div class="sc-ticker">VRT · NYSE</div></div><span class="badge b-green">Backlog Record</span></div>
+    <div class="sc-thesis">Liquid cooling + power infrastructure leader. Q4 order growth +252% YoY. $15B backlog (2x YoY). Book-to-bill 2.9x. Acquired PurgeRite ($1B) for direct-to-chip liquid cooling. AI densification (80-100 kW/rack) structural driver.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">FY25 Revenue</span><span class="sc-metric-val">$10.23B (+26%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Q4 Order Growth</span><span class="sc-metric-val" style="color:var(--success)">+252% YoY</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Total Backlog</span><span class="sc-metric-val">$15B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Book-to-Bill</span><span class="sc-metric-val">2.9x</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Liquid Cooling Leader</span><span class="sc-tag">PurgeRite Deal</span><span class="sc-tag">AI Densification</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Eaton Corporation</div><div class="sc-ticker">ETN · NYSE</div></div><span class="badge b-blue">Chip-to-Grid</span></div>
+    <div class="sc-thesis">"Grid-to-chip" AI power strategy — utility feeder to cold plate. DC orders +200% Q4. $19.6B backlog (including $13.2B Electrical Americas). Boyd Thermal acquisition (Q2 2026) expands content/MW from $2.9M to $3.4M (+17%). Mobility spin-off Q1 2027 = pure-play power.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">DC Order Growth</span><span class="sc-metric-val" style="color:var(--success)">+200% YoY</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Total Backlog</span><span class="sc-metric-val">$19.6B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Content/MW (post-Boyd)</span><span class="sc-metric-val">$3.4M/MW</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Spin-off Catalyst</span><span class="sc-metric-val">Q1 2027 (Mobility)</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Chip-to-Grid Moat</span><span class="sc-tag">Boyd Thermal</span><span class="sc-tag">Pure-play Spin-off</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">GE Vernova</div><div class="sc-ticker">GEV · NYSE</div></div><span class="badge b-orange">Gas Turbine Boom</span></div>
+    <div class="sc-thesis">Gas turbines are the "bridge power" solution for data centers while grid connects are delayed 18-24 months. Q4 2025: gas turbine backlog 62→83 GW (+34% QoQ), pricing +10-20% on new reservations. $150B total backlog. 2026 revenue guide $44-45B. Partnered with Chevron for 4 GW by 2027.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Gas Turbine Backlog</span><span class="sc-metric-val">83 GW (+34%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Total Backlog</span><span class="sc-metric-val">$150B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">2026 Rev Guide</span><span class="sc-metric-val">$44–45B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">New Reserv. Pricing</span><span class="sc-metric-val">+10–20% vs backlog</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Bridge Power</span><span class="sc-tag">Chevron JV</span><span class="sc-tag">Grid Interconnect Delay</span></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ ENERGY / NUCLEAR ════ -->
+<div id="s-energy" class="section">
+<div class="section-header"><div><div class="section-title">☢️ Layer 12 — Energy / Nuclear</div><div class="section-desc">Hyperscalers are signing 20-year nuclear PPAs — carbon-free baseload as strategic moat</div></div></div>
+<div class="g2">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Constellation Energy</div><div class="sc-ticker">CEG · NASDAQ</div></div><span class="badge b-blue">US Nuclear Leader</span></div>
+    <div class="sc-thesis">Largest US nuclear fleet (post-Calpine $16.4B acquisition = also largest US electricity producer). 20-yr PPAs: MSFT (TMI restart, 835 MW, ~$16B), META (1 GW Illinois). New "bring-your-own-generation" framework accelerates bilateral deals. 13%+ adj OE growth through 2030 guided.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Key PPAs</span><span class="sc-metric-val">MSFT + META (20-yr)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Calpine Acquisition</span><span class="sc-metric-val">$16.4B (closed)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">TMI Restart</span><span class="sc-metric-val">835 MW / 2028</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">OE Growth Guide</span><span class="sc-metric-val">13%+ through 2030</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Nuclear PPAs</span><span class="sc-tag">MSFT-Meta-CyrusOne</span><span class="sc-tag">Largest US Fleet</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Vistra Corp</div><div class="sc-ticker">VST · NYSE</div></div><span class="badge b-green">AI Power Proxy</span></div>
+    <div class="sc-thesis">2nd-largest competitive nuclear fleet. META 20-yr PPA (2,600+ MW PJM); AWS 20-yr PPA (1,200 MW Comanche Peak). Acquired Cogentrix + Lotus Infrastructure to expand gas generation. Q4 adj core profit beat. 3-yr return ~7x. New reservations pricing higher.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">META Nuclear PPA</span><span class="sc-metric-val">2,600+ MW (20-yr)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">AWS Nuclear PPA</span><span class="sc-metric-val">1,200 MW (20-yr)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">3-Year Stock Return</span><span class="sc-metric-val" style="color:var(--success)">~7x</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">P/E vs Fair</span><span class="sc-metric-val" style="color:var(--warn)">58x (fair ~40x)</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Nuclear + Gas</span><span class="sc-tag">META-AWS Anchor</span><span class="sc-tag">Valuation Risk</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Oklo</div><div class="sc-ticker">OKLO · NYSE</div></div><span class="badge b-purple">SMR / High Risk</span></div>
+    <div class="sc-thesis">Sam Altman-backed small modular reactor (SMR) company. META deal + TerraPower deal for 2030–2035 power. Pure-play agentic AI power speculation — no revenue, first reactors in 2030+. High risk, high upside for believers in long-term nuclear renaissance.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Revenue</span><span class="sc-metric-val" style="color:var(--warn)">Pre-Revenue</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">META Deal</span><span class="sc-metric-val">2030–2035</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Backer</span><span class="sc-metric-val">Sam Altman / OpenAI</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Risk Level</span><span class="sc-metric-val" style="color:var(--error)">Very High</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">SMR</span><span class="sc-tag">Pre-Revenue</span><span class="sc-tag">10+ Year Bet</span></div>
+    <div><span style="font-size:9px;color:var(--faint);text-transform:uppercase;font-weight:700">Speculative Risk</span><div class="risk-track"><div class="risk-fill" style="width:90%;background:var(--red)"></div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ DC REITs ════ -->
+<div id="s-dc" class="section">
+<div class="section-header"><div><div class="section-title">🏢 Layer 13 — Data Center REITs</div><div class="section-desc">Steady cash flows but AI landlords are underperforming vs pure AI plays — power constraints the key challenge</div></div></div>
+<div class="g2">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Equinix</div><div class="sc-ticker">EQIX · NASDAQ</div></div><span class="badge b-blue">AI-Ready DC</span></div>
+    <div class="sc-thesis">280 DCs globally; 300+ Fortune 500 clients. Guided first-ever $10B+ annual revenue; 9-10% growth in 2026. $4-5B/yr capex 2026-2029 to double capacity. AI Distributed Infrastructure product. 3 GW active capacity. Steady AFFO growth 8-10%/yr.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">FY25 Revenue</span><span class="sc-metric-val">$9.2B (+6%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">2026 Rev Guide</span><span class="sc-metric-val">>$10B (+10%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Active Capacity</span><span class="sc-metric-val">3 GW</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Capex 2026-29</span><span class="sc-metric-val">$4-5B/yr</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Colocation Leader</span><span class="sc-tag">AFFO Yield</span><span class="sc-tag">Global Footprint</span></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Digital Realty</div><div class="sc-ticker">DLR · NYSE</div></div><span class="badge b-teal">Hyperscale Fund</span></div>
+    <div class="sc-thesis">Worlds largest cloud/carrier-neutral DC platform. Raised $3.25B hyperscale fund (pensions + sovereign wealth) for US AI DC development in 6 metros. FY25 operating rev ~$6.1B (+10%). AI training campus focus. Private capital structure reduces leverage.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">FY25 Operating Rev</span><span class="sc-metric-val">~$6.1B (+10%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Hyperscale Fund</span><span class="sc-metric-val">$3.25B (closed)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Target Markets</span><span class="sc-metric-val">NoVA, Dallas, Atlanta</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Model</span><span class="sc-metric-val">Campus + Private Fund</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Training Campuses</span><span class="sc-tag">Institutional Capital</span></div>
+  </div>
+</div>
+<div style="margin-top:var(--space-3);background:color-mix(in srgb,var(--warn) 8%,transparent);border:1px solid color-mix(in srgb,var(--warn) 25%,transparent);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4)">
+  <div style="font-size:var(--text-xs);font-weight:700;color:var(--warn);margin-bottom:4px">⚠ REIT Warning: Power Constraints Limiting Value Capture</div>
+  <div style="font-size:10px;color:var(--muted)">Despite AI tailwinds, EQIX (−13%), DLR (−11%), and IRM (−16%) have underperformed vs S&P 500 over the past year. The market believes AI profit primarily accrues to chip and hyperscaler companies, not DC landlords. Power availability and access to speculative capital are the gating constraints. REITs suit income-focused portfolios; growth-focused AI portfolios may prefer chips/cloud.</div>
+</div>
+</div>
+
+<!-- ════ PIVOT PLAYS ════ -->
+<div id="s-neoclouds" class="section">
+<div class="section-header"><div><div class="section-title">🔴 Pivot Plays — IREN · CIFR · NBIS</div><div class="section-desc">Crypto/adjacent businesses pivoting into AI data center infrastructure — high growth, high risk</div></div></div>
+<div class="g3">
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">IREN Limited</div><div class="sc-ticker">IREN · NASDAQ</div></div><span class="badge b-orange">Crypto → AI Cloud</span></div>
+    <div class="sc-thesis">Pivoting from Bitcoin mining to GPU-as-a-service. $3.6B GPU financing for Microsoft contract; 4.5 GW secured power (only ~10% utilized) = massive expansion runway. Targeting 140K GPUs by end-CY26 and $3.4B ARR. GPU infra funded with $3.7B convertible notes = heavy dilution risk.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">ARR Under Contract</span><span class="sc-metric-val">~$2.3B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">ARR Target (CY26E)</span><span class="sc-metric-val">$3.4B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Secured Power</span><span class="sc-metric-val">4.5 GW</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Convertible Debt</span><span class="sc-metric-val" style="color:var(--error)">$3.7B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Key Customer</span><span class="sc-metric-val">Microsoft</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">GPU Target (CY26)</span><span class="sc-metric-val">140,000</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">Power Moat</span><span class="sc-tag">MSFT Anchor</span><span class="sc-tag">High Leverage</span></div>
+    <div><span style="font-size:9px;color:var(--faint);text-transform:uppercase;font-weight:700">Execution Risk</span><div class="risk-track"><div class="risk-fill" style="width:68%;background:var(--orange)"></div></div></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Cipher Digital</div><div class="sc-ticker">CIFR · NASDAQ</div></div><span class="badge b-purple">Mining → HPC Leasing</span></div>
+    <div class="sc-thesis">Complete BTC mining → HPC data center pivot. $9.3B contracted over 10-15yr leases with tier-1 hyperscalers (AWS, Google). 807 MW capacity. Avg annual NOI ~$669M. Most capital-efficient model of the three pivots — asset-light leasing. Extreme leverage: D/E 329% and construction timeline risk.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Contracted Revenue</span><span class="sc-metric-val">$9.3B (10-15 yr)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Avg Annual NOI</span><span class="sc-metric-val">~$669M</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Capacity</span><span class="sc-metric-val">807 MW</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Debt / Equity</span><span class="sc-metric-val" style="color:var(--error)">329%</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Key Tenants</span><span class="sc-metric-val">AWS, Google</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Mining Exit</span><span class="sc-metric-val">Full by 2027</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">AWS+Google Leases</span><span class="sc-tag">Very High Leverage</span><span class="sc-tag">Construction Risk</span></div>
+    <div><span style="font-size:9px;color:var(--faint);text-transform:uppercase;font-weight:700">Leverage + Execution Risk</span><div class="risk-track"><div class="risk-fill" style="width:85%;background:var(--red)"></div></div></div>
+  </div>
+  <div class="sc">
+    <div class="sc-header"><div><div class="sc-name">Nebius Group</div><div class="sc-ticker">NBIS · NASDAQ</div></div><span class="badge b-green">NVIDIA-Backed Cloud</span></div>
+    <div class="sc-thesis">Yandex-spinoff Dutch AI cloud company. NVIDIA invested $2B in Mar 2026 — most powerful validation. Q4'25 revenue +547% YoY. 310 MW AI factory in Finland. Aggressive $7-9B ARR target by year-end 2026. Stock +600% in 1 year. Key risk: $16-20B capex plan vs current revenue base — financing execution critical.</div>
+    <div class="sc-metrics">
+      <div class="sc-metric"><span class="sc-metric-label">Q4'25 Revenue</span><span class="sc-metric-val">$228M (+547%)</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">Core Cloud ARR</span><span class="sc-metric-val">$1.2B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">2026 Rev Guide</span><span class="sc-metric-val">$3.0-3.4B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">NVIDIA Investment</span><span class="sc-metric-val" style="color:var(--success)">$2B Equity</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">YE26 ARR Target</span><span class="sc-metric-val">$7-9B</span></div>
+      <div class="sc-metric"><span class="sc-metric-label">2026 Capex Plan</span><span class="sc-metric-val" style="color:var(--warn)">$16-20B</span></div>
+    </div>
+    <div class="sc-tags"><span class="sc-tag">NVDA-Validated</span><span class="sc-tag">EU-based</span><span class="sc-tag">Capex Stretch</span></div>
+    <div><span style="font-size:9px;color:var(--faint);text-transform:uppercase;font-weight:700">Valuation / Capex Risk</span><div class="risk-track"><div class="risk-fill" style="width:72%;background:var(--orange)"></div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- ════ CRWV ════ -->
+<div id="s-crwv" class="section">
+<div class="section-header"><div><div class="section-title">🟠 Neocloud — CoreWeave</div><div class="section-desc">Dominant GPU cloud; massive backlog vs massive capex + debt — the defining tension</div></div></div>
+<div class="g2-3">
+  <div class="card">
+    <div class="card-title">CoreWeave Key Metrics</div>
+    <div class="mr"><span class="mr-label">FY25 Revenue</span><span class="mr-val" style="color:var(--success)">$5.13B (+170%)</span></div>
+    <div class="mr"><span class="mr-label">Q4 2025 Revenue</span><span class="mr-val">$1.57B (+110% YoY)</span></div>
+    <div class="mr"><span class="mr-label">Q4 Net Loss</span><span class="mr-val" style="color:var(--error)">($284M)</span></div>
+    <div class="mr"><span class="mr-label">FY25 Net Loss</span><span class="mr-val" style="color:var(--error)">($1.17B)</span></div>
+    <div class="mr"><span class="mr-label">Revenue Backlog (Dec 2025)</span><span class="mr-val" style="color:var(--success)">$66.8B (4.4x YoY)</span></div>
+    <div class="mr"><span class="mr-label">Avg Contract Duration</span><span class="mr-val">~5 years (up from 4)</span></div>
+    <div class="mr"><span class="mr-label">2026 Revenue Guide</span><span class="mr-val">$12–13B (+140%)</span></div>
+    <div class="mr"><span class="mr-label">2026 Capex Plan</span><span class="mr-val" style="color:var(--error)">$30–35B</span></div>
+    <div class="mr"><span class="mr-label">Total Debt</span><span class="mr-val" style="color:var(--error)">~$10B+</span></div>
+    <div class="mr"><span class="mr-label">$8.5B Investment-Grade GPU Loan</span><span class="mr-val" style="color:var(--teal)">Closed Mar 2026</span></div>
+    <div class="mr"><span class="mr-label">Key Customers</span><span class="mr-val">MSFT (62%), OpenAI, Meta</span></div>
+    <div class="mr"><span class="mr-label">Active Power Capacity (EOY 2025)</span><span class="mr-val">850 MW → 1.7 GW (CY26 target)</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">CoreWeave: Bull vs Bear</div>
+    <div style="margin-bottom:var(--space-3)">
+      <div style="font-size:var(--text-xs);font-weight:700;color:var(--success);margin-bottom:var(--space-2)">🟢 Bull Case</div>
+      <ul style="font-size:10px;color:var(--muted);padding-left:var(--space-4);display:flex;flex-direction:column;gap:6px">
+        <li>$66.8B backlog = 5+ years of revenue visibility if executed</li>
+        <li>NVIDIA-backed GPU collateral earns investment-grade financing — structural advantage</li>
+        <li>Enterprise + sovereign cloud expansion (vs just hyperscaler concentration)</li>
+        <li>First-mover in pure-play GPU cloud at scale; MSFT is both customer AND landlord</li>
+        <li>$30-35B capex all contractually tied to existing customers (CFO confirmed)</li>
+      </ul>
+    </div>
+    <div>
+      <div style="font-size:var(--text-xs);font-weight:700;color:var(--error);margin-bottom:var(--space-2)">🔴 Bear Case</div>
+      <ul style="font-size:10px;color:var(--muted);padding-left:var(--space-4);display:flex;flex-direction:column;gap:6px">
+        <li>Spending $2.60 for every $1 in revenue in 2026 — extreme burn</li>
+        <li>$1.2B/yr interest expense (near wipes non-GAAP gross profit)</li>
+        <li>MSFT = 62% revenue concentration — single renewal event = existential risk</li>
+        <li>GPU pricing pressure as Blackwell becomes commodity by 2027</li>
+        <li>Hyperscalers building own GPU capacity — CoreWeave's niche could shrink</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════ HYPERSCALERS ════ -->
+<div id="s-hyperscalers" class="section">
+<div class="section-header"><div><div class="section-title">☁️ Hyperscalers — Capex Deployers</div><div class="section-desc">They drive demand for every layer above; also increasingly their own chip/cloud competition</div></div></div>
+<div class="card mega-table-wrap">
+<table class="mega-table">
+<thead><tr><th>Company</th><th>Ticker</th><th>2026E AI Capex</th><th>AI Cloud Rev</th><th>Custom Silicon</th><th>Nuclear PPA</th><th>Key AI Angle</th></tr></thead>
+<tbody>
+<tr><td class="co-name">Microsoft</td><td><span class="ticker">MSFT</span></td><td class="metric-val">~$80B</td><td class="metric-val">Azure OpenAI</td><td class="metric-val">Maia 2 (MSFT)</td><td class="metric-val">CEG (TMI, 835 MW)</td><td><span class="badge b-blue">OpenAI anchor + CoreWeave 62%</span></td></tr>
+<tr><td class="co-name">Alphabet / Google</td><td><span class="ticker">GOOGL</span></td><td class="metric-val">~$75B</td><td class="metric-val">GCP AI / Gemini</td><td class="metric-val">TPU v5+ (AVGO)</td><td class="metric-val">None announced</td><td><span class="badge b-blue">Broadcom TPU + Trillium</span></td></tr>
+<tr><td class="co-name">Meta Platforms</td><td><span class="ticker">META</span></td><td class="metric-val">~$65B</td><td class="metric-val">Internal / Llama</td><td class="metric-val">MTIA (AVGO) + AMD 42%</td><td class="metric-val">VST 2,600 MW + CEG 1 GW</td><td><span class="badge b-purple">Most aggressive AMD buyer; nuclear PPAs</span></td></tr>
+<tr><td class="co-name">Amazon / AWS</td><td><span class="ticker">AMZN</span></td><td class="metric-val">~$75B</td><td class="metric-val">AWS Bedrock/SageMaker</td><td class="metric-val">Trainium 2 (in-house)</td><td class="metric-val">VST 1,200 MW Comanche Pk</td><td><span class="badge b-green">Trainium reduces NVDA spend; VST nuclear</span></td></tr>
+<tr><td class="co-name">Oracle</td><td><span class="ticker">ORCL</span></td><td class="metric-val">$20B+</td><td class="metric-val">OCI AI clusters</td><td class="metric-val">AMD MI355X (27K nodes)</td><td class="metric-val">—</td><td><span class="badge b-teal">GPU cluster expansion; AMD co-engineering</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- ════ MASTER WATCHLIST ════ -->
+<div id="s-watchlist" class="section">
+<div class="section-header"><div><div class="section-title">📋 Master Watchlist — ~55 Companies</div><div class="section-desc">Complete universe sorted by value chain layer. Conviction ratings from research synthesis.</div></div></div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(this,'tw-core')">Core (High Conv.)</button>
+  <button class="tab-btn" onclick="switchTab(this,'tw-growth')">High Growth</button>
+  <button class="tab-btn" onclick="switchTab(this,'tw-infra')">Infrastructure</button>
+  <button class="tab-btn" onclick="switchTab(this,'tw-speculative')">Speculative</button>
+  <button class="tab-btn" onclick="switchTab(this,'tw-avoid')">Monitor / Caution</button>
+</div>
+
+<div id="tw-core" class="tab-panel active">
+<div class="card mega-table-wrap">
+<table class="mega-table">
+<thead><tr><th>Ticker</th><th>Company</th><th>Layer</th><th>Latest Rev / Key Metric</th><th>Growth</th><th>Conviction</th><th>Thesis (1 line)</th></tr></thead>
+<tbody>
+<tr><td><span class="ticker">NVDA</span></td><td class="co-name">NVIDIA</td><td><span class="badge b-purple">GPU Platform</span></td><td class="metric-val">$215.9B FY26</td><td class="metric-val" style="color:var(--success)">+65%</td><td><span class="badge b-green">★★★★★</span></td><td class="thesis-text">Platform monopoly; Blackwell→Rubin; allocation control; CUDA lock-in</td></tr>
+<tr><td><span class="ticker">TSM</span></td><td class="co-name">TSMC</td><td><span class="badge b-teal">Foundry</span></td><td class="metric-val">+35% YoY Q1'26</td><td class="metric-val" style="color:var(--success)">+35%</td><td><span class="badge b-green">★★★★★</span></td><td class="thesis-text">Irreplaceable advanced node + packaging monopoly; CoWoS gatekeeper</td></tr>
+<tr><td><span class="ticker">MU</span></td><td class="co-name">Micron</td><td><span class="badge b-orange">HBM Memory</span></td><td class="metric-val">$23.9B FQ2 (+196%)</td><td class="metric-val" style="color:var(--success)">+196%</td><td><span class="badge b-green">★★★★★</span></td><td class="thesis-text">Sole US HBM supplier; 100% sold out CY26; structurally scarce vs commodity</td></tr>
+<tr><td><span class="ticker">AVGO</span></td><td class="co-name">Broadcom</td><td><span class="badge b-blue">ASIC + Networking</span></td><td class="metric-val">AI Q1 $8.4B (+106%)</td><td class="metric-val" style="color:var(--success)">+106%</td><td><span class="badge b-green">★★★★★</span></td><td class="thesis-text">ASIC kingmaker (Google/Meta); AI Ethernet; $100B 2027 target</td></tr>
+<tr><td><span class="ticker">ANET</span></td><td class="co-name">Arista Networks</td><td><span class="badge b-green">Networking</span></td><td class="metric-val">FY25 $9B (+29%)</td><td class="metric-val" style="color:var(--success)">+29%</td><td><span class="badge b-green">★★★★☆</span></td><td class="thesis-text">Dominant AI Ethernet switching; surpassed Cisco; software moat (EOS)</td></tr>
+<tr><td><span class="ticker">VRT</span></td><td class="co-name">Vertiv</td><td><span class="badge b-orange">Power+Cooling</span></td><td class="metric-val">$10.2B FY25 (+26%)</td><td class="metric-val" style="color:var(--success)">+26%</td><td><span class="badge b-green">★★★★☆</span></td><td class="thesis-text">Liquid cooling + power infra leader; $15B backlog; 2.9x book-to-bill</td></tr>
+<tr><td><span class="ticker">GEV</span></td><td class="co-name">GE Vernova</td><td><span class="badge b-orange">Power Gen</span></td><td class="metric-val">$150B backlog</td><td class="metric-val" style="color:var(--success)">+65% orders YoY</td><td><span class="badge b-green">★★★★☆</span></td><td class="thesis-text">Gas turbines as bridge power for data centers; 83 GW backlog; pricing power</td></tr>
+<tr><td><span class="ticker">MRVL</span></td><td class="co-name">Marvell Tech</td><td><span class="badge b-blue">ASIC + Optics</span></td><td class="metric-val">$8.2B FY26 (+42%)</td><td class="metric-val" style="color:var(--success)">+42%</td><td><span class="badge b-green">★★★★☆</span></td><td class="thesis-text">Custom silicon scaling; photonic fabric (Celestial AI); $11B FY27 guide</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="tw-growth" class="tab-panel">
+<div class="card mega-table-wrap">
+<table class="mega-table">
+<thead><tr><th>Ticker</th><th>Company</th><th>Layer</th><th>Latest Rev / Key Metric</th><th>Growth</th><th>Conviction</th><th>Thesis</th></tr></thead>
+<tbody>
+<tr><td><span class="ticker">CRDO</span></td><td class="co-name">Credo Technology</td><td><span class="badge b-green">Connectivity</span></td><td class="metric-val">Q3 FY26 $407M</td><td class="metric-val" style="color:var(--success)">+201% YoY</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">AEC monopoly; fastest-growing AI connectivity play; $157M net income</td></tr>
+<tr><td><span class="ticker">ALAB</span></td><td class="co-name">Astera Labs</td><td><span class="badge b-teal">PCIe/CXL</span></td><td class="metric-val">Q4 2025 $270.6M</td><td class="metric-val" style="color:var(--success)">+92% YoY</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">Scorpio CXL/PCIe embedded in Blackwell; NVLink Fusion expansion</td></tr>
+<tr><td><span class="ticker">AMD</span></td><td class="co-name">AMD</td><td><span class="badge b-purple">GPU #2</span></td><td class="metric-val">DC Q4 $5.38B</td><td class="metric-val" style="color:var(--success)">+39% YoY</td><td><span class="badge b-blue">★★★☆☆</span></td><td class="thesis-text">MI350 ramping; Meta 42% allocation; MI450/Helios in H2 2026; ROCm risk</td></tr>
+<tr><td><span class="ticker">ARM</span></td><td class="co-name">Arm Holdings</td><td><span class="badge b-purple">AGI CPU</span></td><td class="metric-val">$15B AGI CPU target 2031</td><td class="metric-val" style="color:var(--success)">IP 2x in 5yr</td><td><span class="badge b-blue">★★★☆☆</span></td><td class="thesis-text">First own chip: AGI CPU for agentic AI; Meta/OpenAI backed; TSMC 3nm</td></tr>
+<tr><td><span class="ticker">DELL</span></td><td class="co-name">Dell Technologies</td><td><span class="badge b-gold">Server OEM</span></td><td class="metric-val">Q4 AI $8.95B (+342%)</td><td class="metric-val" style="color:var(--success)">+342% Q4 YoY</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">AI server market share gainer; $50B FY27 AI guide; SMCI beneficiary</td></tr>
+<tr><td><span class="ticker">ETN</span></td><td class="co-name">Eaton Corp</td><td><span class="badge b-orange">Power Mgmt</span></td><td class="metric-val">$19.6B backlog</td><td class="metric-val" style="color:var(--success)">DC orders +200%</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">Grid-to-chip moat; Boyd Thermal closes Q2; Mobility spin-off Q1 2027</td></tr>
+<tr><td><span class="ticker">LITE</span></td><td class="co-name">Lumentum</td><td><span class="badge b-orange">Photonics</span></td><td class="metric-val">NVDA $2B + commitment</td><td class="metric-val">Capacity reserved</td><td><span class="badge b-blue">★★★☆☆</span></td><td class="thesis-text">Optics = next HBM-style bottleneck; NVDA reserving capacity early</td></tr>
+<tr><td><span class="ticker">COHR</span></td><td class="co-name">Coherent</td><td><span class="badge b-orange">Silicon Photonics</span></td><td class="metric-val">NVDA $2B + commitment</td><td class="metric-val">Capacity reserved</td><td><span class="badge b-blue">★★★☆☆</span></td><td class="thesis-text">Next-gen AI silicon photonics; NVDA validation = reserved capacity</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="tw-infra" class="tab-panel">
+<div class="card mega-table-wrap">
+<table class="mega-table">
+<thead><tr><th>Ticker</th><th>Company</th><th>Layer</th><th>Key Metric</th><th>Conviction</th><th>Thesis</th></tr></thead>
+<tbody>
+<tr><td><span class="ticker">CEG</span></td><td class="co-name">Constellation Energy</td><td><span class="badge b-blue">Nuclear</span></td><td class="metric-val">MSFT+META PPAs; Calpine $16.4B</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">Largest US nuclear fleet; 20-yr hyperscaler PPAs; 13%+ OE growth through 2030</td></tr>
+<tr><td><span class="ticker">VST</span></td><td class="co-name">Vistra Corp</td><td><span class="badge b-blue">Nuclear+Gas</span></td><td class="metric-val">META 2,600 MW + AWS 1,200 MW</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">Nuclear PPAs with Meta + AWS; 7x 3-year return; P/E stretched</td></tr>
+<tr><td><span class="ticker">ASML</span></td><td class="co-name">ASML</td><td><span class="badge b-cyan">Semi Equip</span></td><td class="metric-val">Only EUV/High-NA supplier</td><td><span class="badge b-blue">★★★★★</span></td><td class="thesis-text">Monopoly in EUV lithography; every advanced node needs ASML; non-US defensible</td></tr>
+<tr><td><span class="ticker">AMAT</span></td><td class="co-name">Applied Materials</td><td><span class="badge b-cyan">Semi Equip</span></td><td class="metric-val">+65% (6 months)</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">Broadest WFE exposure; benefits from all fab capex increases</td></tr>
+<tr><td><span class="ticker">LRCX</span></td><td class="co-name">Lam Research</td><td><span class="badge b-cyan">Semi Equip</span></td><td class="metric-val">+65% (6 months)</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">Etch/deposition leader; HBM needs more etch steps = direct beneficiary</td></tr>
+<tr><td><span class="ticker">KLAC</span></td><td class="co-name">KLA Corp</td><td><span class="badge b-cyan">Semi Equip</span></td><td class="metric-val">+36% (6 months)</td><td><span class="badge b-blue">★★★★☆</span></td><td class="thesis-text">Process control monopoly; every advanced yield improvement requires KLAC</td></tr>
+<tr><td><span class="ticker">EQIX</span></td><td class="co-name">Equinix</td><td><span class="badge b-muted">DC REIT</span></td><td class="metric-val">$9.2B FY25; $10B+ guide</td><td><span class="badge b-teal">★★★☆☆</span></td><td class="thesis-text">Steady AFFO yield play; 280 DC global footprint; AI workload distribution</td></tr>
+<tr><td><span class="ticker">DLR</span></td><td class="co-name">Digital Realty</td><td><span class="badge b-muted">DC REIT</span></td><td class="metric-val">$6.1B; $3.25B fund</td><td><span class="badge b-teal">★★★☆☆</span></td><td class="thesis-text">Training campus play; institutional capital vehicle; private fund structure</td></tr>
+<tr><td><span class="ticker">APH</span></td><td class="co-name">Amphenol</td><td><span class="badge b-green">Interconnect</span></td><td class="metric-val">5-yr return ~319%</td><td><span class="badge b-blue">★★★☆☆</span></td><td class="thesis-text">Every AI rack needs connectors; steady compounder with AI tailwinds</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="tw-speculative" class="tab-panel">
+<div class="card mega-table-wrap">
+<table class="mega-table">
+<thead><tr><th>Ticker</th><th>Company</th><th>Type</th><th>Bull Metric</th><th>Key Risk</th><th>Risk Level</th></tr></thead>
+<tbody>
+<tr><td><span class="ticker">NBIS</span></td><td class="co-name">Nebius Group</td><td><span class="badge b-purple">AI Cloud</span></td><td class="metric-val">NVDA $2B; +547% Q4; $7-9B ARR target</td><td class="thesis-text">$16-20B capex vs tiny revenue; stock +600% in 1yr</td><td><span class="badge b-orange">HIGH</span></td></tr>
+<tr><td><span class="ticker">IREN</span></td><td class="co-name">IREN Limited</td><td><span class="badge b-orange">Mining→GPU Cloud</span></td><td class="metric-val">4.5 GW power; $3.4B ARR target; MSFT</td><td class="thesis-text">$3.7B convertible debt; net loss $155M; execution</td><td><span class="badge b-orange">HIGH</span></td></tr>
+<tr><td><span class="ticker">CIFR</span></td><td class="co-name">Cipher Digital</td><td><span class="badge b-orange">Mining→HPC Leases</span></td><td class="metric-val">$9.3B contracted (AWS/Google, 10-15yr)</td><td class="thesis-text">D/E 329%; construction delays; mining transition</td><td><span class="badge b-red">VERY HIGH</span></td></tr>
+<tr><td><span class="ticker">CRWV</span></td><td class="co-name">CoreWeave</td><td><span class="badge b-orange">Neocloud</span></td><td class="metric-val">$66.8B backlog; $12-13B 2026 guide</td><td class="thesis-text">$30-35B capex; $1.2B interest/yr; MSFT 62% conc.</td><td><span class="badge b-red">VERY HIGH</span></td></tr>
+<tr><td><span class="ticker">OKLO</span></td><td class="co-name">Oklo</td><td><span class="badge b-purple">SMR Nuclear</span></td><td class="metric-val">Sam Altman; Meta deal; SMR future</td><td class="thesis-text">Pre-revenue; first reactor 2030+; regulatory risk</td><td><span class="badge b-red">EXTREME</span></td></tr>
+<tr><td><span class="ticker">TER</span></td><td class="co-name">Teradyne</td><td><span class="badge b-cyan">Semi Test</span></td><td class="metric-val">+119% (6 months); chip testing surge</td><td class="thesis-text">Cyclical; concentrated in AAPL/mobile testing historically</td><td><span class="badge b-gold">MODERATE</span></td></tr>
+<tr><td><span class="ticker">AEIS</span></td><td class="co-name">Advanced Energy Ind.</td><td><span class="badge b-cyan">Fab Power</span></td><td class="metric-val">+87% (6 months); power for fabs</td><td class="thesis-text">Small cap; fab capex cyclicality</td><td><span class="badge b-gold">MODERATE</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="tw-avoid" class="tab-panel">
+<div class="card mega-table-wrap">
+<table class="mega-table">
+<thead><tr><th>Ticker</th><th>Company</th><th>Status</th><th>Issue</th><th>Outlook</th></tr></thead>
+<tbody>
+<tr><td><span class="ticker">SMCI</span></td><td class="co-name">Super Micro Computer</td><td><span class="badge b-red">Legal Crisis</span></td><td class="thesis-text">Co-founder indicted for $2.5B illegal China AI server export; class action filed; -33% on news; -60% in 6 months. Board investigation ongoing. Not named as defendant but reputational damage severe.</td><td><span class="badge b-orange">Monitor — Avoid Until Resolution</span></td></tr>
+<tr><td><span class="ticker">INTC</span></td><td class="co-name">Intel</td><td><span class="badge b-muted">Structural Decline</span></td><td class="thesis-text">Lost AI GPU share to NVDA/AMD. Gaudi 3 not gaining hyperscaler traction. Foundry (IFS) years behind TSMC. New CEO restructuring. Not positioned for current AI wave.</td><td><span class="badge b-muted">Long Turnaround — Avoid for AI Play</span></td></tr>
+<tr><td><span class="ticker">IRM</span></td><td class="co-name">Iron Mountain</td><td><span class="badge b-muted">REIT Underperformer</span></td><td class="thesis-text">-16% vs market over past year despite DC expansion. Core business (physical records) still dominant; DC expansion too slow vs pure-play DCs.</td><td><span class="badge b-muted">Not a Pure AI Play</span></td></tr>
+<tr><td><span class="ticker">QCOM</span></td><td class="co-name">Qualcomm</td><td><span class="badge b-gold">Edge AI Only</span></td><td class="thesis-text">Strong edge AI story (Snapdragon X2 Elite, 85 TOPS); 20-25% ARM-based PC share by 2027. But not a data center story. Record Q1 FY26. Good play if edge AI is your thesis, not DC-infrastructure.</td><td><span class="badge b-teal">Edge AI Yes, DC AI No</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- ════ TIMELINE ════ -->
+<div id="s-timeline" class="section">
+<div class="section-header"><div><div class="section-title">📅 Key Catalysts — 2026–2028</div></div></div>
+<div class="g2">
+  <div class="card">
+    <div class="card-title">2026 Catalysts</div>
+    <div class="tl">
+      <div class="tl-item"><div class="tl-date">Q1 2026</div><div class="tl-text">NVDA $2B each into LITE + COHR (optics bottleneck play); Nebius $2B NVDA investment; TSMC Q1 +35%; ARM AGI CPU launch (Meta/OpenAI backed)</div></div>
+      <div class="tl-item"><div class="tl-date">Q2 2026</div><div class="tl-text">Micron FQ3: $33.5B rev + ~81% GM; Eaton Boyd Thermal close ($1B); IREN Sweetwater GPU energization; SMCI board investigation resolution (TBD)</div></div>
+      <div class="tl-item"><div class="tl-date">H2 2026</div><div class="tl-text">NVDA Vera Rubin (next GPU gen); HBM4 volume; IREN 140K GPU target; NBIS $7-9B ARR target; CIFR lease commencements (Oct); AMD MI450 + Helios rack ramp; ALAB Scorpio X-Series volume; UALink sampling</div></div>
+      <div class="tl-item"><div class="tl-date">CY26 Ongoing</div><div class="tl-text">Hyperscaler capex $650B deployed; ~50% US DC builds delayed (power constraint); GEV gas turbine deliveries begin for DCs; CEG TMI restart construction on track for 2028</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">2027–2028 Structural Milestones</div>
+    <div class="tl">
+      <div class="tl-item"><div class="tl-date">2027</div><div class="tl-text">AVGO >$100B AI revenue target; TSMC CoWoS 130K wfpm; HBM4E ~40% of market; MRVL ~$11B; ETN Mobility spin-off (pure-play power); CRWV 5+ GW capacity target; AMD MI400 platform; ARM AGI CPU volume</div></div>
+      <div class="tl-item"><div class="tl-date">2028</div><div class="tl-text">DC power load 153 GW (McKinsey); US DC electricity 6.7-12% of consumption; CEG Three Mile Island online (835 MW for MSFT); MU FY28 HBM capacity relief; MRVL ~$15B; new cleanroom capacity online</div></div>
+      <div class="tl-item"><div class="tl-date">→2030</div><div class="tl-text">OKLO/TerraPower SMRs begin operations for META; ~33% DCs off-grid power target; $7T global AI DC infra spend; ARM $25B total revenue target; CRWV 5+ GW contracted capacity</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end content -->
+</main>
+
+<script>
+// Theme
+const html=document.documentElement;
+let dark=true;
+document.getElementById('toggleTheme').addEventListener('click',()=>{
+  dark=!dark;
+  html.setAttribute('data-theme',dark?'dark':'light');
+  document.getElementById('toggleTheme').textContent=dark?'☀':'🌙';
+  setTimeout(()=>initAllCharts(),50);
+});
+
+// Nav
+function nav(el,id){
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Tabs
+function switchTab(btn,panelId){
+  const sec=btn.closest('.section');
+  sec.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  sec.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+}
+
+// Charts
+let charts={};
+function gs(v){return getComputedStyle(html).getPropertyValue(v).trim();}
+function destroyAll(){Object.values(charts).forEach(c=>{try{c.destroy()}catch(e){}});charts={};}
+
+function initAllCharts(){
+  destroyAll();
+  const grid=gs('--div'),mut=gs('--muted'),faint=gs('--faint');
+  const primary=gs('--primary'),cyan=gs('--cyan'),orange=gs('--orange');
+  const green=gs('--success'),red=gs('--red'),blue=gs('--blue'),purple=gs('--purple');
+  const gold=gs('--gold'),teal=gs('--teal');
+  Chart.defaults.color=mut;Chart.defaults.borderColor=grid;
+  Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=10;
+
+  const baseOpts=(title)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:10,font:{size:10}}},title:{display:false}},scales:{y:{grid:{color:grid},ticks:{font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}});
+
+  // Power
+  charts.power=new Chart(document.getElementById('cPower'),{type:'line',data:{
+    labels:['2018','2020','2023','2025E','2028E Low','2028E High'],
+    datasets:[{label:'US DC Electricity (TWh)',data:[76,100,176,260,325,580],borderColor:orange,backgroundColor:orange+'22',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:orange}]
+  },options:{...baseOpts(),plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},ticks:{callback:v=>v+'TWh',font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}}});
+
+  // HBM market
+  charts.hbm=new Chart(document.getElementById('cHBM'),{type:'bar',data:{
+    labels:['2023','2024','2025','2026E','2027E'],
+    datasets:[
+      {label:'HBM Market ($B)',data:[6,16,34.6,54.6,91.7],backgroundColor:[teal,teal,teal,primary,blue],borderRadius:4,barPercentage:.5}
+    ]
+  },options:{...baseOpts(),plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},ticks:{callback:v=>'$'+v+'B',font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}}});
+
+  // Radar
+  charts.radar=new Chart(document.getElementById('cRadar'),{type:'radar',data:{
+    labels:['HBM
+Memory','CoWoS
+Packaging','GPU
+Compute','Grid
+Power','Optics','Power
+Delivery','Gas
+Turbines','Ethernet
+Switch'],
+    datasets:[{label:'Tightness %',data:[97,93,88,90,84,80,82,72],backgroundColor:red+'33',borderColor:red,pointBackgroundColor:red,pointRadius:4}]
+  },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{suggestedMin:50,suggestedMax:100,grid:{color:grid},ticks:{backdropColor:'transparent',color:faint,font:{size:8}},pointLabels:{font:{size:9},color:mut}}}}});
+
+  // GPU ramp
+  charts.gpu=new Chart(document.getElementById('cGPU'),{type:'bar',data:{
+    labels:['FY24','FY25','FY26','FY27E'],
+    datasets:[
+      {label:'NVDA DC ($B)',data:[47.5,115,165,240],backgroundColor:purple,borderRadius:3,barPercentage:.4},
+      {label:'AMD DC ($B)',data:[2.3,8.5,20,34],backgroundColor:red,borderRadius:3,barPercentage:.4}
+    ]
+  },options:{...baseOpts(),plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:8,font:{size:9}}}},scales:{y:{grid:{color:grid},ticks:{callback:v=>'$'+v+'B',font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}}});
+
+  // AVGO
+  charts.avgo=new Chart(document.getElementById('cAVGO'),{type:'bar',data:{
+    labels:['Q1 FY25','Q2 FY25','Q3 FY25','Q4 FY25','Q1 FY26','Q2 FY26E'],
+    datasets:[{label:'AVGO AI Revenue ($B)',data:[2.3,3.1,4.0,4.9,8.4,10.7],backgroundColor:[teal,teal,teal,teal,green,blue],borderRadius:4,barPercentage:.55}]
+  },options:{...baseOpts(),plugins:{legend:{display:false}},scales:{y:{grid:{color:grid},ticks:{callback:v=>'$'+v+'B',font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}}});
+
+  // ASIC growth
+  charts.asic2=new Chart(document.getElementById('cAsic2'),{type:'line',data:{
+    labels:['Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026','Q2 2026'],
+    datasets:[
+      {label:'MRVL YoY %',data:[35,37,39,42,40,44],borderColor:blue,tension:.3,pointRadius:3,pointBackgroundColor:blue,backgroundColor:'transparent'},
+      {label:'ALAB YoY %',data:[85,92,104,92,90,88],borderColor:teal,tension:.3,pointRadius:3,pointBackgroundColor:teal,backgroundColor:'transparent'},
+      {label:'CRDO YoY %',data:[140,170,190,201,200,196],borderColor:green,tension:.3,pointRadius:3,pointBackgroundColor:green,backgroundColor:'transparent'}
+    ]
+  },options:{...baseOpts(),scales:{y:{grid:{color:grid},ticks:{callback:v=>v+'%',font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}}});
+
+  // HBM share
+  charts.hbmshare=new Chart(document.getElementById('cHBMshare'),{type:'doughnut',data:{
+    labels:['SK Hynix','Micron (MU)','Samsung'],
+    datasets:[{data:[60,25,15],backgroundColor:[green,primary,gold],borderColor:'transparent',hoverBorderColor:'transparent'}]
+  },options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:8,font:{size:9}}}}}});
+}
+
+document.addEventListener('DOMContentLoaded',()=>{initAllCharts();});
+</script>
+</body>
+</html>
