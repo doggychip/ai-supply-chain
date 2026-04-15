@@ -290,6 +290,102 @@ img,svg{display:block;max-width:100%}
 
 .cv-avoid-reason{font-size:var(--text-xs);color:var(--muted);line-height:1.6;display:flex;align-items:flex-start;gap:var(--space-2)}
 .cv-avoid-reason .warn-icon{color:var(--error);font-size:var(--text-sm);flex-shrink:0}
+
+/* ══════ FEATURE: EARNINGS CALENDAR ══════ */
+.ecal-months{display:flex;flex-direction:column;gap:var(--space-6)}
+.ecal-month-title{font-size:var(--text-base);font-weight:700;letter-spacing:-.01em;padding-bottom:var(--space-2);border-bottom:2px solid var(--div);margin-bottom:var(--space-3);display:flex;align-items:center;gap:var(--space-2)}
+.ecal-month-title .ecal-count{font-size:var(--text-xs);color:var(--muted);font-weight:600}
+.ecal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:var(--space-3)}
+.ecal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);display:flex;align-items:center;gap:var(--space-3);transition:transform .15s,box-shadow .15s}
+.ecal-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.ecal-card.ec-urgent{border-left:3px solid var(--error)}
+.ecal-card.ec-soon{border-left:3px solid var(--warn)}
+.ecal-card.ec-later{border-left:3px solid var(--success)}
+.ecal-card.ec-today{border-left:3px solid var(--cyan);background:color-mix(in srgb,var(--cyan) 6%,var(--surface))}
+.ecal-date-box{display:flex;flex-direction:column;align-items:center;min-width:44px;padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);background:var(--s3)}
+.ecal-date-box .ecal-day{font-size:var(--text-lg);font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.ecal-date-box .ecal-dow{font-size:9px;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.04em}
+.ecal-info{flex:1;min-width:0}
+.ecal-info .ecal-ticker{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:700;color:var(--primary);cursor:pointer}
+.ecal-info .ecal-ticker:hover{text-decoration:underline}
+.ecal-info .ecal-period{font-size:10px;color:var(--muted)}
+.ecal-info .ecal-time{font-size:10px;color:var(--faint);font-family:var(--font-mono)}
+.ecal-prox-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:var(--radius-sm);white-space:nowrap}
+.ecal-prox-badge.prox-today{background:color-mix(in srgb,var(--cyan) 15%,transparent);color:var(--cyan)}
+.ecal-prox-badge.prox-urgent{background:color-mix(in srgb,var(--error) 15%,transparent);color:var(--error)}
+.ecal-prox-badge.prox-soon{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
+.ecal-prox-badge.prox-later{background:color-mix(in srgb,var(--success) 15%,transparent);color:var(--success)}
+
+/* ══════ FEATURE: VALUATION TABLE ══════ */
+.val-controls{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);flex-wrap:wrap}
+.val-controls select{background:var(--s2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 12px;font-size:var(--text-xs);font-family:var(--font-body);cursor:pointer}
+.val-controls select:focus{outline:2px solid var(--primary);outline-offset:-1px}
+.val-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-lg)}
+.val-table{width:100%;border-collapse:collapse;font-size:var(--text-xs)}
+.val-table thead th{text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:var(--space-2) var(--space-3);border-bottom:2px solid var(--div);background:var(--surface);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;z-index:2}
+.val-table thead th:hover{color:var(--text)}
+.val-table thead th .sort-arrow{font-size:10px;margin-left:4px;opacity:.5}
+.val-table thead th.sorted .sort-arrow{opacity:1;color:var(--primary)}
+.val-table tbody td{padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--div);vertical-align:middle;font-variant-numeric:tabular-nums}
+.val-table tbody tr:hover td{background:var(--s2)}
+.val-table .vtk{font-family:var(--font-mono);font-weight:600;font-size:10px;color:var(--primary);cursor:pointer}
+.val-table .vtk:hover{text-decoration:underline}
+.val-table .val-neg{color:var(--error)}
+.val-table .val-pos{color:var(--success)}
+.val-table .val-neutral{color:var(--muted)}
+.val-heatmap-high{background:color-mix(in srgb,var(--success) 12%,transparent)}
+.val-heatmap-mid{background:color-mix(in srgb,var(--warn) 8%,transparent)}
+.val-heatmap-low{background:color-mix(in srgb,var(--error) 10%,transparent)}
+.val-heatmap-neg{background:color-mix(in srgb,var(--error) 15%,transparent);color:var(--error)}
+
+/* ══════ FEATURE: RISK TRACKER ══════ */
+.risk-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:var(--space-4)}
+.rsk-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3);transition:transform .15s,box-shadow .15s}
+.rsk-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.rsk-card.rsk-critical{border-top:3px solid var(--error)}
+.rsk-card.rsk-high{border-top:3px solid var(--orange)}
+.rsk-card.rsk-medium{border-top:3px solid var(--warn)}
+.rsk-header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-2)}
+.rsk-title{font-size:var(--text-sm);font-weight:700}
+.rsk-sev{font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--radius-sm);white-space:nowrap;flex-shrink:0}
+.rsk-sev.sev-critical{background:color-mix(in srgb,var(--error) 15%,transparent);color:var(--error)}
+.rsk-sev.sev-high{background:color-mix(in srgb,var(--orange) 15%,transparent);color:var(--orange)}
+.rsk-sev.sev-medium{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
+.rsk-desc{font-size:var(--text-xs);color:var(--muted);line-height:1.6}
+.rsk-sev-bar{height:4px;border-radius:2px;overflow:hidden;background:var(--s4)}
+.rsk-sev-bar-fill{height:100%;border-radius:2px}
+.rsk-tickers{display:flex;flex-wrap:wrap;gap:6px}
+.rsk-tickers-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:700;margin-bottom:var(--space-1)}
+
+/* ══════ FEATURE: PORTFOLIO SIMULATOR ══════ */
+.port-layout{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+@media(max-width:1100px){.port-layout{grid-template-columns:1fr}}
+.port-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5)}
+.port-panel-title{font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:var(--space-3);display:flex;align-items:center;gap:var(--space-2)}
+.port-capital-row{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4)}
+.port-capital-row label{font-size:var(--text-xs);font-weight:600;white-space:nowrap}
+.port-capital-row input{background:var(--s2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 12px;font-size:var(--text-sm);font-family:var(--font-mono);width:160px}
+.port-capital-row input:focus{outline:2px solid var(--primary);outline-offset:-1px}
+.port-layer-grid{display:flex;flex-direction:column;gap:6px;max-height:520px;overflow-y:auto;padding-right:var(--space-2)}
+.port-layer-row{display:grid;grid-template-columns:160px 1fr 50px;align-items:center;gap:var(--space-2);padding:4px 0}
+.port-layer-row .plr-name{font-size:var(--text-xs);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.port-layer-row input[type="range"]{width:100%;accent-color:var(--primary);cursor:pointer}
+.port-layer-row .plr-val{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:700;text-align:right;width:50px;min-width:50px}
+.port-total-row{display:flex;justify-content:space-between;align-items:center;padding:var(--space-3) 0;border-top:2px solid var(--div);margin-top:var(--space-3);font-size:var(--text-sm);font-weight:700}
+.port-total-row .port-total-val{font-family:var(--font-mono)}
+.port-total-row .port-warn{color:var(--error);font-size:var(--text-xs)}
+.port-total-row .port-ok{color:var(--success);font-size:var(--text-xs)}
+.port-btn-row{display:flex;gap:var(--space-2);margin-top:var(--space-3)}
+.port-btn{padding:8px 16px;border-radius:var(--radius-md);font-size:var(--text-xs);font-weight:600;border:1px solid var(--border);background:var(--s2);color:var(--text);cursor:pointer;transition:background .15s}
+.port-btn:hover{background:var(--s3)}
+.port-btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.port-btn-primary:hover{background:var(--pri-h)}
+.port-chart-wrap{height:280px;margin-bottom:var(--space-4)}
+.port-results-table{width:100%;border-collapse:collapse;font-size:var(--text-xs)}
+.port-results-table thead th{text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:var(--space-2) var(--space-3);border-bottom:2px solid var(--div);background:var(--surface);white-space:nowrap}
+.port-results-table tbody td{padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--div);font-variant-numeric:tabular-nums}
+.port-results-table tbody tr:hover td{background:var(--s2)}
+.port-results-table .ptk{font-family:var(--font-mono);font-weight:600;font-size:10px;color:var(--primary)}
 </style>
 </head>
 <body>
@@ -341,6 +437,14 @@ img,svg{display:block;max-width:100%}
 <button class="sb-item" onclick="nav(this,'s-watchlist')"><span class="dot" style="background:var(--gold)"></span>Master Watchlist</button>
 <button class="sb-item" onclick="nav(this,'s-conviction')"><span class="dot" style="background:var(--green)"></span>Conviction List</button>
 <button class="sb-item" onclick="nav(this,'s-timeline')"><span class="dot" style="background:var(--primary)"></span>Catalysts 2026–28</button>
+</div>
+
+<div class="sb-section">
+<div class="sb-section-title">Tools</div>
+<button class="sb-item" onclick="nav(this,'s-earnings')"><span class="dot" style="background:var(--warn)"></span>Earnings Calendar</button>
+<button class="sb-item" onclick="nav(this,'s-valuation')"><span class="dot" style="background:var(--cyan)"></span>Valuation Table</button>
+<button class="sb-item" onclick="nav(this,'s-risk')"><span class="dot" style="background:var(--error)"></span>Risk Tracker</button>
+<button class="sb-item" onclick="nav(this,'s-portfolio')"><span class="dot" style="background:var(--success)"></span>Portfolio Simulator</button>
 </div>
 
 <div class="sb-footer">
@@ -1401,6 +1505,147 @@ img,svg{display:block;max-width:100%}
 
 </div><!-- /s-conviction -->
 
+<!-- ════ EARNINGS CALENDAR ════ -->
+<div id="s-earnings" class="section">
+<div class="section-header">
+  <div><div class="section-title">📅 Earnings Calendar</div><div class="section-desc">Upcoming earnings dates for all tracked tickers — sorted by date</div></div>
+</div>
+<div class="ecal-months" id="ecalContainer"></div>
+</div>
+
+<!-- ════ VALUATION TABLE ════ -->
+<div id="s-valuation" class="section">
+<div class="section-header">
+  <div><div class="section-title">📊 Relative Valuation Table</div><div class="section-desc">Side-by-side financial ratios across all 36 tickers — click column headers to sort</div></div>
+</div>
+<div class="val-controls">
+  <label style="font-size:var(--text-xs);font-weight:600">Filter by Layer:</label>
+  <select id="valLayerFilter"><option value="all">All Layers</option></select>
+</div>
+<div class="val-table-wrap" style="max-height:600px;overflow-y:auto">
+<table class="val-table" id="valTable">
+  <thead>
+    <tr>
+      <th data-col="ticker">Ticker <span class="sort-arrow">▲▼</span></th>
+      <th data-col="layer">Layer <span class="sort-arrow">▲▼</span></th>
+      <th data-col="pe">P/E <span class="sort-arrow">▲▼</span></th>
+      <th data-col="ev_ebitda">EV/EBITDA <span class="sort-arrow">▲▼</span></th>
+      <th data-col="ps">P/S <span class="sort-arrow">▲▼</span></th>
+      <th data-col="gross_margin">Gross Margin % <span class="sort-arrow">▲▼</span></th>
+      <th data-col="op_margin">Op Margin % <span class="sort-arrow">▲▼</span></th>
+      <th data-col="net_margin">Net Margin % <span class="sort-arrow">▲▼</span></th>
+      <th data-col="roe">ROE % <span class="sort-arrow">▲▼</span></th>
+      <th data-col="de">D/E <span class="sort-arrow">▲▼</span></th>
+      <th data-col="fcf_margin">FCF Margin % <span class="sort-arrow">▲▼</span></th>
+    </tr>
+  </thead>
+  <tbody id="valBody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- ════ RISK TRACKER ════ -->
+<div id="s-risk" class="section">
+<div class="section-header">
+  <div><div class="section-title">⚠️ Risk Tracker</div><div class="section-desc">Key geopolitical and regulatory risks affecting the AI supply chain</div></div>
+</div>
+<div class="risk-cards" id="riskContainer">
+
+  <div class="rsk-card rsk-critical">
+    <div class="rsk-header"><div class="rsk-title">US-China Export Controls</div><span class="rsk-sev sev-critical">CRITICAL</span></div>
+    <div class="rsk-desc">Chip restrictions, Entity List expansion, advanced node limits. Restricts sale of AI accelerators and semiconductor equipment to Chinese entities.</div>
+    <div class="rsk-sev-bar"><div class="rsk-sev-bar-fill" style="width:95%;background:var(--error)"></div></div>
+    <div><div class="rsk-tickers-label">Affected Tickers</div><div class="rsk-tickers"><span class="lticker">NVDA</span><span class="lticker">AMD</span><span class="lticker">INTC</span><span class="lticker">ASML</span><span class="lticker">AMAT</span><span class="lticker">LRCX</span><span class="lticker">KLAC</span><span class="lticker">TSM</span></div></div>
+  </div>
+
+  <div class="rsk-card rsk-critical">
+    <div class="rsk-header"><div class="rsk-title">Taiwan Strait Geopolitical Tension</div><span class="rsk-sev sev-critical">CRITICAL</span></div>
+    <div class="rsk-desc">TSMC concentration risk — 60%+ global leading-edge capacity in Taiwan. Any escalation would disrupt the entire semiconductor supply chain.</div>
+    <div class="rsk-sev-bar"><div class="rsk-sev-bar-fill" style="width:90%;background:var(--error)"></div></div>
+    <div><div class="rsk-tickers-label">Affected Tickers</div><div class="rsk-tickers"><span class="lticker">TSM</span><span class="lticker">ASML</span><span class="lticker">AMAT</span></div></div>
+  </div>
+
+  <div class="rsk-card rsk-high">
+    <div class="rsk-header"><div class="rsk-title">AI Regulation (EU AI Act / US Executive Orders)</div><span class="rsk-sev sev-high">HIGH</span></div>
+    <div class="rsk-desc">Compliance costs, compute reporting requirements. EU AI Act classifying high-risk AI systems affects all hyperscaler-dependent infrastructure.</div>
+    <div class="rsk-sev-bar"><div class="rsk-sev-bar-fill" style="width:75%;background:var(--orange)"></div></div>
+    <div><div class="rsk-tickers-label">Affected Tickers</div><div class="rsk-tickers"><span class="lticker">NVDA</span><span class="lticker">AMD</span><span class="lticker">CRWV</span><span class="lticker">NBIS</span><span class="lticker">IREN</span><span class="lticker">CIFR</span><span class="lticker">EQIX</span><span class="lticker">DLR</span></div></div>
+  </div>
+
+  <div class="rsk-card rsk-high">
+    <div class="rsk-header"><div class="rsk-title">Power Grid Capacity Constraints</div><span class="rsk-sev sev-high">HIGH</span></div>
+    <div class="rsk-desc">Data center power demand outpacing grid buildout. 74-132 GW needed by 2028E vs current infrastructure capacity.</div>
+    <div class="rsk-sev-bar"><div class="rsk-sev-bar-fill" style="width:80%;background:var(--orange)"></div></div>
+    <div><div class="rsk-tickers-label">Affected Tickers</div><div class="rsk-tickers"><span class="lticker">DLR</span><span class="lticker">EQIX</span><span class="lticker">IRM</span><span class="lticker">CEG</span><span class="lticker">VST</span><span class="lticker">VRT</span><span class="lticker">ETN</span></div></div>
+  </div>
+
+  <div class="rsk-card rsk-high">
+    <div class="rsk-header"><div class="rsk-title">HBM/Memory Supply Bottleneck</div><span class="rsk-sev sev-high">HIGH</span></div>
+    <div class="rsk-desc">HBM3E allocation constraints through 2027. Supply sold out under binding contracts. Vera Rubin 500K unit cut due to HBM4 issues.</div>
+    <div class="rsk-sev-bar"><div class="rsk-sev-bar-fill" style="width:85%;background:var(--orange)"></div></div>
+    <div><div class="rsk-tickers-label">Affected Tickers</div><div class="rsk-tickers"><span class="lticker">MU</span><span class="lticker">NVDA</span><span class="lticker">AMD</span></div></div>
+  </div>
+
+  <div class="rsk-card rsk-medium">
+    <div class="rsk-header"><div class="rsk-title">Tariff Escalation (US/Global)</div><span class="rsk-sev sev-medium">MEDIUM</span></div>
+    <div class="rsk-desc">Server assembly cost inflation, BOM disruption. Tariffs on imported components increase costs for server OEMs and connectivity providers.</div>
+    <div class="rsk-sev-bar"><div class="rsk-sev-bar-fill" style="width:55%;background:var(--warn)"></div></div>
+    <div><div class="rsk-tickers-label">Affected Tickers</div><div class="rsk-tickers"><span class="lticker">DELL</span><span class="lticker">SMCI</span><span class="lticker">HPE</span><span class="lticker">APH</span></div></div>
+  </div>
+
+  <div class="rsk-card rsk-medium">
+    <div class="rsk-header"><div class="rsk-title">Nuclear Permitting Delays</div><span class="rsk-sev sev-medium">MEDIUM</span></div>
+    <div class="rsk-desc">NRC approval timelines, SMR commercialization delays. Regulatory bottleneck for next-gen nuclear powering AI data centers.</div>
+    <div class="rsk-sev-bar"><div class="rsk-sev-bar-fill" style="width:50%;background:var(--warn)"></div></div>
+    <div><div class="rsk-tickers-label">Affected Tickers</div><div class="rsk-tickers"><span class="lticker">OKLO</span><span class="lticker">CEG</span><span class="lticker">BWXT</span></div></div>
+  </div>
+
+  <div class="rsk-card rsk-medium">
+    <div class="rsk-header"><div class="rsk-title">Antitrust (NVDA/AVGO Dominance)</div><span class="rsk-sev sev-medium">MEDIUM</span></div>
+    <div class="rsk-desc">Market concentration scrutiny, bundling concerns. NVIDIA's 90%+ GPU share and Broadcom's ASIC dominance attract regulatory attention.</div>
+    <div class="rsk-sev-bar"><div class="rsk-sev-bar-fill" style="width:45%;background:var(--warn)"></div></div>
+    <div><div class="rsk-tickers-label">Affected Tickers</div><div class="rsk-tickers"><span class="lticker">NVDA</span><span class="lticker">AVGO</span></div></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ════ PORTFOLIO SIMULATOR ════ -->
+<div id="s-portfolio" class="section">
+<div class="section-header">
+  <div><div class="section-title">💼 Portfolio Simulator</div><div class="section-desc">Model allocation across AI infrastructure layers — equal-weight tickers within each layer</div></div>
+</div>
+<div class="port-layout">
+  <div class="port-panel">
+    <div class="port-panel-title">Allocation Controls</div>
+    <div class="port-capital-row">
+      <label>Starting Capital ($)</label>
+      <input type="number" id="portCapital" value="100000" min="1000" step="1000">
+    </div>
+    <div class="port-layer-grid" id="portLayerGrid"></div>
+    <div class="port-total-row">
+      <span>Total Allocation</span>
+      <span><span class="port-total-val" id="portTotalPct">0%</span> <span id="portTotalStatus"></span></span>
+    </div>
+    <div class="port-btn-row">
+      <button class="port-btn port-btn-primary" id="portCalcBtn">Calculate</button>
+      <button class="port-btn" id="portResetBtn">Reset</button>
+      <button class="port-btn" id="portEqualBtn">Equal Weight All</button>
+    </div>
+  </div>
+  <div class="port-panel">
+    <div class="port-panel-title">Results</div>
+    <div class="port-chart-wrap"><canvas id="cPortfolio"></canvas></div>
+    <div style="max-height:300px;overflow-y:auto">
+      <table class="port-results-table">
+        <thead><tr><th>Ticker</th><th>Layer</th><th>Weight %</th><th>$ Amount</th></tr></thead>
+        <tbody id="portResultsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
 </div><!-- /content -->
 </main>
 
@@ -1747,6 +1992,452 @@ document.addEventListener('click', function(e) {
 window.addEventListener('load',function(){
   setTimeout(initAllCharts,300);
 });
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURE 1: EARNINGS CALENDAR
+   ══════════════════════════════════════════════════════════════ */
+(function(){
+  const EARNINGS = {
+    "NVDA":{date:"2026-05-20",time:"16:20 ET",period:"Q1 2027"},
+    "AMD":{date:"2026-05-05",time:"17:00 ET",period:"Q1 2026"},
+    "ARM":{date:"2026-05-06",time:"17:00 ET",period:"Q4 2026"},
+    "INTC":{date:"2026-04-23",time:"17:00 ET",period:"Q1 2026"},
+    "AVGO":{date:"2026-06-04",time:"17:00 ET",period:"Q2 2026"},
+    "MRVL":{date:"2026-05-28",time:"16:45 ET",period:"Q1 2027"},
+    "ALAB":{date:"2026-05-05",time:"16:30 ET",period:"Q1 2026"},
+    "CRDO":{date:"2026-06-02",time:"16:00 ET",period:"Q4 2026"},
+    "TSM":{date:"2026-04-16",time:"02:00 ET",period:"Q1 2026"},
+    "ASML":{date:"2026-07-15",time:"09:00 ET",period:"Q2 2026"},
+    "AMAT":{date:"2026-05-14",time:"08:00 ET",period:"Q2 2026"},
+    "LRCX":{date:"2026-04-22",time:"17:00 ET",period:"Q3 2026"},
+    "KLAC":{date:"2026-04-29",time:"17:00 ET",period:"Q3 2026"},
+    "TER":{date:"2026-04-29",time:"08:30 ET",period:"Q1 2026"},
+    "AEIS":{date:"2026-04-29",time:"16:30 ET",period:"Q1 2026"},
+    "MU":{date:"2026-06-24",time:"18:00 ET",period:"Q3 2026"},
+    "ANET":{date:"2026-05-05",time:"16:30 ET",period:"Q1 2026"},
+    "LITE":{date:"2026-05-05",time:"17:00 ET",period:"Q3 2026"},
+    "APH":{date:"2026-04-29",time:"13:00 ET",period:"Q1 2026"},
+    "SMCI":{date:"2026-05-05",time:"17:00 ET",period:"Q3 2026"},
+    "DELL":{date:"2026-05-28",time:"16:30 ET",period:"Q1 2027"},
+    "HPE":{date:"2026-06-02",time:"17:00 ET",period:"Q2 2026"},
+    "VRT":{date:"2026-04-22",time:"11:00 ET",period:"Q1 2026"},
+    "ETN":{date:"2026-05-01",time:"11:00 ET",period:"Q1 2026"},
+    "GEV":{date:"2026-04-22",time:"07:30 ET",period:"Q1 2026"},
+    "CEG":{date:"2026-05-11",time:"10:00 ET",period:"Q1 2026"},
+    "VST":{date:"2026-05-07",time:"10:00 ET",period:"Q1 2026"},
+    "OKLO":{date:"2026-05-12",time:"16:00 ET",period:"Q1 2026"},
+    "BWXT":{date:"2026-05-04",time:"17:00 ET",period:"Q1 2026"},
+    "EQIX":{date:"2026-04-29",time:"17:30 ET",period:"Q1 2026"},
+    "DLR":{date:"2026-04-23",time:"17:00 ET",period:"Q1 2026"},
+    "IRM":{date:"2026-04-30",time:"08:30 ET",period:"Q1 2026"},
+    "CRWV":{date:"2026-05-13",time:"17:00 ET",period:"Q1 2026"},
+    "NBIS":{date:"2026-05-19",time:"08:00 ET",period:"Q1 2026"},
+    "IREN":{date:"2026-05-13",time:"17:00 ET",period:"Q3 2026"},
+    "CIFR":{date:"2026-05-05",time:"08:00 ET",period:"Q1 2026"}
+  };
+
+  const TODAY = new Date(2026,3,16); // April 16, 2026
+  const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function daysDiff(d){ return Math.round((d - TODAY)/(1000*60*60*24)); }
+
+  function proxClass(days){
+    if(days===0) return 'prox-today';
+    if(days<0) return 'prox-later'; // past
+    if(days<7) return 'prox-urgent';
+    if(days<=30) return 'prox-soon';
+    return 'prox-later';
+  }
+  function proxLabel(days){
+    if(days===0) return 'TODAY';
+    if(days<0) return Math.abs(days)+'d ago';
+    if(days===1) return 'Tomorrow';
+    return days+'d away';
+  }
+  function cardClass(days){
+    if(days===0) return 'ec-today';
+    if(days>0 && days<7) return 'ec-urgent';
+    if(days>=7 && days<=30) return 'ec-soon';
+    return 'ec-later';
+  }
+
+  const entries = Object.entries(EARNINGS).map(([tk,v])=>{
+    const d = new Date(v.date+'T00:00:00');
+    return {ticker:tk, dateObj:d, date:v.date, time:v.time, period:v.period, days:daysDiff(d), month:d.getMonth(), year:d.getFullYear()};
+  }).sort((a,b)=>a.dateObj-b.dateObj);
+
+  // Group by month
+  const byMonth = {};
+  entries.forEach(e=>{
+    const key = e.year+'-'+String(e.month).padStart(2,'0');
+    if(!byMonth[key]) byMonth[key] = [];
+    byMonth[key].push(e);
+  });
+
+  const container = document.getElementById('ecalContainer');
+  Object.keys(byMonth).sort().forEach(key=>{
+    const items = byMonth[key];
+    const d0 = items[0].dateObj;
+    const monthDiv = document.createElement('div');
+
+    monthDiv.innerHTML = '<div class="ecal-month-title">'+MONTHS[d0.getMonth()]+' '+d0.getFullYear()+' <span class="ecal-count">('+items.length+' reports)</span></div>';
+
+    const grid = document.createElement('div');
+    grid.className = 'ecal-grid';
+    items.forEach(e=>{
+      const dc = cardClass(e.days);
+      const pc = proxClass(e.days);
+      const pl = proxLabel(e.days);
+      grid.innerHTML += '<div class="ecal-card '+dc+'">'
+        +'<div class="ecal-date-box"><span class="ecal-day">'+e.dateObj.getDate()+'</span><span class="ecal-dow">'+DOW[e.dateObj.getDay()]+'</span></div>'
+        +'<div class="ecal-info"><span class="ecal-ticker lticker">'+e.ticker+'</span>'
+        +'<div class="ecal-period">'+e.period+'</div>'
+        +'<div class="ecal-time">'+e.time+'</div></div>'
+        +'<span class="ecal-prox-badge '+pc+'">'+pl+'</span>'
+        +'</div>';
+    });
+    monthDiv.appendChild(grid);
+    container.appendChild(monthDiv);
+  });
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURE 2: VALUATION TABLE
+   ══════════════════════════════════════════════════════════════ */
+(function(){
+  const RATIOS = {
+    "NVDA":{pe:38.3,ev_ebitda:33.85,ps:21.12,gross_margin:71.1,op_margin:60.4,net_margin:55.6,roe:101.5,de:0.07,fcf_margin:44.8},
+    "AMD":{pe:81.13,ev_ebitda:51.19,ps:10.12,gross_margin:49.5,op_margin:10.7,net_margin:12.3,roe:7.1,de:0.05,fcf_margin:19.3},
+    "ARM":{pe:175.07,ev_ebitda:108.2,ps:28.17,gross_margin:96.9,op_margin:20.2,net_margin:16.3,roe:10.8,de:0.05,fcf_margin:-0.9},
+    "INTC":{pe:-603.33,ev_ebitda:21.28,ps:3.42,gross_margin:34.8,op_margin:-4.2,net_margin:0.0,roe:0.0,de:0.41,fcf_margin:-9.4},
+    "AVGO":{pe:77.49,ev_ebitda:52.58,ps:27.43,gross_margin:67.8,op_margin:39.9,net_margin:36.2,roe:31.0,de:0.80,fcf_margin:42.1},
+    "MRVL":{pe:25.71,ev_ebitda:26.29,ps:8.16,gross_margin:51.0,op_margin:16.1,net_margin:32.6,roe:19.3,de:0.31,fcf_margin:17.0},
+    "ALAB":{pe:136.36,ev_ebitda:150.47,ps:33.21,gross_margin:75.7,op_margin:20.3,net_margin:25.7,roe:18.8,de:0.33,fcf_margin:474.8},
+    "CRDO":{pe:166.41,ev_ebitda:132.78,ps:18.91,gross_margin:64.8,op_margin:8.5,net_margin:11.9,roe:8.5,de:0.02,fcf_margin:6.6},
+    "TSM":{pe:28.79,ev_ebitda:18.02,ps:12.98,gross_margin:59.9,op_margin:50.8,net_margin:45.0,roe:35.1,de:0.17,fcf_margin:26.3},
+    "ASML":{pe:34.72,ev_ebitda:25.27,ps:10.76,gross_margin:51.8,op_margin:36.9,net_margin:30.6,roe:43.3,de:0.11,fcf_margin:37.5},
+    "AMAT":{pe:26.41,ev_ebitda:20.56,ps:6.39,gross_margin:48.7,op_margin:29.2,net_margin:24.7,roe:35.5,de:0.32,fcf_margin:20.1},
+    "LRCX":{pe:23.42,ev_ebitda:19.19,ps:6.69,gross_margin:48.7,op_margin:32.0,net_margin:29.1,roe:58.2,de:0.38,fcf_margin:29.4},
+    "KLAC":{pe:29.49,ev_ebitda:23.15,ps:9.73,gross_margin:60.9,op_margin:39.3,net_margin:33.4,roe:100.8,de:1.25,fcf_margin:30.8},
+    "TER":{pe:55.78,ev_ebitda:38.79,ps:9.47,gross_margin:58.2,op_margin:20.4,net_margin:18.0,roe:20.4,de:0.09,fcf_margin:14.1},
+    "AEIS":{pe:54.52,ev_ebitda:33.89,ps:4.40,gross_margin:37.7,op_margin:9.3,net_margin:8.3,roe:11.6,de:null,fcf_margin:48.7},
+    "MU":{pe:16.07,ev_ebitda:7.83,ps:3.66,gross_margin:39.8,op_margin:26.1,net_margin:22.8,roe:17.2,de:0.28,fcf_margin:4.5},
+    "ANET":{pe:47.65,ev_ebitda:39.17,ps:18.28,gross_margin:64.1,op_margin:42.8,net_margin:39.0,roe:31.4,de:null,fcf_margin:0.0},
+    "LITE":{pe:256.08,ev_ebitda:108.65,ps:4.02,gross_margin:28.0,op_margin:-10.9,net_margin:1.6,roe:2.5,de:2.28,fcf_margin:-6.4},
+    "APH":{pe:40.46,ev_ebitda:24.88,ps:7.18,gross_margin:36.9,op_margin:25.4,net_margin:18.6,roe:36.9,de:null,fcf_margin:107.8},
+    "SMCI":{pe:29.17,ev_ebitda:21.89,ps:1.33,gross_margin:11.1,op_margin:5.7,net_margin:4.8,roe:17.9,de:0.75,fcf_margin:7.0},
+    "DELL":{pe:13.18,ev_ebitda:8.46,ps:0.66,gross_margin:20.0,op_margin:7.2,net_margin:5.2,roe:-300.4,de:null,fcf_margin:-1275.4},
+    "HPE":{pe:-610.5,ev_ebitda:21.24,ps:0.94,gross_margin:100.0,op_margin:-1.3,net_margin:0.2,roe:0.2,de:null,fcf_margin:90.3},
+    "VRT":{pe:47.51,ev_ebitda:29.60,ps:6.06,gross_margin:36.3,op_margin:17.9,net_margin:13.0,roe:41.8,de:0.80,fcf_margin:18.5},
+    "ETN":{pe:30.48,ev_ebitda:21.27,ps:4.50,gross_margin:37.6,op_margin:19.0,net_margin:14.9,roe:21.5,de:null,fcf_margin:48.3},
+    "GEV":{pe:36.95,ev_ebitda:75.16,ps:4.63,gross_margin:19.8,op_margin:3.6,net_margin:12.8,roe:42.6,de:null,fcf_margin:9.7},
+    "CEG":{pe:47.74,ev_ebitda:20.37,ps:4.32,gross_margin:18.4,op_margin:12.1,net_margin:9.1,roe:16.4,de:null,fcf_margin:59.9},
+    "VST":{pe:74.00,ev_ebitda:15.13,ps:3.07,gross_margin:23.2,op_margin:10.7,net_margin:5.3,roe:17.7,de:3.78,fcf_margin:7.4},
+    "OKLO":{pe:-99.67,ev_ebitda:-74.16,ps:null,gross_margin:null,op_margin:null,net_margin:null,roe:-12.2,de:0.00,fcf_margin:null},
+    "BWXT":{pe:48.28,ev_ebitda:39.47,ps:4.94,gross_margin:22.9,op_margin:10.3,net_margin:10.3,roe:28.5,de:null,fcf_margin:163.5},
+    "EQIX":{pe:55.68,ev_ebitda:23.79,ps:8.17,gross_margin:51.1,op_margin:20.0,net_margin:14.6,roe:9.7,de:null,fcf_margin:149.0},
+    "DLR":{pe:43.22,ev_ebitda:21.35,ps:8.70,gross_margin:55.4,op_margin:10.8,net_margin:21.5,roe:5.8,de:null,fcf_margin:9.2},
+    "IRM":{pe:46.57,ev_ebitda:11.78,ps:1.90,gross_margin:57.1,op_margin:17.4,net_margin:4.2,roe:17.9,de:null,fcf_margin:900.0},
+    "CRWV":{pe:-25.48,ev_ebitda:23.02,ps:7.01,gross_margin:71.7,op_margin:-0.9,net_margin:-22.7,roe:-50.3,de:null,fcf_margin:679.1},
+    "NBIS":{pe:208.25,ev_ebitda:-157.94,ps:39.98,gross_margin:68.6,op_margin:-112.5,net_margin:19.2,roe:2.6,de:1.05,fcf_margin:-694.8},
+    "IREN":{pe:37.36,ev_ebitda:24.24,ps:7.51,gross_margin:68.3,op_margin:-1.9,net_margin:17.4,roe:6.0,de:null,fcf_margin:53.0},
+    "CIFR":{pe:-6.87,ev_ebitda:-35.29,ps:26.69,gross_margin:28.4,op_margin:-188.2,net_margin:-367.2,roe:-196.7,de:null,fcf_margin:328.9}
+  };
+
+  const LAYERS = {
+    "GPU / Accelerators":["NVDA","AMD","ARM","INTC"],
+    "Custom ASIC + Connectivity":["AVGO","MRVL","ALAB","CRDO"],
+    "Foundry":["TSM"],
+    "Semi Equipment":["ASML","AMAT","LRCX","KLAC","TER","AEIS"],
+    "Memory (HBM)":["MU"],
+    "Networking / Optics":["ANET","LITE","APH"],
+    "Server OEMs":["DELL","SMCI","HPE"],
+    "Power & Cooling":["VRT","ETN","GEV"],
+    "Energy / Nuclear":["CEG","VST","OKLO","BWXT"],
+    "Data Center REITs":["DLR","EQIX","IRM"],
+    "Pivot Plays":["IREN","CIFR","NBIS"],
+    "Neoclouds":["CRWV"]
+  };
+
+  // Build ticker→layer lookup
+  const tickerLayer = {};
+  Object.entries(LAYERS).forEach(([layer,tickers])=>{
+    tickers.forEach(t=>{ tickerLayer[t]=layer; });
+  });
+
+  // Populate layer filter
+  const filterEl = document.getElementById('valLayerFilter');
+  Object.keys(LAYERS).forEach(l=>{
+    const opt = document.createElement('option');
+    opt.value = l; opt.textContent = l;
+    filterEl.appendChild(opt);
+  });
+
+  // Build data rows
+  let data = Object.entries(RATIOS).map(([tk,r])=>({
+    ticker:tk, layer:tickerLayer[tk]||'—', ...r
+  }));
+
+  let sortCol = 'ticker', sortAsc = true;
+
+  function fmt(v,dec){
+    if(v===null||v===undefined) return '<span class="val-neutral">—</span>';
+    const n = Number(v);
+    if(isNaN(n)) return '<span class="val-neutral">—</span>';
+    const s = n.toFixed(dec!==undefined?dec:1);
+    if(n<0) return '<span class="val-neg">'+s+'</span>';
+    return s;
+  }
+
+  function marginHeat(v){
+    if(v===null||v===undefined) return '';
+    if(v<0) return ' val-heatmap-neg';
+    if(v>=40) return ' val-heatmap-high';
+    if(v>=20) return ' val-heatmap-mid';
+    if(v<10) return ' val-heatmap-low';
+    return '';
+  }
+
+  function renderTable(){
+    const filter = filterEl.value;
+    let rows = filter==='all' ? data : data.filter(r=>r.layer===filter);
+
+    // Sort
+    rows = [...rows].sort((a,b)=>{
+      let va=a[sortCol], vb=b[sortCol];
+      if(va===null||va===undefined) va=sortAsc?Infinity:-Infinity;
+      if(vb===null||vb===undefined) vb=sortAsc?Infinity:-Infinity;
+      if(typeof va==='string') return sortAsc?va.localeCompare(vb):vb.localeCompare(va);
+      return sortAsc?(va-vb):(vb-va);
+    });
+
+    const body = document.getElementById('valBody');
+    body.innerHTML = rows.map(r=>'<tr>'
+      +'<td><span class="vtk lticker">'+r.ticker+'</span></td>'
+      +'<td style="font-size:10px">'+r.layer+'</td>'
+      +'<td>'+fmt(r.pe)+'</td>'
+      +'<td>'+fmt(r.ev_ebitda)+'</td>'
+      +'<td>'+fmt(r.ps)+'</td>'
+      +'<td class="'+marginHeat(r.gross_margin)+'">'+fmt(r.gross_margin)+'</td>'
+      +'<td class="'+marginHeat(r.op_margin)+'">'+fmt(r.op_margin)+'</td>'
+      +'<td class="'+marginHeat(r.net_margin)+'">'+fmt(r.net_margin)+'</td>'
+      +'<td class="'+(r.roe!==null&&r.roe>=30?' val-heatmap-high':r.roe!==null&&r.roe<0?' val-heatmap-neg':'')+'">'+fmt(r.roe)+'</td>'
+      +'<td>'+fmt(r.de,2)+'</td>'
+      +'<td class="'+marginHeat(r.fcf_margin)+'">'+fmt(r.fcf_margin)+'</td>'
+      +'</tr>').join('');
+
+    // Update sort arrow styling
+    document.querySelectorAll('#valTable thead th').forEach(th=>{
+      th.classList.toggle('sorted', th.dataset.col===sortCol);
+      const arrow = th.querySelector('.sort-arrow');
+      if(th.dataset.col===sortCol){
+        arrow.textContent = sortAsc?'▲':'▼';
+      } else {
+        arrow.textContent = '▲▼';
+      }
+    });
+  }
+
+  // Sort click
+  document.querySelectorAll('#valTable thead th').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const col = th.dataset.col;
+      if(sortCol===col) sortAsc=!sortAsc;
+      else { sortCol=col; sortAsc=true; }
+      renderTable();
+    });
+  });
+
+  filterEl.addEventListener('change', renderTable);
+  renderTable();
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURE 4: PORTFOLIO SIMULATOR
+   ══════════════════════════════════════════════════════════════ */
+(function(){
+  const LAYERS = {
+    "GPU / Accelerators":["NVDA","AMD","ARM","INTC"],
+    "Custom ASIC + Connectivity":["AVGO","MRVL","ALAB","CRDO"],
+    "Foundry":["TSM"],
+    "Semi Equipment":["ASML","AMAT","LRCX","KLAC","TER","AEIS"],
+    "Memory (HBM)":["MU"],
+    "Networking / Optics":["ANET","LITE","APH"],
+    "Server OEMs":["DELL","SMCI","HPE"],
+    "Power & Cooling":["VRT","ETN","GEV"],
+    "Energy / Nuclear":["CEG","VST","OKLO","BWXT"],
+    "Data Center REITs":["DLR","EQIX","IRM"],
+    "Pivot Plays":["IREN","CIFR","NBIS"],
+    "Neoclouds":["CRWV"]
+  };
+
+  const layerNames = Object.keys(LAYERS);
+  const grid = document.getElementById('portLayerGrid');
+  const allocs = {};
+
+  const defaultAllocs = {
+    "GPU / Accelerators":20,
+    "Custom ASIC + Connectivity":15,
+    "Foundry":8,
+    "Semi Equipment":10,
+    "Memory (HBM)":5,
+    "Networking / Optics":8,
+    "Server OEMs":5,
+    "Power & Cooling":8,
+    "Energy / Nuclear":8,
+    "Data Center REITs":5,
+    "Pivot Plays":5,
+    "Neoclouds":3
+  };
+
+  layerNames.forEach(name=>{
+    allocs[name] = defaultAllocs[name]||0;
+    const row = document.createElement('div');
+    row.className = 'port-layer-row';
+    row.innerHTML = '<span class="plr-name" title="'+name+'">'+name+'</span>'
+      +'<input type="range" min="0" max="50" value="'+allocs[name]+'" data-layer="'+name+'">'
+      +'<span class="plr-val" data-layer-val="'+name+'">'+allocs[name]+'%</span>';
+    grid.appendChild(row);
+  });
+
+  function updateTotal(){
+    let total = 0;
+    layerNames.forEach(n=>{ total+=allocs[n]; });
+    document.getElementById('portTotalPct').textContent = total+'%';
+    const status = document.getElementById('portTotalStatus');
+    if(total===100) status.innerHTML='<span class="port-ok">✓ Balanced</span>';
+    else if(total>100) status.innerHTML='<span class="port-warn">Over by '+(total-100)+'%</span>';
+    else status.innerHTML='<span class="port-warn">Under by '+(100-total)+'%</span>';
+  }
+
+  grid.addEventListener('input',function(e){
+    if(e.target.type==='range'){
+      const layer = e.target.dataset.layer;
+      const val = parseInt(e.target.value);
+      allocs[layer] = val;
+      grid.querySelector('[data-layer-val="'+layer+'"]').textContent = val+'%';
+      updateTotal();
+    }
+  });
+
+  let portChart = null;
+
+  function calculate(){
+    const capital = parseFloat(document.getElementById('portCapital').value)||100000;
+    const results = [];
+    const layerTotals = [];
+    const layerLabels = [];
+    const colors = ['#5b9cf6','#a87ef0','#4fc4cf','#56d4e8','#f5a454','#56cc84','#e8c44a','#f07070','#f0ad4e','#5b9cf6','#a87ef0','#4fc4cf'];
+
+    layerNames.forEach((name,i)=>{
+      const pct = allocs[name];
+      if(pct<=0) return;
+      const layerAmt = capital * pct / 100;
+      const tickers = LAYERS[name];
+      const perTicker = layerAmt / tickers.length;
+      const perTickerPct = pct / tickers.length;
+      layerLabels.push(name);
+      layerTotals.push(layerAmt);
+      tickers.forEach(tk=>{
+        results.push({ticker:tk, layer:name, weight:perTickerPct, amount:perTicker});
+      });
+    });
+
+    // Results table
+    const tbody = document.getElementById('portResultsBody');
+    tbody.innerHTML = results.map(r=>'<tr>'
+      +'<td class="ptk">'+r.ticker+'</td>'
+      +'<td style="font-size:10px">'+r.layer+'</td>'
+      +'<td style="font-weight:600">'+r.weight.toFixed(2)+'%</td>'
+      +'<td style="font-family:var(--font-mono);font-weight:600">$'+r.amount.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})+'</td>'
+      +'</tr>').join('');
+
+    // Pie chart
+    if(portChart){ try{portChart.destroy();}catch(e){} portChart=null; }
+    if(layerLabels.length===0) return;
+
+    const muted = gs('--muted');
+    portChart = new Chart(document.getElementById('cPortfolio'),{
+      type:'doughnut',
+      data:{
+        labels:layerLabels,
+        datasets:[{data:layerTotals, backgroundColor:colors.slice(0,layerLabels.length), borderWidth:0}]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false, cutout:'50%',
+        plugins:{
+          legend:{position:'right',labels:{color:muted,font:{size:9,family:'Inter'},boxWidth:8,padding:6}}
+        }
+      }
+    });
+  }
+
+  document.getElementById('portCalcBtn').addEventListener('click', calculate);
+
+  document.getElementById('portResetBtn').addEventListener('click',()=>{
+    layerNames.forEach(name=>{
+      allocs[name] = defaultAllocs[name]||0;
+      grid.querySelector('[data-layer="'+name+'"]').value = allocs[name];
+      grid.querySelector('[data-layer-val="'+name+'"]').textContent = allocs[name]+'%';
+    });
+    updateTotal();
+    document.getElementById('portCapital').value = 100000;
+    document.getElementById('portResultsBody').innerHTML = '';
+    if(portChart){ try{portChart.destroy();}catch(e){} portChart=null; }
+  });
+
+  document.getElementById('portEqualBtn').addEventListener('click',()=>{
+    const eachPct = Math.floor(100/layerNames.length);
+    const remainder = 100 - eachPct*layerNames.length;
+    layerNames.forEach((name,i)=>{
+      allocs[name] = eachPct + (i<remainder?1:0);
+      grid.querySelector('[data-layer="'+name+'"]').value = allocs[name];
+      grid.querySelector('[data-layer-val="'+name+'"]').textContent = allocs[name]+'%';
+    });
+    updateTotal();
+  });
+
+  updateTotal();
+  // Auto-calculate on load
+  setTimeout(calculate, 400);
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURE 5: FIX DARK/LIGHT MODE TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+(function(){
+  const html = document.documentElement;
+  const btn = document.getElementById('toggleTheme');
+  // Restore saved preference (try/catch for sandboxed environments)
+  var saved = null;
+  try { saved = localStorage.getItem('ai-dashboard-theme'); } catch(e){}
+  if(saved && (saved==='dark'||saved==='light')){
+    html.setAttribute('data-theme', saved);
+  }
+  // Update icon
+  function updateIcon(){
+    btn.textContent = html.getAttribute('data-theme')==='dark'?'☀':'🌙';
+  }
+  updateIcon();
+
+  // Remove the old click listener by replacing the button
+  const newBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(newBtn, btn);
+
+  newBtn.addEventListener('click',function(){
+    const current = html.getAttribute('data-theme');
+    const next = current==='dark'?'light':'dark';
+    html.setAttribute('data-theme', next);
+    try { localStorage.setItem('ai-dashboard-theme', next); } catch(e){}
+    newBtn.textContent = next==='dark'?'☀':'🌙';
+    // Refresh charts for new theme colors
+    destroyAll(); initAllCharts();
+    // Refresh portfolio chart if active
+    const calcBtn = document.getElementById('portCalcBtn');
+    if(calcBtn) setTimeout(()=>calcBtn.click(), 350);
+  });
+})();
 </script>
 </body>
 </html>
