@@ -178,6 +178,58 @@ img,svg{display:block;max-width:100%}
 
 @media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.sidebar{width:200px}}
 @media(max-width:800px){.sidebar{display:none}.g4,.g3,.g2,.g2-3,.g3-2{grid-template-columns:1fr}}
+
+/* ── SIDE PANEL (Ticker Detail Drawer) ── */
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:90;opacity:0;pointer-events:none;transition:opacity .28s ease}
+.panel-overlay.open{opacity:1;pointer-events:auto}
+.side-panel{position:fixed;top:0;right:0;width:380px;max-width:92vw;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:100;transform:translateX(100%);transition:transform .32s cubic-bezier(.16,1,.3,1);overflow-y:auto;display:flex;flex-direction:column}
+.side-panel.open{transform:translateX(0)}
+.sp-close{position:absolute;top:var(--space-3);right:var(--space-3);width:32px;height:32px;border-radius:var(--radius-md);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);background:var(--s2);z-index:2;cursor:pointer}
+.sp-close:hover{background:var(--s3);color:var(--text)}
+.sp-header{padding:var(--space-5) var(--space-5) var(--space-3);border-bottom:1px solid var(--div)}
+.sp-ticker{font-family:var(--font-mono);font-size:var(--text-lg);font-weight:700;color:var(--primary);letter-spacing:.02em}
+.sp-company{font-size:var(--text-sm);color:var(--muted);margin-top:2px}
+.sp-price-section{padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--div)}
+.sp-price{font-size:var(--text-xl);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.sp-change{display:flex;gap:var(--space-3);align-items:center;margin-top:4px;font-size:var(--text-sm);font-weight:600;font-variant-numeric:tabular-nums}
+.sp-change.up{color:var(--success)}
+.sp-change.dn{color:var(--error)}
+.sp-sparkline-wrap{margin-top:var(--space-3);height:48px;border-radius:var(--radius-sm);overflow:hidden}
+.sp-unavail{font-size:var(--text-xs);color:var(--muted);margin-top:var(--space-2)}
+.sp-unavail a{color:var(--primary);text-decoration:underline}
+.sp-section{padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--div)}
+.sp-section-title{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:700;margin-bottom:var(--space-2)}
+.sp-metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+.sp-metric{display:flex;flex-direction:column;gap:1px}
+.sp-metric-label{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:700}
+.sp-metric-val{font-size:var(--text-xs);font-weight:600;font-variant-numeric:tabular-nums}
+.sp-thesis{font-size:var(--text-xs);line-height:1.6;color:var(--muted)}
+.sp-layers{display:flex;flex-wrap:wrap;gap:6px}
+.sp-layer-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 10px;border-radius:var(--radius-sm);background:var(--s3);color:var(--text)}
+.sp-tags{display:flex;flex-wrap:wrap;gap:4px}
+.sp-tag{font-size:9px;padding:2px 7px;border-radius:var(--radius-sm);background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary);font-weight:600}
+.sp-links{display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-4) var(--space-5)}
+.sp-link{display:flex;align-items:center;justify-content:center;gap:var(--space-2);padding:var(--space-3);border-radius:var(--radius-md);font-size:var(--text-xs);font-weight:600;text-decoration:none;border:1px solid var(--border);color:var(--text);background:var(--s2);transition:background .15s}
+.sp-link:hover{background:var(--s3)}
+.sp-link.primary-link{background:var(--primary);color:#fff;border-color:var(--primary)}
+.sp-link.primary-link:hover{background:var(--pri-h)}
+
+/* ── BOTTLENECK FLOW DIAGRAM ── */
+@keyframes flow-pulse{0%,100%{box-shadow:0 0 8px 2px var(--glow-color,var(--red))}50%{box-shadow:0 0 20px 6px var(--glow-color,var(--red))}}
+.flow-pipeline{display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:var(--space-6);padding:var(--space-4) 0}
+.flow-node{position:relative;width:100%;max-width:600px;display:grid;grid-template-columns:46px 1fr auto;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-lg);border:1.5px solid var(--node-color,var(--border));background:color-mix(in srgb,var(--node-color,var(--s3)) 8%,var(--surface));cursor:default;transition:transform .15s,box-shadow .15s}
+.flow-node:hover{transform:scale(1.015);z-index:2}
+.flow-node.critical{animation:flow-pulse 2s ease-in-out infinite}
+.flow-node-num{width:36px;height:36px;border-radius:var(--radius-md);background:var(--node-color,var(--s4));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flow-node-info{min-width:0}
+.flow-node-name{font-size:var(--text-xs);font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.flow-node-status{font-size:10px;color:var(--muted);margin-top:1px;display:flex;align-items:center;gap:var(--space-2)}
+.flow-node-pct{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700;color:var(--node-color,var(--muted));white-space:nowrap;display:flex;align-items:center;gap:var(--space-2)}
+.flow-connector{width:2px;height:20px;background:var(--div);margin:0 auto;position:relative}
+.flow-connector::after{content:'';position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid var(--div)}
+.flow-legend{display:flex;flex-wrap:wrap;gap:var(--space-3);justify-content:center;margin-bottom:var(--space-4)}
+.flow-legend-item{display:flex;align-items:center;gap:var(--space-2);font-size:10px;color:var(--muted)}
+.flow-legend-dot{width:10px;height:10px;border-radius:3px}
 </style>
 </head>
 <body>
@@ -274,8 +326,50 @@ img,svg{display:block;max-width:100%}
 <!-- ════ VALUE CHAIN MAP ════ -->
 <div id="s-map" class="section">
 <div class="section-header">
-  <div><div class="section-title">🗺 Complete Value Chain Map</div><div class="section-desc">14 layers from energy to cloud — click a ticker to see it in context below</div></div>
+  <div><div class="section-title">🗺 Complete Value Chain Map</div><div class="section-desc">14 layers from energy to cloud — click a ticker to open detailed analysis</div></div>
 </div>
+
+<!-- Bottleneck Flow Diagram -->
+<div class="flow-legend">
+  <div class="flow-legend-item"><div class="flow-legend-dot" style="background:#f07070"></div>90-100% Critical</div>
+  <div class="flow-legend-item"><div class="flow-legend-dot" style="background:#f5a454"></div>80-89% Strained</div>
+  <div class="flow-legend-item"><div class="flow-legend-dot" style="background:#e8c44a"></div>70-79% Tight</div>
+  <div class="flow-legend-item"><div class="flow-legend-dot" style="background:#56cc84"></div>60-69% Adequate</div>
+  <div class="flow-legend-item"><div class="flow-legend-dot" style="background:#4fc4cf"></div>&lt;60% Expanding</div>
+</div>
+<div class="flow-pipeline" id="flowPipeline">
+  <!-- Bottom-up: Energy at bottom, Cloud at top. Rendered reversed in DOM so top=Cloud -->
+  <div class="flow-node" style="--node-color:#4fc4cf"><div class="flow-node-num" style="background:#4fc4cf">14</div><div class="flow-node-info"><div class="flow-node-name">AI Cloud / Neoclouds</div><div class="flow-node-status">Expanding &middot; CRWV, NBIS, IREN, CIFR</div></div><div class="flow-node-pct" style="color:#4fc4cf">55%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#56cc84"><div class="flow-node-num" style="background:#56cc84">13</div><div class="flow-node-info"><div class="flow-node-name">Data Center REITs</div><div class="flow-node-status">Adequate &middot; EQIX, DLR, IRM</div></div><div class="flow-node-pct" style="color:#56cc84">62%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#f07070" class="critical"><div class="flow-node-num" style="background:#f07070">1</div><div class="flow-node-info"><div class="flow-node-name">GPU / Accelerators</div><div class="flow-node-status">Very Tight 🔥 &middot; NVDA, AMD, ARM, INTC</div></div><div class="flow-node-pct" style="color:#f07070">90% 🔥</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#f5a454"><div class="flow-node-num" style="background:#f5a454">2</div><div class="flow-node-info"><div class="flow-node-name">Custom ASIC + NIC</div><div class="flow-node-status">Tight &middot; AVGO, MRVL, ALAB, CRDO</div></div><div class="flow-node-pct" style="color:#f5a454">80%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#e8c44a"><div class="flow-node-num" style="background:#e8c44a">6</div><div class="flow-node-info"><div class="flow-node-name">Networking / Switching</div><div class="flow-node-status">Tight &middot; ANET, CRDO, ALAB</div></div><div class="flow-node-pct" style="color:#e8c44a">75%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#f5a454"><div class="flow-node-num" style="background:#f5a454">7</div><div class="flow-node-info"><div class="flow-node-name">Optics / Photonics</div><div class="flow-node-status">Shortage &middot; LITE, COHR, MRVL</div></div><div class="flow-node-pct" style="color:#f5a454">88%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#e8c44a"><div class="flow-node-num" style="background:#e8c44a">8</div><div class="flow-node-info"><div class="flow-node-name">Interconnect / Copper</div><div class="flow-node-status">Tight &middot; APH, CRDO</div></div><div class="flow-node-pct" style="color:#e8c44a">76%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#e8c44a"><div class="flow-node-num" style="background:#e8c44a">9</div><div class="flow-node-info"><div class="flow-node-name">Server OEM / Integration</div><div class="flow-node-status">Opportunity &middot; SMCI, DELL, HPE</div></div><div class="flow-node-pct" style="color:#e8c44a">72%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#f07070;--glow-color:#f07070" class="critical"><div class="flow-node-num" style="background:#f07070">5</div><div class="flow-node-info"><div class="flow-node-name">Memory / HBM</div><div class="flow-node-status">SOLD OUT 🔥 &middot; MU, 000660.KS, 005930.KS</div></div><div class="flow-node-pct" style="color:#f07070">98% 🔥</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#f07070;--glow-color:#f07070" class="critical"><div class="flow-node-num" style="background:#f07070">3</div><div class="flow-node-info"><div class="flow-node-name">Foundry + Packaging (CoWoS)</div><div class="flow-node-status">BOTTLENECK 🔥 &middot; TSM, 005930.KS</div></div><div class="flow-node-pct" style="color:#f07070">93% 🔥</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#e8c44a"><div class="flow-node-num" style="background:#e8c44a">4</div><div class="flow-node-info"><div class="flow-node-name">Semi Equipment</div><div class="flow-node-status">Balanced &middot; ASML, AMAT, LRCX, KLAC, TER</div></div><div class="flow-node-pct" style="color:#e8c44a">70%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#f5a454"><div class="flow-node-num" style="background:#f5a454">10</div><div class="flow-node-info"><div class="flow-node-name">Power Delivery + Cooling</div><div class="flow-node-status">Strained &middot; VRT, ETN</div></div><div class="flow-node-pct" style="color:#f5a454">82%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#f5a454"><div class="flow-node-num" style="background:#f5a454">11</div><div class="flow-node-info"><div class="flow-node-name">Power Generation</div><div class="flow-node-status">Sold Out &middot; GEV</div></div><div class="flow-node-pct" style="color:#f5a454">85%</div></div>
+  <div class="flow-connector"></div>
+  <div class="flow-node" style="--node-color:#e8c44a"><div class="flow-node-num" style="background:#e8c44a">12</div><div class="flow-node-info"><div class="flow-node-name">Energy / Nuclear</div><div class="flow-node-status">Constrained &middot; CEG, VST, OKLO, BWXT</div></div><div class="flow-node-pct" style="color:#e8c44a">78%</div></div>
+</div>
+
+<div style="font-size:10px;color:var(--faint);text-align:center;margin-bottom:var(--space-4);letter-spacing:.04em;text-transform:uppercase;font-weight:600">▲ Dependency Flow: Energy → Power → Foundry → Memory → GPU → Networking → Server → Cloud ▲</div>
+
 <div class="layer-map">
   <div class="layer-row"><div class="layer-name"><span class="layer-num">1</span>GPU / Accelerators</div><div class="layer-tickers"><span class="lticker">NVDA</span><span class="lticker">AMD</span><span class="lticker">ARM</span><span class="lticker">INTC</span></div></div>
   <div class="layer-row"><div class="layer-name"><span class="layer-num">2</span>Custom ASIC + NIC</div><div class="layer-tickers"><span class="lticker">AVGO</span><span class="lticker">MRVL</span><span class="lticker">ALAB</span><span class="lticker">CRDO</span></div></div>
@@ -829,6 +923,44 @@ img,svg{display:block;max-width:100%}
 </div><!-- /content -->
 </main>
 
+<!-- ════ SIDE PANEL OVERLAY ════ -->
+<div class="panel-overlay" id="panelOverlay"></div>
+<div class="side-panel" id="sidePanel">
+  <button class="sp-close" id="spClose">&times;</button>
+  <div class="sp-header">
+    <div class="sp-ticker" id="spTicker">NVDA</div>
+    <div class="sp-company" id="spCompany">NVIDIA Corporation</div>
+  </div>
+  <div class="sp-price-section">
+    <div class="sp-price" id="spPrice">$0.00</div>
+    <div class="sp-change" id="spChange"><span id="spChgAmt"></span><span id="spChgPct"></span></div>
+    <div class="sp-sparkline-wrap"><canvas id="spSparkline"></canvas></div>
+    <div class="sp-unavail" id="spUnavail" style="display:none"></div>
+  </div>
+  <div class="sp-section">
+    <div class="sp-section-title">Key Metrics</div>
+    <div class="sp-metrics-grid">
+      <div class="sp-metric"><span class="sp-metric-label">Market Cap</span><span class="sp-metric-val" id="spMcap">—</span></div>
+      <div class="sp-metric"><span class="sp-metric-label">P/E Ratio</span><span class="sp-metric-val" id="spPE">—</span></div>
+      <div class="sp-metric"><span class="sp-metric-label">52-Week High</span><span class="sp-metric-val" id="spHi52">—</span></div>
+      <div class="sp-metric"><span class="sp-metric-label">52-Week Low</span><span class="sp-metric-val" id="spLo52">—</span></div>
+    </div>
+  </div>
+  <div class="sp-section">
+    <div class="sp-section-title">Layer Context</div>
+    <div class="sp-layers" id="spLayers"></div>
+  </div>
+  <div class="sp-section">
+    <div class="sp-section-title">Investment Thesis</div>
+    <div class="sp-thesis" id="spThesis">—</div>
+  </div>
+  <div class="sp-section">
+    <div class="sp-section-title">Tags</div>
+    <div class="sp-tags" id="spTags"></div>
+  </div>
+  <div class="sp-links" id="spLinks"></div>
+</div>
+
 <script>
 /* ── NAV ── */
 function nav(btn,id){
@@ -922,6 +1054,214 @@ function initAllCharts(){
     options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
       plugins:{legend:{position:'right',labels:{color:muted,font:{size:10,family:'Inter'},boxWidth:10,padding:8}}}}}));
 }
+
+/* ── TICKER DATA ── */
+const TICKER_DATA = {
+  'NVDA': { name:'NVIDIA Corporation', price:197.21, chg:0.70, chgPct:0.36, mcap:'$4.79T', pe:'40.3', hi52:'$212.19', lo52:'$95.04', layers:['1 GPU / Accelerators'], thesis:'Irreplaceable GPU platform. FY26 $215.9B (+65%). Vera Rubin next-gen launching H2 2026 but facing 500K unit cut due to HBM4 issues. FY27 consensus $370B+.', tags:['Platform Leader','CoWoS Anchor','CUDA Lock-in'] },
+  'AMD': { name:'Advanced Micro Devices', price:253.72, chg:-1.35, chgPct:-0.53, mcap:'$413.7B', pe:'96.8', hi52:'$267.08', lo52:'$83.75', layers:['1 GPU / Accelerators'], thesis:'MI450 ramping with Meta as largest customer (6GW partnership). DC GPU revenue targeting $15B in 2026.', tags:['#2 GPU','Meta Partnership','ROCm'] },
+  'ARM': { name:'Arm Holdings plc', price:157.51, chg:-3.71, chgPct:-2.30, mcap:'$167.3B', pe:'212.9', hi52:'$183.16', lo52:'$95.32', layers:['1 GPU / Accelerators'], thesis:'Historic pivot: launched first in-house AGI CPU March 24, 2026. Meta lead customer. Targeting $25B revenue by FY2031.', tags:['AGI CPU','Meta/OpenAI','Emerging'] },
+  'INTC': { name:'Intel Corporation', price:64.22, chg:0.41, chgPct:0.64, mcap:'$322.4B', pe:'N/A', hi52:'$65.84', lo52:'$18.25', layers:['1 GPU / Accelerators'], thesis:'18A yields 65-75%. Crescent Island inference GPU sampling H2 2026. Google expanded CPU partnership.', tags:['Foundry Pivot','18A','Crescent Island'] },
+  'AVGO': { name:'Broadcom Inc.', price:390.99, chg:10.21, chgPct:2.68, mcap:'$1.85T', pe:'76.2', hi52:'$414.61', lo52:'$161.61', layers:['2 Custom ASIC + NIC'], thesis:'6 XPU customers (Google, Meta, Anthropic, OpenAI, Fujitsu, ByteDance). Q2 FY26 guide $22B. Line of sight to $100B+ AI chip revenue in 2027.', tags:['6 XPU Wins','$100B Target','VMware'] },
+  'MRVL': { name:'Marvell Technology', price:132.68, chg:-1.15, chgPct:-0.86, mcap:'$116.0B', pe:'43.2', hi52:'$138.18', lo52:'$48.09', layers:['2 Custom ASIC + NIC','7 Optics / Photonics'], thesis:'FY26 $8.2B (+42%). Celestial AI acquired ($3.25-5.5B) for Photonic Fabric. FY27 target ~$11B.', tags:['Custom Silicon','Photonic Fabric','Accelerating'] },
+  'ALAB': { name:'Astera Labs', price:167.54, chg:-3.06, chgPct:-1.79, mcap:'$28.5B', pe:'137.3', hi52:'$262.90', lo52:'$52.56', layers:['2 Custom ASIC + NIC','6 Networking'], thesis:'Scorpio X-Series in production. Amazon $6.5B purchase warrant. FY26E revenue $1.35B (+58%).', tags:['Scorpio','Amazon Warrant','High Growth'] },
+  'CRDO': { name:'Credo Technology', price:162.88, chg:3.36, chgPct:2.11, mcap:'$30.0B', pe:'89.5', hi52:'$213.80', lo52:'$33.04', layers:['2 Custom ASIC + NIC','6 Networking','8 Interconnect'], thesis:'Q3 $407M (+201%). ~70% AEC market share. Acquired DustPhotonics for $750M (silicon photonics).', tags:['AEC Leader','DustPhotonics','200%+ Growth'] },
+  'TSM': { name:'Taiwan Semiconductor', price:374.81, chg:-5.08, chgPct:-1.34, mcap:'$1.94T', pe:'36.0', hi52:'$390.21', lo52:'$145.84', layers:['3 Foundry + Packaging'], thesis:'Q1 2026 $35.71B (+35%). CoWoS 75-80K wpm → 120-130K target by EOY. N2 in HVM. CoPoS pilot June 2026.', tags:['CoWoS Monopoly','N2 HVM','$1.9T'] },
+  '005930.KS': { name:'Samsung Electronics', price:0, chg:0, chgPct:0, mcap:'~$350B', pe:'~15', hi52:'N/A', lo52:'N/A', layers:['3 Foundry + Packaging','5 Memory (HBM)'], thesis:'HBM4 mass production started Feb 2026. Qualified for both NVIDIA and AMD. Market share recovering to ~28%.', tags:['HBM4 Qualified','Foundry #2','Recovery'] },
+  'ASML': { name:'ASML Holding', price:1427.66, chg:-90.64, chgPct:-5.97, mcap:'$550.2B', pe:'49.5', hi52:'$1,547.22', lo52:'$614.06', layers:['4 Semi Equipment'], thesis:'Q1 €8.8B. 2026 guide raised to €36-40B. €38.8B backlog. MATCH Act poses ~5% revenue risk.', tags:['EUV Monopoly','€38.8B Backlog','China Risk'] },
+  'AMAT': { name:'Applied Materials', price:383.82, chg:-11.82, chgPct:-2.99, mcap:'$304.6B', pe:'39.4', hi52:'$407.29', lo52:'$132.80', layers:['4 Semi Equipment'], thesis:'Q1 FY26 $7.01B. New GAA tools for 2nm launched April 2026. Expects >20% semi equipment growth in 2026.', tags:['GAA Tools','Advanced Packaging','Stable'] },
+  'LRCX': { name:'Lam Research', price:258.38, chg:-14.03, chgPct:-5.15, mcap:'$322.7B', pe:'53.2', hi52:'$273.50', lo52:'$61.14', layers:['4 Semi Equipment'], thesis:'Q2 FY26 $5.34B (+22%). Advanced packaging revenue +40% in 2026. WFE industry $135B forecast.', tags:['Etch Leader','Packaging +40%','WFE $135B'] },
+  'KLAC': { name:'KLA Corporation', price:1697.73, chg:-98.18, chgPct:-5.47, mcap:'$223.1B', pe:'49.4', hi52:'$1,798.00', lo52:'$607.70', layers:['4 Semi Equipment'], thesis:'Q1 FY26 $3.21B (+13%). 2030 targets: $26B revenue, $84 EPS.', tags:['Inspection','2030 Vision','Margin Leader'] },
+  'TER': { name:'Teradyne', price:357.05, chg:-8.46, chgPct:-2.31, mcap:'$55.9B', pe:'103.2', hi52:'$373.00', lo52:'$68.24', layers:['4 Semi Equipment'], thesis:'Q4 2025 $1.083B (+44%). 60%+ revenue from AI test.', tags:['AI Test','60%+ AI Rev','Robotics'] },
+  'AEIS': { name:'Advanced Energy Industries', price:366.19, chg:-19.54, chgPct:-5.07, mcap:'$13.8B', pe:'94.6', hi52:'$386.25', lo52:'$82.64', layers:['4 Semi Equipment'], thesis:'Q4 2025 $489.4M. Data Center segment +100.6% YoY.', tags:['DC Power +100%','Precision Power','Emerging'] },
+  'MU': { name:'Micron Technology', price:443.57, chg:-22.09, chgPct:-4.74, mcap:'$500.2B', pe:'20.9', hi52:'$471.34', lo52:'$65.65', layers:['5 Memory (HBM)'], thesis:'FQ2 $23.86B (3x YoY), GM 74.9%. FQ3 guide $33.5B + 81% GM. HBM4 100% sold out under binding contracts. Sole US HBM4 supplier.', tags:['HBM4 Sold Out','US Sovereign','5-yr SCAs'] },
+  '000660.KS': { name:'SK Hynix', price:0, chg:0, chgPct:0, mcap:'~$120B', pe:'~8', hi52:'N/A', lo52:'N/A', layers:['5 Memory (HBM)'], thesis:'#1 HBM supplier ~47% share. Cutting HBM4 shipments 20-30% due to Vera Rubin delays. HBM4 16H 48GB targeting Q3 2026.', tags:['#1 HBM Share','Rubin Delays','HXSCF OTC'] },
+  'ANET': { name:'Arista Networks', price:151.81, chg:-2.56, chgPct:-1.66, mcap:'$191.2B', pe:'55.0', hi52:'$164.94', lo52:'$66.59', layers:['6 Networking'], thesis:'Q4 2025 $2.49B (+29%). 2026 guide $11.25B (+25%). AI Center target raised to $3.25B.', tags:['AI Switching','$3.25B AI','800G Shipping'] },
+  'LITE': { name:'Lumentum Holdings', price:812.86, chg:-39.93, chgPct:-4.68, mcap:'$58.0B', pe:'233.6', hi52:'$960.00', lo52:'$49.13', layers:['7 Optics / Photonics'], thesis:'NVIDIA $2B investment closed. Q2 FY26 $665.5M. Q3 guide $805M. Targeting $2B/quarter in 18-24 months.', tags:['NVDA $2B','EML Leader','$2B/Q Target'] },
+  'COHR': { name:'Coherent Inc.', price:308.15, chg:-5.27, chgPct:-1.68, mcap:'$48.9B', pe:'305.1', hi52:'$322.48', lo52:'$50.81', layers:['7 Optics / Photonics'], thesis:'NVIDIA $2B investment. Q2 FY26 $1.686B (+17.5%). DC book-to-bill >4x. Doubling InP capacity in 2026.', tags:['NVDA $2B','InP Doubling','Book-to-Bill >4x'] },
+  'APH': { name:'Amphenol Corporation', price:145.79, chg:-2.93, chgPct:-1.97, mcap:'$179.2B', pe:'43.5', hi52:'$167.04', lo52:'$62.55', layers:['8 Interconnect'], thesis:'Q4 $6.4B (+49%). IT datacom triple-digit organic growth. CommScope CCS closed Jan 2026.', tags:['Triple-Digit DC','CommScope CCS','Per-Rack Content'] },
+  'SMCI': { name:'Super Micro Computer', price:27.14, chg:-0.06, chgPct:-0.22, mcap:'$16.3B', pe:'19.8', hi52:'$62.36', lo52:'$19.48', layers:['9 Server OEM'], thesis:'Co-founder indicted March 2026. Revenue declining. Share shifting to Dell and HPE.', tags:['Legal Risk','Share Loss','Indicted'] },
+  'DELL': { name:'Dell Technologies', price:179.21, chg:-5.30, chgPct:-2.87, mcap:'$121.0B', pe:'20.7', hi52:'$191.37', lo52:'$80.74', layers:['9 Server OEM'], thesis:'$43B AI server backlog. FY27 AI server revenue target $50B. Gaining share from SMCI.', tags:['$43B Backlog','SMCI Beneficiary','Gaining Share'] },
+  'HPE': { name:'Hewlett Packard Enterprise', price:24.50, chg:0.03, chgPct:0.10, mcap:'$32.5B', pe:'N/A', hi52:'$26.44', lo52:'$14.55', layers:['9 Server OEM'], thesis:'Networking surge from Juniper integration. Gaining AI server share from SMCI troubles.', tags:['Juniper Synergy','SMCI Beneficiary','Networking'] },
+  'VRT': { name:'Vertiv Holdings', price:298.66, chg:-11.85, chgPct:-3.82, mcap:'$114.3B', pe:'87.3', hi52:'$312.46', lo52:'$65.93', layers:['10 Power Delivery + Cooling'], thesis:'Record $15B backlog. Orders +252% organic growth. FY2026 guide $13.7B revenue.', tags:['$15B Backlog','+252% Orders','Record'] },
+  'ETN': { name:'Eaton Corporation', price:392.08, chg:-9.82, chgPct:-2.44, mcap:'$152.1B', pe:'37.6', hi52:'$408.45', lo52:'$255.10', layers:['10 Power Delivery + Cooling'], thesis:'Boyd Thermal acquisition closed March 12. Chip-to-grid power delivery strategy. $1.1B DC order pipeline.', tags:['Boyd Thermal','Chip-to-Grid','$1.1B Pipeline'] },
+  'GEV': { name:'GE Vernova', price:978.65, chg:-8.85, chgPct:-0.90, mcap:'$263.8B', pe:'55.3', hi52:'$1,007.38', lo52:'$306.21', layers:['11 Power Generation'], thesis:'83 GW gas turbine backlog, $150B total backlog. Targeting 100 GW by EOY 2026.', tags:['83 GW Backlog','100 GW Target','Gas Turbine Boom'] },
+  'CEG': { name:'Constellation Energy', price:293.82, chg:-2.79, chgPct:-0.94, mcap:'$91.8B', pe:'39.7', hi52:'$412.70', lo52:'$188.01', layers:['12 Energy / Nuclear'], thesis:'Calpine acquisition closed. Crane restart 2027 (FERC risk). TMI restart on track for 2028 (835 MW for MSFT).', tags:['TMI Restart','Calpine','Nuclear Leader'] },
+  'VST': { name:'Vistra Corp', price:162.60, chg:-1.37, chgPct:-0.84, mcap:'$55.0B', pe:'74.6', hi52:'$219.82', lo52:'$103.34', layers:['12 Energy / Nuclear'], thesis:'Meta 20-yr PPA. AWS deal. Cogentrix acquisition. Nuclear fleet as AI power proxy.', tags:['Meta 20yr PPA','AWS Deal','Nuclear Fleet'] },
+  'OKLO': { name:'Oklo Inc.', price:63.28, chg:4.70, chgPct:8.02, mcap:'$11.0B', pe:'N/A', hi52:'$193.84', lo52:'$19.89', layers:['12 Energy / Nuclear'], thesis:'Meta 1.2 GW campus deal. Criticality target July 2026. First SMR to deploy for AI workloads.', tags:['Meta 1.2 GW','SMR Pioneer','July Criticality'] },
+  'BWXT': { name:'BWX Technologies', price:237.02, chg:-1.25, chgPct:-0.52, mcap:'$21.7B', pe:'66.2', hi52:'$240.31', lo52:'$99.63', layers:['12 Energy / Nuclear'], thesis:'NRC enrichment license filed April 7. Nuclear fuel and components for next-gen SMRs.', tags:['NRC Filed','Nuclear Fuel','HALEU'] },
+  'EQIX': { name:'Equinix', price:1048.13, chg:-9.24, chgPct:-0.87, mcap:'$103.0B', pe:'76.3', hi52:'$1,060.07', lo52:'$710.52', layers:['13 DC REITs'], thesis:'$10B+ FY2026 first-ever. Global footprint with 260+ data centers across 72 metros.', tags:['$10B+ Rev','Global Leader','xScale'] },
+  'DLR': { name:'Digital Realty Trust', price:194.36, chg:-1.43, chgPct:-0.73, mcap:'$66.8B', pe:'54.1', hi52:'$196.41', lo52:'$143.83', layers:['13 DC REITs'], thesis:'$1.4B backlog. Strong hyperscaler demand for large-scale campuses.', tags:['Hyperscaler','$1.4B Backlog','Campus Scale'] },
+  'IRM': { name:'Iron Mountain', price:112.79, chg:-1.24, chgPct:-1.09, mcap:'$33.4B', pe:'230.2', hi52:'$115.24', lo52:'$77.77', layers:['13 DC REITs'], thesis:'>$1B DC revenue target 2026. Expanding from records mgmt into AI data centers.', tags:['DC Expansion','$1B Target','Pivot Play'] },
+  'CRWV': { name:'CoreWeave', price:118.37, chg:1.17, chgPct:1.00, mcap:'$62.2B', pe:'N/A', hi52:'$187.00', lo52:'$33.52', layers:['14 AI Cloud / Neoclouds'], thesis:'$66.8B contract backlog post-IPO. Meta $35.2B deal. FY26 target ~$12B revenue.', tags:['$66.8B Backlog','Meta $35.2B','GPU Cloud'] },
+  'NBIS': { name:'Nebius Group', price:161.74, chg:-0.20, chgPct:-0.12, mcap:'$38.8B', pe:'1347.8', hi52:'$166.10', lo52:'$20.25', layers:['14 AI Cloud / Neoclouds'], thesis:'NVIDIA $2B investment. $20B backlog. Building GPU cloud infrastructure at scale.', tags:['NVDA $2B','$20B Backlog','Yandex Spin'] },
+  'IREN': { name:'IREN Limited', price:46.41, chg:-0.96, chgPct:-2.02, mcap:'$15.4B', pe:'32.2', hi52:'$76.87', lo52:'$5.24', layers:['14 AI Cloud / Neoclouds'], thesis:'150K GPUs operational. $2.3-3.7B ARR target. Sweetwater facility energized.', tags:['150K GPUs','Sweetwater','BTC→AI Pivot'] },
+  'CIFR': { name:'Cipher Digital', price:17.62, chg:-0.82, chgPct:-4.47, mcap:'$7.1B', pe:'N/A', hi52:'$25.52', lo52:'$2.22', layers:['14 AI Cloud / Neoclouds'], thesis:'$9.3B HPC contracts. Near-complete Bitcoin mining exit. McLennan 500 MW + Colchis 1 GW.', tags:['$9.3B HPC','BTC Exit','1.5 GW Pipeline'] }
+};
+
+/* ── SIDE PANEL LOGIC ── */
+let spSparkChart = null;
+
+async function fetchLiveQuote(ticker) {
+  if(ticker.includes('.KS')) return null;
+  try {
+    const r = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?range=1d&interval=5m');
+    const d = await r.json();
+    const meta = d.chart.result[0].meta;
+    const closes = d.chart.result[0].indicators.quote[0].close.filter(v=>v!==null);
+    return { price: meta.regularMarketPrice, prevClose: meta.previousClose, closes };
+  } catch(e) { return null; }
+}
+
+function openPanel(ticker) {
+  const data = TICKER_DATA[ticker];
+  if(!data) return;
+
+  const panel = document.getElementById('sidePanel');
+  const overlay = document.getElementById('panelOverlay');
+
+  // Fill static data
+  document.getElementById('spTicker').textContent = ticker;
+  document.getElementById('spCompany').textContent = data.name;
+  document.getElementById('spMcap').textContent = data.mcap;
+  document.getElementById('spPE').textContent = data.pe;
+  document.getElementById('spHi52').textContent = data.hi52;
+  document.getElementById('spLo52').textContent = data.lo52;
+  document.getElementById('spThesis').textContent = data.thesis;
+
+  // Layers
+  const layersEl = document.getElementById('spLayers');
+  layersEl.innerHTML = data.layers.map(l => '<span class="sp-layer-badge">' + l + '</span>').join('');
+
+  // Tags
+  const tagsEl = document.getElementById('spTags');
+  tagsEl.innerHTML = data.tags.map(t => '<span class="sp-tag">' + t + '</span>').join('');
+
+  // Links
+  const linksEl = document.getElementById('spLinks');
+  const yUrl = 'https://finance.yahoo.com/quote/' + ticker;
+  const pUrl = 'https://www.perplexity.ai/finance/quote/' + ticker;
+  linksEl.innerHTML = '<a class="sp-link primary-link" href="'+yUrl+'" target="_blank" rel="noopener">View on Yahoo Finance ↗</a>'
+    + '<a class="sp-link" href="'+pUrl+'" target="_blank" rel="noopener">View on Perplexity Finance ↗</a>';
+
+  // Set static price first
+  showPrice(data.price, data.chg, data.chgPct, null, ticker);
+
+  // Open panel
+  panel.classList.add('open');
+  overlay.classList.add('open');
+
+  // Try live fetch
+  fetchLiveQuote(ticker).then(live => {
+    if(live && live.price) {
+      const chg = live.price - live.prevClose;
+      const chgPct = (chg / live.prevClose) * 100;
+      showPrice(live.price, chg, chgPct, live.closes, ticker);
+    } else {
+      // Show fallback message
+      const unavailEl = document.getElementById('spUnavail');
+      if(ticker.includes('.KS')) {
+        unavailEl.innerHTML = 'Korean exchange — <a href="https://finance.yahoo.com/quote/'+ticker+'" target="_blank" rel="noopener">view on Yahoo Finance</a>';
+      } else {
+        unavailEl.innerHTML = 'Live price unavailable — <a href="https://finance.yahoo.com/quote/'+ticker+'" target="_blank" rel="noopener">open on Yahoo Finance</a>';
+      }
+      unavailEl.style.display = 'block';
+    }
+  });
+}
+
+function showPrice(price, chg, chgPct, closes, ticker) {
+  const priceEl = document.getElementById('spPrice');
+  const changeEl = document.getElementById('spChange');
+  const chgAmtEl = document.getElementById('spChgAmt');
+  const chgPctEl = document.getElementById('spChgPct');
+  const unavailEl = document.getElementById('spUnavail');
+  const sparkWrap = document.querySelector('.sp-sparkline-wrap');
+
+  if(price === 0) {
+    priceEl.textContent = 'N/A';
+    changeEl.className = 'sp-change';
+    chgAmtEl.textContent = '';
+    chgPctEl.textContent = '';
+    sparkWrap.style.display = 'none';
+    return;
+  }
+
+  sparkWrap.style.display = 'block';
+  unavailEl.style.display = 'none';
+  priceEl.textContent = '$' + price.toFixed(2);
+
+  const isUp = chg >= 0;
+  changeEl.className = 'sp-change ' + (isUp ? 'up' : 'dn');
+  chgAmtEl.textContent = (isUp ? '+' : '') + chg.toFixed(2);
+  chgPctEl.textContent = '(' + (isUp ? '+' : '') + chgPct.toFixed(2) + '%)';
+
+  // Sparkline
+  if(spSparkChart) { try { spSparkChart.destroy(); } catch(e){} spSparkChart = null; }
+  const canvas = document.getElementById('spSparkline');
+  if(closes && closes.length > 2) {
+    drawSparkline(canvas, closes, isUp);
+  } else {
+    // Generate a simple synthetic sparkline from static data
+    const base = price - chg;
+    const pts = [];
+    for(let i=0; i<30; i++) {
+      const t = i/29;
+      pts.push(base + (chg * t) + (Math.random()-.5) * Math.abs(chg) * 2);
+    }
+    pts.push(price);
+    drawSparkline(canvas, pts, isUp);
+  }
+}
+
+function drawSparkline(canvas, data, isUp) {
+  const color = isUp ? gs('--success') : gs('--error');
+  spSparkChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: data.map((_,i)=>i),
+      datasets: [{
+        data: data,
+        borderColor: color,
+        backgroundColor: color + '18',
+        fill: true,
+        borderWidth: 1.5,
+        pointRadius: 0,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: {
+        x: { display: false },
+        y: { display: false }
+      },
+      elements: { point: { radius: 0 } },
+      animation: { duration: 400 }
+    }
+  });
+}
+
+function closePanel() {
+  document.getElementById('sidePanel').classList.remove('open');
+  document.getElementById('panelOverlay').classList.remove('open');
+  if(spSparkChart) { try { spSparkChart.destroy(); } catch(e){} spSparkChart = null; }
+}
+
+// Attach events
+document.getElementById('spClose').addEventListener('click', closePanel);
+document.getElementById('panelOverlay').addEventListener('click', closePanel);
+document.addEventListener('keydown', function(e) { if(e.key === 'Escape') closePanel(); });
+
+// Delegate click on all .lticker elements
+document.addEventListener('click', function(e) {
+  const el = e.target.closest('.lticker');
+  if(el) {
+    const ticker = el.textContent.trim();
+    openPanel(ticker);
+  }
+});
 
 window.addEventListener('load',function(){
   setTimeout(initAllCharts,300);
