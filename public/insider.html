@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Insider Activity — AI Supply Chain Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+if(typeof Chart==="undefined"){var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js";document.head.appendChild(s);}
+</script>
+<style>
+:root {
+  --bg:#0d0f14;--surface:#13151d;--text:#dde0f0;--primary:#5b9cf6;
+  --muted:#7a7f98;--border:#1e2230;--green:#34d399;--red:#f87171;
+  --yellow:#fbbf24;--orange:#fb923c;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;
+  --text-xs:0.75rem;--text-sm:0.875rem;--text-base:1rem;--text-lg:1.125rem;--text-xl:1.25rem;--text-2xl:1.5rem;--text-3xl:1.875rem;
+  --radius:8px;--radius-lg:12px;
+}
+[data-theme="light"] {
+  --bg:#f2f3f7;--surface:#fff;--text:#1a1d2e;--primary:#2563eb;
+  --muted:#6b7280;--border:#d1d5db;--green:#059669;--red:#dc2626;
+  --yellow:#d97706;--orange:#ea580c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.tab-bar{display:flex;gap:2px;background:var(--surface);border-bottom:2px solid var(--border);padding:0 var(--space-4);position:sticky;top:0;z-index:100;overflow-x:auto}
+.tab-link{padding:var(--space-3) var(--space-4);font-size:var(--text-xs);font-weight:600;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .2s,border-color .2s}
+.tab-link:hover{color:var(--text)}
+.tab-link.active{color:var(--primary);border-bottom-color:var(--primary)}
+.page-header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-6) var(--space-8);border-bottom:1px solid var(--border)}
+.page-header h1{font-size:var(--text-2xl);font-weight:700}
+.theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:var(--space-2) var(--space-3);border-radius:var(--radius);cursor:pointer;font-size:var(--text-sm)}
+.main{padding:var(--space-6) var(--space-8);max-width:1600px;margin:0 auto}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5)}
+.card h2{font-size:var(--text-lg);font-weight:600;margin-bottom:var(--space-4);color:var(--text)}
+.card h3{font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-3);color:var(--muted)}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-5);margin-bottom:var(--space-6)}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-5);margin-bottom:var(--space-6)}
+.stat-value{font-size:var(--text-3xl);font-weight:700;font-family:'JetBrains Mono',monospace}
+.stat-label{font-size:var(--text-xs);color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-1)}
+.stat-sub{font-size:var(--text-sm);color:var(--muted);margin-top:var(--space-1)}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:var(--text-xs);font-weight:600;text-transform:uppercase}
+.badge-buy{background:rgba(52,211,153,0.15);color:var(--green)}
+.badge-sell{background:rgba(248,113,113,0.15);color:var(--red)}
+.signal-box{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4);border-radius:var(--radius);font-weight:600}
+.signal-green{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:var(--green)}
+.signal-red{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);color:var(--red)}
+.signal-dot{width:12px;height:12px;border-radius:50%;animation:pulse 2s infinite}
+.signal-green .signal-dot{background:var(--green)}
+.signal-red .signal-dot{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.filters{display:flex;flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-5);align-items:center}
+.filters label{font-size:var(--text-xs);color:var(--muted);font-weight:600;text-transform:uppercase}
+.filters select,.filters input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:var(--space-2) var(--space-3);border-radius:var(--radius);font-size:var(--text-sm);font-family:'Inter',sans-serif}
+.filters select{min-width:140px}
+.feed{max-height:600px;overflow-y:auto;display:flex;flex-direction:column;gap:var(--space-3)}
+.feed::-webkit-scrollbar{width:6px}
+.feed::-webkit-scrollbar-track{background:var(--bg)}
+.feed::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.txn-card{display:grid;grid-template-columns:100px 1fr auto;gap:var(--space-4);padding:var(--space-4);background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);align-items:center;transition:border-color .2s}
+.txn-card:hover{border-color:var(--primary)}
+.txn-date{font-family:'JetBrains Mono',monospace;font-size:var(--text-xs);color:var(--muted)}
+.txn-info{display:flex;flex-direction:column;gap:2px}
+.txn-name{font-weight:600;font-size:var(--text-sm)}
+.txn-ticker{font-family:'JetBrains Mono',monospace;color:var(--primary);font-weight:500;font-size:var(--text-xs)}
+.txn-details{font-size:var(--text-xs);color:var(--muted)}
+.txn-value{text-align:right}
+.txn-value .amount{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:var(--text-sm)}
+table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+th{text-align:left;padding:var(--space-3);border-bottom:2px solid var(--border);font-size:var(--text-xs);color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:600;position:sticky;top:0;background:var(--surface)}
+td{padding:var(--space-3);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:var(--text-xs)}
+.table-wrap{max-height:400px;overflow-y:auto}
+.mono{font-family:'JetBrains Mono',monospace}
+@media(max-width:1024px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
+@media(max-width:640px){.grid-4{grid-template-columns:1fr}.txn-card{grid-template-columns:80px 1fr}.txn-value{grid-column:1/-1;text-align:left}.main{padding:var(--space-4)}}
+</style>
+</head>
+<body>
+<nav class="tab-bar">
+  <a href="index.html" class="tab-link">Main Dashboard</a>
+  <a href="correlation.html" class="tab-link">Correlation</a>
+  <a href="technicals.html" class="tab-link">Technicals</a>
+  <a href="insider.html" class="tab-link active">Insider Activity</a>
+  <a href="options.html" class="tab-link">Options Flow</a>
+  <a href="sentiment.html" class="tab-link">Sentiment</a>
+  <a href="leaderboard.html" class="tab-link">Leaderboard</a>
+  <a href="stress-test.html" class="tab-link">Stress Test</a>
+</nav>
+<header class="page-header">
+  <h1>Insider &amp; Institutional Activity</h1>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+</header>
+<div class="main">
+  <!-- Smart Money Signal -->
+  <div id="smartSignal" style="margin-bottom:var(--space-6)"></div>
+
+  <!-- Summary Stats -->
+  <div class="grid-4" id="statsGrid"></div>
+
+  <!-- Charts Row -->
+  <div class="grid-2">
+    <div class="card">
+      <h2>Net Insider Activity by Ticker</h2>
+      <div style="position:relative;height:400px"><canvas id="chartNetBuying"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Buy vs Sell Distribution (by Value)</h2>
+      <div style="position:relative;height:400px;display:flex;align-items:center;justify-content:center"><canvas id="chartPie"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Filters + Feed -->
+  <div class="card" style="margin-bottom:var(--space-6)">
+    <h2>Activity Feed</h2>
+    <div class="filters">
+      <label>Ticker</label>
+      <select id="filterTicker" multiple size="1"><option value="ALL" selected>All Tickers</option></select>
+      <label>Type</label>
+      <select id="filterType"><option value="ALL">All</option><option value="Buy">Buy</option><option value="Sell">Sell</option></select>
+      <label>From</label>
+      <input type="date" id="filterFrom">
+      <label>To</label>
+      <input type="date" id="filterTo">
+    </div>
+    <div class="feed" id="feedContainer"></div>
+  </div>
+
+  <!-- Institutional Context Table -->
+  <div class="card">
+    <h2>Market Context — Insider-Active Tickers</h2>
+    <div class="table-wrap">
+      <table id="contextTable">
+        <thead><tr><th>Ticker</th><th>Name</th><th>Price</th><th>Change %</th><th>Volume</th><th>Avg Volume</th><th>Market Cap</th><th>P/E</th><th># Transactions</th><th>Net Value</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// Safe storage shim for sandboxed environments
+var _memStore={};
+var safeStorage={getItem:function(k){return _memStore[k]||null},setItem:function(k,v){_memStore[k]=v},removeItem:function(k){delete _memStore[k]}};
+</script>
+<script>
+const INSIDER_DATA = {"NVDA": [{"date": "2026-03-20", "name": "STEVENS MARK A", "type": "Sell", "shares": 100000, "price": 172.61, "value": 17261000.0}, {"date": "2026-03-20", "name": "STEVENS MARK A", "type": "Sell", "shares": 121682, "price": 174.57, "value": 21242027.0}, {"date": "2026-03-19", "name": "SHAH AARTI S.", "type": "Sell", "shares": 8516, "price": 176.27, "value": 1501115.0}, {"date": "2026-03-13", "name": "DABIRI JOHN", "type": "Sell", "shares": 3004, "price": 184.9, "value": 555440.0}, {"date": "2026-02-04", "name": "KRESS COLETTE", "type": "Sell", "shares": 528, "price": 179.16, "value": 94596.0}, {"date": "2026-01-21", "name": "PURI AJAY K", "type": "Sell", "shares": 200000, "price": 180.04, "value": 36008000.0}], "AMD": [{"date": "2026-04-06", "name": "PAPERMASTER MARK D", "type": "Sell", "shares": 3293, "price": 225.0, "value": 740925.0}, {"date": "2026-03-12", "name": "SU LISA T", "type": "Sell", "shares": 16228, "price": 197.42, "value": 3203732.0}, {"date": "2026-01-16", "name": "HAHN AVA", "type": "Sell", "shares": 2442, "price": 234.42, "value": 572454.0}], "ARM": [{"date": "2026-03-25", "name": "HAAS RENE A.", "type": "Sell", "shares": 1092, "price": 163.35, "value": 178378.0}, {"date": "2026-03-25", "name": "HAAS RENE A.", "type": "Sell", "shares": 4830, "price": 162.62, "value": 785455.0}, {"date": "2026-03-25", "name": "HAAS RENE A.", "type": "Sell", "shares": 6196, "price": 161.47, "value": 1000468.0}], "INTC": [{"date": "2026-01-26", "name": "ZINSNER DAVID", "type": "Buy", "shares": 5882, "price": 42.5, "value": 249985.0}], "AVGO": [{"date": "2026-04-10", "name": "VELAGA S. RAM", "type": "Sell", "shares": 8000, "price": 370.52, "value": 2964160.0}, {"date": "2026-04-09", "name": "DELLY GAYLA J", "type": "Sell", "shares": 1000, "price": 358.31, "value": 358310.0}, {"date": "2026-04-08", "name": "VELAGA S. RAM", "type": "Sell", "shares": 12955, "price": 352.02, "value": 4560419.0}, {"date": "2026-03-16", "name": "SPEARS KIRSTEN M.", "type": "Sell", "shares": 5147, "price": 327.78, "value": 1687084.0}, {"date": "2026-03-16", "name": "SPEARS KIRSTEN M.", "type": "Sell", "shares": 2787, "price": 328.52, "value": 915585.0}, {"date": "2026-03-17", "name": "SPEARS KIRSTEN M.", "type": "Sell", "shares": 3715, "price": 318.05, "value": 1181556.0}], "MRVL": [{"date": "2026-04-06", "name": "CASPER MARK", "type": "Sell", "shares": 6900, "price": 109.45, "value": 755205.0}, {"date": "2026-04-06", "name": "KOOPMANS CHRIS", "type": "Sell", "shares": 10000, "price": 110.24, "value": 1102400.0}, {"date": "2026-04-01", "name": "CASPER MARK", "type": "Sell", "shares": 7000, "price": 105.11, "value": 735770.0}, {"date": "2026-04-02", "name": "CASPER MARK", "type": "Sell", "shares": 10854, "price": 107.01, "value": 1161487.0}, {"date": "2026-03-26", "name": "BHARATHI SANDEEP", "type": "Sell", "shares": 44414, "price": 99.61, "value": 4424079.0}, {"date": "2026-03-26", "name": "MURPHY MATTHEW J", "type": "Sell", "shares": 30000, "price": 98.7, "value": 2961000.0}], "ALAB": [{"date": "2026-04-10", "name": "MOHAN JITENDRA", "type": "Sell", "shares": 99023, "price": 149.53, "value": 14806909.0}, {"date": "2026-04-10", "name": "MOHAN JITENDRA", "type": "Sell", "shares": 24727, "price": 150.25, "value": 3715232.0}, {"date": "2026-04-01", "name": "ALBA MANUEL", "type": "Sell", "shares": 57001, "price": 106.32, "value": 6060346.0}, {"date": "2026-03-02", "name": "MAZZARA PHILIP", "type": "Sell", "shares": 1200, "price": 113.85, "value": 136620.0}, {"date": "2026-03-02", "name": "MAZZARA PHILIP", "type": "Sell", "shares": 677, "price": 114.81, "value": 77726.0}, {"date": "2026-03-02", "name": "MAZZARA PHILIP", "type": "Sell", "shares": 750, "price": 115.84, "value": 86880.0}], "CRDO": [{"date": "2026-04-10", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 600, "price": 109.05, "value": 65430.0}, {"date": "2026-04-10", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 1423, "price": 110.13, "value": 156715.0}, {"date": "2026-04-10", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 1875, "price": 111.07, "value": 208256.0}, {"date": "2026-03-11", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 4079, "price": 117.16, "value": 477896.0}, {"date": "2026-03-11", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 5700, "price": 117.97, "value": 672429.0}, {"date": "2026-03-11", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 6144, "price": 119.13, "value": 731935.0}, {"date": "2026-01-22", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 427, "price": 140.96, "value": 60190.0}, {"date": "2026-01-22", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 500, "price": 142.5, "value": 71250.0}, {"date": "2026-01-22", "name": "CHENG CHI FUNG", "type": "Sell", "shares": 300, "price": 143.54, "value": 43062.0}], "TSM": [{"date": "2026-04-09", "name": "YOO CHUE-SAN", "type": "Buy", "shares": 65, "price": 57.87, "value": 3762.0}, {"date": "2026-04-09", "name": "YUAN LIPEN", "type": "Buy", "shares": 52, "price": 57.87, "value": 3009.0}, {"date": "2026-04-09", "name": "ZHANG KEVIN XIAOQIANG", "type": "Buy", "shares": 79, "price": 57.87, "value": 4572.0}], "AMAT": [{"date": "2026-02-25", "name": "BRUNER JUDY", "type": "Sell", "shares": 2500, "price": 391.71, "value": 979275.0}, {"date": "2026-02-23", "name": "BRUNER JUDY", "type": "Sell", "shares": 2458, "price": 376.49, "value": 925412.0}, {"date": "2026-02-23", "name": "BRUNER JUDY", "type": "Sell", "shares": 1511, "price": 377.89, "value": 570992.0}, {"date": "2026-02-24", "name": "SANDERS ADAM", "type": "Sell", "shares": 534, "price": 379.16, "value": 202471.0}, {"date": "2026-02-17", "name": "HILL BRICE", "type": "Sell", "shares": 5000, "price": 361.21, "value": 1806050.0}], "TER": [{"date": "2026-04-08", "name": "MILLS REGAN", "type": "Sell", "shares": 16, "price": 342.17, "value": 5475.0}, {"date": "2026-04-06", "name": "JOHNSON MERCEDES", "type": "Sell", "shares": 625, "price": 312.2, "value": 195125.0}], "AEIS": [{"date": "2026-03-18", "name": "OLDHAM PAUL R", "type": "Sell", "shares": 4314, "price": 315.99, "value": 1363181.0}, {"date": "2026-03-16", "name": "DELSANTO ANNE", "type": "Sell", "shares": 240, "price": 312.59, "value": 75022.0}, {"date": "2026-03-13", "name": "SHIRLEY BRIAN", "type": "Sell", "shares": 1234, "price": 310.19, "value": 382774.0}, {"date": "2026-02-17", "name": "DELSANTO ANNE", "type": "Sell", "shares": 240, "price": 311.04, "value": 74650.0}, {"date": "2026-02-13", "name": "MINNIX LANESHA", "type": "Sell", "shares": 1000, "price": 316.62, "value": 316620.0}], "MU": [{"date": "2026-04-10", "name": "SADANA SUMIT", "type": "Sell", "shares": 24000, "price": 421.35, "value": 10112400.0}, {"date": "2026-04-09", "name": "CORDANO MICHAEL D", "type": "Sell", "shares": 3407, "price": 420.81, "value": 1433700.0}, {"date": "2026-04-01", "name": "ARNZEN APRIL S", "type": "Sell", "shares": 8630, "price": 345.13, "value": 2978472.0}, {"date": "2026-01-27", "name": "RAY MICHAEL CHARLES", "type": "Sell", "shares": 1600, "price": 407.95, "value": 652720.0}, {"date": "2026-01-27", "name": "RAY MICHAEL CHARLES", "type": "Sell", "shares": 2000, "price": 409.18, "value": 818360.0}, {"date": "2026-01-27", "name": "RAY MICHAEL CHARLES", "type": "Sell", "shares": 1168, "price": 410.08, "value": 478973.0}], "ANET": [{"date": "2026-04-01", "name": "GIANCARLO CHARLES H", "type": "Sell", "shares": 3898, "price": 125.38, "value": 488731.0}, {"date": "2026-04-01", "name": "GIANCARLO CHARLES H", "type": "Sell", "shares": 3702, "price": 126.44, "value": 468081.0}, {"date": "2026-04-01", "name": "GIANCARLO CHARLES H", "type": "Sell", "shares": 400, "price": 127.0, "value": 50800.0}, {"date": "2026-01-20", "name": "DUDA KENNETH", "type": "Sell", "shares": 10756, "price": 129.25, "value": 1390213.0}, {"date": "2026-01-20", "name": "DUDA KENNETH", "type": "Sell", "shares": 2407, "price": 129.9, "value": 312669.0}], "LITE": [{"date": "2026-02-27", "name": "ALI WAJID", "type": "Sell", "shares": 200, "price": 677.78, "value": 135556.0}, {"date": "2026-02-12", "name": "RETORT VINCENT", "type": "Sell", "shares": 450, "price": 576.35, "value": 259358.0}, {"date": "2026-02-06", "name": "HERSCHER PENNY", "type": "Sell", "shares": 4849, "price": 535.48, "value": 2596543.0}], "APH": [{"date": "2026-02-18", "name": "LAMPO CRAIG A", "type": "Sell", "shares": 100000, "price": 149.98, "value": 14998000.0}, {"date": "2026-02-18", "name": "D'AMICO LANCE E", "type": "Sell", "shares": 50000, "price": 149.88, "value": 7494000.0}, {"date": "2026-02-12", "name": "NORWITT RICHARD ADAM", "type": "Sell", "shares": 515281, "price": 147.27, "value": 75885433.0}, {"date": "2026-02-12", "name": "NORWITT RICHARD ADAM", "type": "Sell", "shares": 93052, "price": 147.17, "value": 13694463.0}, {"date": "2026-02-05", "name": "LIVINGSTON ROBERT", "type": "Buy", "shares": 10000, "price": 128.51, "value": 1285100.0}], "DELL": [{"date": "2026-04-09", "name": "KENNEDY DAVID ALAN", "type": "Sell", "shares": 19500, "price": 182.53, "value": 3559335.0}, {"date": "2026-03-23", "name": "SCANNELL WILLIAM F", "type": "Sell", "shares": 143067, "price": 165.0, "value": 23606055.0}],"SNDK":[{"date":"2026-03-20","name":"SHEK BERNARD","type":"Sell","shares":117,"price":709.71,"value":83036},{"date":"2026-03-03","name":"CAULFIELD THOMAS","type":"Sell","shares":14500,"price":0,"value":0},{"date":"2026-02-25","name":"SUZUKI MIYUKI","type":"Sell","shares":3500,"price":627.53,"value":2196355},{"date":"2026-02-25","name":"GOECKELER DAVID","type":"Sell","shares":1569,"price":632.38,"value":992204},{"date":"2026-02-25","name":"ILKBAHAR ALPER","type":"Sell","shares":566,"price":632.38,"value":357927},{"date":"2026-02-21","name":"VISOSO LUIS FELIPE","type":"Sell","shares":1594,"price":649.97,"value":1036052}]};
+const QUOTES_DATA = {"NVDA": {"name": "NVIDIA Corporation", "price": 197.73, "change": 1.22, "changesPct": 0.62, "volume": 140849087, "avgVolume": 178422101, "marketCap": 4805827644266, "pe": 40.35, "yearLow": 95.04, "yearHigh": 212.19}, "AMD": {"name": "Advanced Micro Devices, Inc.", "price": 255.71, "change": 0.64, "changesPct": 0.25, "volume": 17666486, "avgVolume": 37431775, "marketCap": 416912141100, "pe": 97.6, "yearLow": 83.75, "yearHigh": 267.08}, "ARM": {"name": "Arm Holdings plc American Depositary Shares", "price": 158.98, "change": -2.24, "changesPct": -1.39, "volume": 2872196, "avgVolume": 7025718, "marketCap": 168835139660, "pe": 214.84, "yearLow": 95.32, "yearHigh": 183.16}, "INTC": {"name": "Intel Corporation", "price": 64.64, "change": 0.82, "changesPct": 1.29, "volume": 73660371, "avgVolume": 118651544, "marketCap": 324532981350, "pe": -1077.25, "yearLow": 18.25, "yearHigh": 65.84}, "AVGO": {"name": "Broadcom Inc.", "price": 394.32, "change": 13.54, "changesPct": 3.56, "volume": 20623862, "avgVolume": 26706215, "marketCap": 1869579551057, "pe": 76.87, "yearLow": 161.61, "yearHigh": 414.61}, "MRVL": {"name": "Marvell Technology, Inc.", "price": 133.09, "change": -0.74, "changesPct": -0.55, "volume": 17330974, "avgVolume": 20138613, "marketCap": 116379778858, "pe": 43.35, "yearLow": 48.09, "yearHigh": 138.18}, "ALAB": {"name": "Astera Labs, Inc. Common Stock", "price": 169.31, "change": -1.29, "changesPct": -0.75, "volume": 3510933, "avgVolume": 5351355, "marketCap": 28819800490, "pe": 138.78, "yearLow": 52.56, "yearHigh": 262.9}, "CRDO": {"name": "Credo Technology Group Holding Ltd", "price": 166.53, "change": 7.0, "changesPct": 4.39, "volume": 8252238, "avgVolume": 7342833, "marketCap": 30715526259, "pe": 91.5, "yearLow": 33.04, "yearHigh": 213.8}, "TSM": {"name": "Taiwan Semiconductor Manufacturing Company Limited", "price": 376.4, "change": -3.49, "changesPct": -0.92, "volume": 10659845, "avgVolume": 13330916, "marketCap": 1952202172412, "pe": 36.16, "yearLow": 145.84, "yearHigh": 390.21}, "ASML": {"name": "ASML Holding N.V.", "price": 1444.6, "change": -73.7, "changesPct": -4.85, "volume": 3196056, "avgVolume": 1804964, "marketCap": 556774328755, "pe": 50.07, "yearLow": 614.06, "yearHigh": 1547.22}, "AMAT": {"name": "Applied Materials, Inc.", "price": 388.36, "change": -7.28, "changesPct": -1.84, "volume": 3281491, "avgVolume": 7429048, "marketCap": 308206379600, "pe": 39.83, "yearLow": 132.8, "yearHigh": 407.29}, "LRCX": {"name": "Lam Research Corporation", "price": 261.85, "change": -10.56, "changesPct": -3.88, "volume": 7419046, "avgVolume": 10961991, "marketCap": 326984442495, "pe": 53.88, "yearLow": 61.14, "yearHigh": 273.5}, "KLAC": {"name": "KLA Corporation", "price": 1718.3, "change": -77.61, "changesPct": -4.32, "volume": 790705, "avgVolume": 1091138, "marketCap": 225770793987, "pe": 49.95, "yearLow": 607.7, "yearHigh": 1798.0}, "TER": {"name": "Teradyne, Inc.", "price": 360.77, "change": -4.74, "changesPct": -1.3, "volume": 1287598, "avgVolume": 3508586, "marketCap": 56480692464, "pe": 104.27, "yearLow": 68.24, "yearHigh": 373.0}, "AEIS": {"name": "Advanced Energy Industries, Inc.", "price": 370.68, "change": -15.05, "changesPct": -3.9, "volume": 476546, "avgVolume": 751086, "marketCap": 13993540680, "pe": 95.78, "yearLow": 82.64, "yearHigh": 386.25}, "MU": {"name": "Micron Technology, Inc.", "price": 451.6, "change": -14.06, "changesPct": -3.02, "volume": 33078349, "avgVolume": 44655845, "marketCap": 509282868000, "pe": 21.3, "yearLow": 65.65, "yearHigh": 471.34}, "ANET": {"name": "Arista Networks, Inc.", "price": 154.09, "change": -0.28, "changesPct": -0.18, "volume": 3716997, "avgVolume": 7804525, "marketCap": 194043246606, "pe": 55.83, "yearLow": 66.59, "yearHigh": 164.94}, "LITE": {"name": "Lumentum Holdings Inc.", "price": 816.52, "change": -36.27, "changesPct": -4.25, "volume": 4975105, "avgVolume": 6542642, "marketCap": 58299528000, "pe": 234.63, "yearLow": 49.13, "yearHigh": 960.0}, "APH": {"name": "Amphenol Corporation", "price": 147.66, "change": -1.06, "changesPct": -0.71, "volume": 3887834, "avgVolume": 10217511, "marketCap": 181506625200, "pe": 44.08, "yearLow": 62.55, "yearHigh": 167.04}, "DELL": {"name": "Dell Technologies Inc.", "price": 179.39, "change": -5.12, "changesPct": -2.77, "volume": 5027276, "avgVolume": 8785921, "marketCap": 121088568597, "pe": 20.69, "yearLow": 80.74, "yearHigh": 191.37}, "SMCI": {"name": "Super Micro Computer, Inc.", "price": 27.25, "change": 0.04, "changesPct": 0.17, "volume": 21336238, "avgVolume": 37893328, "marketCap": 16319455305, "pe": 19.89, "yearLow": 19.48, "yearHigh": 62.36}, "HPE": {"name": "Hewlett Packard Enterprise Company", "price": 24.7, "change": 0.23, "changesPct": 0.96, "volume": 5186016, "avgVolume": 18190990, "marketCap": 32828211275, "pe": -145.32, "yearLow": 14.55, "yearHigh": 26.44}, "VRT": {"name": "Vertiv Holdings Co", "price": 300.76, "change": -9.75, "changesPct": -3.14, "volume": 3953784, "avgVolume": 7782065, "marketCap": 115070178216, "pe": 87.94, "yearLow": 65.93, "yearHigh": 312.46}, "ETN": {"name": "Eaton Corporation plc", "price": 394.79, "change": -7.11, "changesPct": -1.77, "volume": 1368434, "avgVolume": 2802966, "marketCap": 153172598150, "pe": 37.82, "yearLow": 255.1, "yearHigh": 408.45}, "GEV": {"name": "GE Vernova Inc.", "price": 988.31, "change": 0.81, "changesPct": 0.08, "volume": 1336388, "avgVolume": 2783090, "marketCap": 266378676426, "pe": 55.81, "yearLow": 306.21, "yearHigh": 1007.38}, "CEG": {"name": "Constellation Energy Corporation", "price": 295.0, "change": -1.6, "changesPct": -0.54, "volume": 1118175, "avgVolume": 3746113, "marketCap": 92127132100, "pe": 39.87, "yearLow": 188.01, "yearHigh": 412.7}, "VST": {"name": "Vistra Corp.", "price": 163.39, "change": -0.58, "changesPct": -0.35, "volume": 2147597, "avgVolume": 5047073, "marketCap": 55315568613, "pe": 74.95, "yearLow": 103.34, "yearHigh": 219.82}, "OKLO": {"name": "Oklo Inc.", "price": 63.52, "change": 4.94, "changesPct": 8.43, "volume": 18218307, "avgVolume": 9295225, "marketCap": 11025089414, "pe": -88.22, "yearLow": 19.89, "yearHigh": 193.84}, "BWXT": {"name": "BWX Technologies, Inc.", "price": 239.08, "change": 0.81, "changesPct": 0.34, "volume": 486433, "avgVolume": 1017006, "marketCap": 21862694508, "pe": 66.78, "yearLow": 99.63, "yearHigh": 240.31}, "DLR": {"name": "Digital Realty Trust, Inc.", "price": 195.16, "change": -0.63, "changesPct": -0.32, "volume": 882842, "avgVolume": 2033426, "marketCap": 67059903400, "pe": 54.36, "yearLow": 143.83, "yearHigh": 196.41}, "EQIX": {"name": "Equinix, Inc.", "price": 1047.49, "change": -9.88, "changesPct": -0.93, "volume": 330135, "avgVolume": 640470, "marketCap": 102921025201, "pe": 76.24, "yearLow": 710.52, "yearHigh": 1060.07}, "IRM": {"name": "Iron Mountain Incorporated", "price": 113.59, "change": -0.44, "changesPct": -0.39, "volume": 487774, "avgVolume": 1770630, "marketCap": 33603897650, "pe": 231.82, "yearLow": 77.77, "yearHigh": 115.24}, "IREN": {"name": "IREN Limited", "price": 47.4, "change": 0.03, "changesPct": 0.06, "volume": 23563744, "avgVolume": 38081391, "marketCap": 15725384990, "pe": 32.92, "yearLow": 5.24, "yearHigh": 76.87}, "CIFR": {"name": "Cipher Mining Inc.", "price": 17.91, "change": -0.55, "changesPct": -2.95, "volume": 16212805, "avgVolume": 29075313, "marketCap": 7253655695, "pe": -7.75, "yearLow": 2.22, "yearHigh": 25.52}, "NBIS": {"name": "Nebius Group N.V.", "price": 164.76, "change": 2.82, "changesPct": 1.74, "volume": 11314356, "avgVolume": 18450575, "marketCap": 39541440000, "pe": 1372.97, "yearLow": 20.25, "yearHigh": 166.1}, "CRWV": {"name": "CoreWeave, Inc. Class A Common Stock", "price": 119.05, "change": 1.85, "changesPct": 1.58, "volume": 35706021, "avgVolume": 27694678, "marketCap": 62583169376, "pe": -42.37, "yearLow": 33.52, "yearHigh": 187.0},"SNDK":{"name":"Sandisk Corporation","price":890.04,"change":-54.42,"changesPct":-5.76,"volume":13962737,"avgVolume":19947901,"marketCap":131370767339,"pe":-118.67,"yearLow":28.94,"yearHigh":965.0}};
+
+// Theme
+function getTheme(){ try{ return safeStorage.getItem('theme')||'dark'; }catch(e){ return 'dark'; } }
+function setTheme(t){ document.documentElement.setAttribute('data-theme',t); safeStorage.setItem('theme',t) }
+function toggleTheme(){ setTheme(getTheme()==='dark'?'light':'dark'); }
+setTheme(getTheme());
+
+// Flatten transactions
+const allTxns = [];
+for(const [ticker, txns] of Object.entries(INSIDER_DATA)){
+  for(const t of txns){
+    allTxns.push({...t, ticker});
+  }
+}
+allTxns.sort((a,b)=> b.date.localeCompare(a.date));
+
+const insiderTickers = Object.keys(INSIDER_DATA).sort();
+
+// Populate ticker filter
+const sel = document.getElementById('filterTicker');
+insiderTickers.forEach(t=>{
+  const o = document.createElement('option');
+  o.value=t; o.textContent=t;
+  sel.appendChild(o);
+});
+
+// Format helpers
+const fmt = n => {
+  if(Math.abs(n)>=1e9) return '$'+( n/1e9).toFixed(1)+'B';
+  if(Math.abs(n)>=1e6) return '$'+(n/1e6).toFixed(1)+'M';
+  if(Math.abs(n)>=1e3) return '$'+(n/1e3).toFixed(1)+'K';
+  return '$'+n.toFixed(0);
+};
+const fmtN = n => n.toLocaleString();
+const fmtPct = n => (n>=0?'+':'')+n.toFixed(2)+'%';
+
+// Calculate stats
+const buys = allTxns.filter(t=>t.type==='Buy');
+const sells = allTxns.filter(t=>t.type==='Sell');
+const totalBuyVal = buys.reduce((s,t)=>s+t.value,0);
+const totalSellVal = sells.reduce((s,t)=>s+t.value,0);
+const largest = allTxns.reduce((a,b)=>a.value>b.value?a:b);
+
+// Most active insider
+const insiderCounts = {};
+allTxns.forEach(t=>{ insiderCounts[t.name]=(insiderCounts[t.name]||0)+1; });
+const mostActive = Object.entries(insiderCounts).sort((a,b)=>b[1]-a[1])[0];
+
+// Smart Money Signal
+const netBuying = totalBuyVal - totalSellVal;
+const sigEl = document.getElementById('smartSignal');
+sigEl.innerHTML = `<div class="signal-box ${netBuying>=0?'signal-green':'signal-red'}">
+  <div class="signal-dot"></div>
+  <span>Smart Money Signal: ${netBuying>=0?'NET BUYING':'NET SELLING'} &mdash; ${fmt(Math.abs(netBuying))} net ${netBuying>=0?'inflow':'outflow'} across ${insiderTickers.length} tickers</span>
+</div>`;
+
+// Stats cards
+document.getElementById('statsGrid').innerHTML = `
+  <div class="card">
+    <div class="stat-label">Total Buys</div>
+    <div class="stat-value" style="color:var(--green)">${buys.length}</div>
+    <div class="stat-sub">${fmt(totalBuyVal)} total value</div>
+  </div>
+  <div class="card">
+    <div class="stat-label">Total Sells</div>
+    <div class="stat-value" style="color:var(--red)">${sells.length}</div>
+    <div class="stat-sub">${fmt(totalSellVal)} total value</div>
+  </div>
+  <div class="card">
+    <div class="stat-label">Largest Transaction</div>
+    <div class="stat-value" style="font-size:var(--text-xl)">${fmt(largest.value)}</div>
+    <div class="stat-sub">${largest.name} &mdash; ${largest.ticker} (${largest.type})</div>
+  </div>
+  <div class="card">
+    <div class="stat-label">Most Active Insider</div>
+    <div class="stat-value" style="font-size:var(--text-xl)">${mostActive[1]}</div>
+    <div class="stat-sub">${mostActive[0]}</div>
+  </div>
+`;
+
+// Net buying by ticker chart
+const netByTicker = {};
+insiderTickers.forEach(t=>{ netByTicker[t]=0; });
+allTxns.forEach(tx=>{
+  netByTicker[tx.ticker] += tx.type==='Buy' ? tx.value : -tx.value;
+});
+const sortedTickers = insiderTickers.slice().sort((a,b)=>netByTicker[b]-netByTicker[a]);
+const netVals = sortedTickers.map(t=>netByTicker[t]);
+const netColors = netVals.map(v=>v>=0?'rgba(52,211,153,0.7)':'rgba(248,113,113,0.7)');
+
+try { new Chart(document.getElementById('chartNetBuying'),{
+  type:'bar',
+  data:{
+    labels:sortedTickers,
+    datasets:[{label:'Net Value ($)',data:netVals,backgroundColor:netColors,borderRadius:4}]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.raw)}}},
+    scales:{
+      x:{ticks:{color:'#7a7f98',callback:v=>fmt(v)},grid:{color:'rgba(30,34,48,0.5)'}},
+      y:{ticks:{color:'#7a7f98',font:{family:"'JetBrains Mono'",size:11}},grid:{display:false}}
+    }
+  }
+}); } catch(e) { console.warn("Chart render failed:", e); }
+
+// Pie chart
+try { new Chart(document.getElementById('chartPie'),{
+  type:'doughnut',
+  data:{
+    labels:['Buys','Sells'],
+    datasets:[{data:[totalBuyVal,totalSellVal],backgroundColor:['rgba(52,211,153,0.8)','rgba(248,113,113,0.8)'],borderWidth:0,hoverOffset:8}]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    cutout:'55%',
+    plugins:{
+      legend:{position:'bottom',labels:{color:'#7a7f98',font:{size:12}}},
+      tooltip:{callbacks:{label:c=>c.label+': '+fmt(c.raw)+' ('+(c.raw/(totalBuyVal+totalSellVal)*100).toFixed(1)+'%)'}}
+    }
+  }
+}); } catch(e) { console.warn("Chart render failed:", e); }
+
+// Feed rendering
+function renderFeed(){
+  const tickerSel = document.getElementById('filterTicker');
+  const selectedTickers = Array.from(tickerSel.selectedOptions).map(o=>o.value);
+  const showAll = selectedTickers.includes('ALL') || selectedTickers.length===0;
+  const typeFilt = document.getElementById('filterType').value;
+  const fromD = document.getElementById('filterFrom').value;
+  const toD = document.getElementById('filterTo').value;
+
+  let filtered = allTxns.filter(t=>{
+    if(!showAll && !selectedTickers.includes(t.ticker)) return false;
+    if(typeFilt!=='ALL' && t.type!==typeFilt) return false;
+    if(fromD && t.date<fromD) return false;
+    if(toD && t.date>toD) return false;
+    return true;
+  });
+
+  const container = document.getElementById('feedContainer');
+  if(filtered.length===0){
+    container.innerHTML='<div style="padding:var(--space-6);text-align:center;color:var(--muted)">No transactions match filters</div>';
+    return;
+  }
+  container.innerHTML = filtered.map(t=>`
+    <div class="txn-card">
+      <div class="txn-date">${t.date}</div>
+      <div class="txn-info">
+        <div class="txn-name">${t.name}</div>
+        <div><span class="txn-ticker">${t.ticker}</span> <span class="badge ${t.type==='Buy'?'badge-buy':'badge-sell'}">${t.type}</span></div>
+        <div class="txn-details">${fmtN(t.shares)} shares @ $${t.price.toFixed(2)}</div>
+      </div>
+      <div class="txn-value">
+        <div class="amount" style="color:var(${t.type==='Buy'?'--green':'--red'})">${fmt(t.value)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('filterTicker').addEventListener('change',renderFeed);
+document.getElementById('filterType').addEventListener('change',renderFeed);
+document.getElementById('filterFrom').addEventListener('change',renderFeed);
+document.getElementById('filterTo').addEventListener('change',renderFeed);
+renderFeed();
+
+// Context table
+const tbody = document.querySelector('#contextTable tbody');
+insiderTickers.forEach(ticker=>{
+  const q = QUOTES_DATA[ticker];
+  if(!q) return;
+  const txns = INSIDER_DATA[ticker];
+  const netVal = txns.reduce((s,t)=>s+(t.type==='Buy'?t.value:-t.value),0);
+  const chgClass = q.changesPct>=0?'color:var(--green)':'color:var(--red)';
+  const netClass = netVal>=0?'color:var(--green)':'color:var(--red)';
+  tbody.innerHTML += `<tr>
+    <td style="color:var(--primary);font-weight:600">${ticker}</td>
+    <td style="font-family:Inter,sans-serif">${q.name.length>30?q.name.slice(0,30)+'...':q.name}</td>
+    <td>$${q.price.toFixed(2)}</td>
+    <td style="${chgClass}">${fmtPct(q.changesPct)}</td>
+    <td>${fmtN(q.volume)}</td>
+    <td>${fmtN(q.avgVolume)}</td>
+    <td>${fmt(q.marketCap)}</td>
+    <td>${q.pe>0?q.pe.toFixed(1):'N/A'}</td>
+    <td>${txns.length}</td>
+    <td style="${netClass}">${fmt(Math.abs(netVal))}</td>
+  </tr>`;
+});
+</script>
+</body>
+</html>

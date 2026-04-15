@@ -8,6 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Safe storage shim for sandboxed environments
+var _memStore={};
+var safeStorage={getItem:function(k){return _memStore[k]||null},setItem:function(k,v){_memStore[k]=v},removeItem:function(k){delete _memStore[k]}};
+</script>
 <script>if(typeof Chart==="undefined"){var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js";document.head.appendChild(s);}</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -44,7 +49,7 @@
 --shadow:0 4px 20px rgba(0,0,0,.1);--shadow-sm:0 1px 4px rgba(0,0,0,.06);
 }
 html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--text);background:var(--bg);display:flex;overflow:hidden;height:100vh}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);color:var(--text);background:var(--bg);display:flex;flex-direction:column;overflow:hidden;height:100vh}
 button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
 img,svg{display:block;max-width:100%}
 
@@ -386,9 +391,29 @@ img,svg{display:block;max-width:100%}
 .port-results-table tbody td{padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--div);font-variant-numeric:tabular-nums}
 .port-results-table tbody tr:hover td{background:var(--s2)}
 .port-results-table .ptk{font-family:var(--font-mono);font-weight:600;font-size:10px;color:var(--primary)}
+
+/* ── TOP TAB BAR ── */
+.tab-bar{display:flex;gap:2px;background:var(--surface);border-bottom:2px solid var(--border);padding:0 var(--space-4);position:sticky;top:0;z-index:100;overflow-x:auto}
+.tab-link{padding:var(--space-3) var(--space-4);font-size:var(--text-xs);font-weight:600;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .2s,border-color .2s}
+.tab-link:hover{color:var(--text)}
+.tab-link.active{color:var(--primary);border-bottom-color:var(--primary)}
+.dashboard-body{display:flex;overflow:hidden;flex:1;min-height:0}
 </style>
 </head>
 <body>
+
+<nav class="tab-bar">
+  <a href="index.html" class="tab-link active">Main Dashboard</a>
+  <a href="correlation.html" class="tab-link">Correlation</a>
+  <a href="technicals.html" class="tab-link">Technicals</a>
+  <a href="insider.html" class="tab-link">Insider Activity</a>
+  <a href="options.html" class="tab-link">Options Flow</a>
+  <a href="sentiment.html" class="tab-link">Sentiment</a>
+  <a href="leaderboard.html" class="tab-link">Leaderboard</a>
+  <a href="stress-test.html" class="tab-link">Stress Test</a>
+</nav>
+
+<div class="dashboard-body">
 
 <!-- ════════ SIDEBAR ════════ -->
 <aside class="sidebar">
@@ -1648,6 +1673,7 @@ img,svg{display:block;max-width:100%}
 
 </div><!-- /content -->
 </main>
+</div><!-- /dashboard-body -->
 
 <!-- ════ SIDE PANEL OVERLAY ════ -->
 <div class="panel-overlay" id="panelOverlay"></div>
@@ -2411,7 +2437,7 @@ window.addEventListener('load',function(){
   const btn = document.getElementById('toggleTheme');
   // Restore saved preference (try/catch for sandboxed environments)
   var saved = null;
-  try { saved = localStorage.getItem('ai-dashboard-theme'); } catch(e){}
+  saved = safeStorage.getItem('ai-dashboard-theme')
   if(saved && (saved==='dark'||saved==='light')){
     html.setAttribute('data-theme', saved);
   }
@@ -2429,7 +2455,7 @@ window.addEventListener('load',function(){
     const current = html.getAttribute('data-theme');
     const next = current==='dark'?'light':'dark';
     html.setAttribute('data-theme', next);
-    try { localStorage.setItem('ai-dashboard-theme', next); } catch(e){}
+    safeStorage.setItem('ai-dashboard-theme', next)
     newBtn.textContent = next==='dark'?'☀':'🌙';
     // Refresh charts for new theme colors
     destroyAll(); initAllCharts();

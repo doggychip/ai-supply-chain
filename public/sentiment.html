@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sentiment — AI Supply Chain Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+if(typeof Chart==="undefined"){var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js";document.head.appendChild(s);}
+</script>
+<style>
+:root {
+  --bg:#0d0f14;--surface:#13151d;--text:#dde0f0;--primary:#5b9cf6;
+  --muted:#7a7f98;--border:#1e2230;--green:#34d399;--red:#f87171;
+  --yellow:#fbbf24;--orange:#fb923c;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;
+  --text-xs:0.75rem;--text-sm:0.875rem;--text-base:1rem;--text-lg:1.125rem;--text-xl:1.25rem;--text-2xl:1.5rem;--text-3xl:1.875rem;
+  --radius:8px;--radius-lg:12px;
+}
+[data-theme="light"] {
+  --bg:#f2f3f7;--surface:#fff;--text:#1a1d2e;--primary:#2563eb;
+  --muted:#6b7280;--border:#d1d5db;--green:#059669;--red:#dc2626;
+  --yellow:#d97706;--orange:#ea580c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.tab-bar{display:flex;gap:2px;background:var(--surface);border-bottom:2px solid var(--border);padding:0 var(--space-4);position:sticky;top:0;z-index:100;overflow-x:auto}
+.tab-link{padding:var(--space-3) var(--space-4);font-size:var(--text-xs);font-weight:600;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .2s,border-color .2s}
+.tab-link:hover{color:var(--text)}
+.tab-link.active{color:var(--primary);border-bottom-color:var(--primary)}
+.page-header{display:flex;align-items:center;justify-content:space-between;padding:var(--space-6) var(--space-8);border-bottom:1px solid var(--border)}
+.page-header h1{font-size:var(--text-2xl);font-weight:700}
+.theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:var(--space-2) var(--space-3);border-radius:var(--radius);cursor:pointer;font-size:var(--text-sm)}
+.main{padding:var(--space-6) var(--space-8);max-width:1600px;margin:0 auto}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-5);margin-bottom:var(--space-5)}
+.card h2{font-size:var(--text-lg);font-weight:600;margin-bottom:var(--space-4)}
+.card h3{font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-3);color:var(--muted)}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-5);margin-bottom:var(--space-6)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-5);margin-bottom:var(--space-6)}
+.stat-value{font-size:var(--text-3xl);font-weight:700;font-family:'JetBrains Mono',monospace}
+.stat-label{font-size:var(--text-xs);color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-1)}
+.stat-sub{font-size:var(--text-sm);color:var(--muted);margin-top:var(--space-1)}
+.disclaimer{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:var(--radius);padding:var(--space-3) var(--space-4);font-size:var(--text-xs);color:var(--yellow);margin-bottom:var(--space-6);display:flex;align-items:center;gap:var(--space-3)}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:var(--text-xs);font-weight:600;text-transform:uppercase}
+.badge-bullish{background:rgba(52,211,153,0.15);color:var(--green)}
+.badge-bearish{background:rgba(248,113,113,0.15);color:var(--red)}
+.badge-neutral{background:rgba(122,127,152,0.15);color:var(--muted)}
+.heat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--space-2)}
+.heat-cell{padding:var(--space-3);border-radius:var(--radius);text-align:center;font-family:'JetBrains Mono',monospace;font-size:var(--text-xs);font-weight:600;border:1px solid var(--border);cursor:default;transition:transform .15s,box-shadow .15s}
+.heat-cell:hover{transform:scale(1.08);box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:1}
+.heat-cell .ht{margin-bottom:2px}
+.heat-cell .hs{font-size:10px;opacity:0.8}
+.fear-greed{display:flex;flex-direction:column;align-items:center;gap:var(--space-3)}
+.fg-ring{position:relative;width:200px;height:200px}
+.fg-label{font-size:var(--text-3xl);font-weight:700;font-family:'JetBrains Mono',monospace}
+.fg-desc{font-size:var(--text-sm);color:var(--muted)}
+.trending-list{display:flex;flex-direction:column;gap:var(--space-2)}
+.trending-item{display:flex;align-items:center;justify-content:space-between;padding:var(--space-3);background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)}
+.trending-item .rank{font-family:'JetBrains Mono',monospace;font-size:var(--text-xs);color:var(--muted);width:24px}
+.trending-item .ticker{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--primary);width:60px}
+.trending-item .bar-wrap{flex:1;margin:0 var(--space-3);height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.trending-item .bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.trending-item .score{font-family:'JetBrains Mono',monospace;font-size:var(--text-xs);font-weight:600;width:40px;text-align:right}
+.narrative-card{display:grid;grid-template-columns:1fr auto auto;gap:var(--space-4);padding:var(--space-4);background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);align-items:center;margin-bottom:var(--space-2)}
+.narrative-card .theme{font-weight:600;font-size:var(--text-sm)}
+.narrative-card .desc{font-size:var(--text-xs);color:var(--muted)}
+.mono{font-family:'JetBrains Mono',monospace}
+.sector-bar-wrap{margin-bottom:var(--space-3)}
+.sector-bar-label{display:flex;justify-content:space-between;font-size:var(--text-xs);margin-bottom:4px}
+.sector-bar-label span:first-child{font-weight:600}
+.sector-bar-label span:last-child{font-family:'JetBrains Mono',monospace}
+.sector-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.sector-bar-inner{height:100%;border-radius:4px;transition:width .6s}
+table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+th{text-align:left;padding:var(--space-3);border-bottom:2px solid var(--border);font-size:var(--text-xs);color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:600;position:sticky;top:0;background:var(--surface)}
+td{padding:var(--space-3);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:var(--text-xs)}
+.table-wrap{max-height:500px;overflow-y:auto}
+.table-wrap::-webkit-scrollbar{width:6px}
+.table-wrap::-webkit-scrollbar-track{background:var(--bg)}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:1024px){.grid-3{grid-template-columns:repeat(2,1fr)}.heat-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:640px){.grid-3{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}.heat-grid{grid-template-columns:repeat(3,1fr)}.main{padding:var(--space-4)}}
+</style>
+</head>
+<body>
+<nav class="tab-bar">
+  <a href="index.html" class="tab-link">Main Dashboard</a>
+  <a href="correlation.html" class="tab-link">Correlation</a>
+  <a href="technicals.html" class="tab-link">Technicals</a>
+  <a href="insider.html" class="tab-link">Insider Activity</a>
+  <a href="options.html" class="tab-link">Options Flow</a>
+  <a href="sentiment.html" class="tab-link active">Sentiment</a>
+  <a href="leaderboard.html" class="tab-link">Leaderboard</a>
+  <a href="stress-test.html" class="tab-link">Stress Test</a>
+</nav>
+<header class="page-header">
+  <h1>Market Sentiment Dashboard</h1>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+</header>
+<div class="main">
+  <div class="disclaimer">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L1 14h14L8 1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v4M8 11.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Derived from market data signals (price change, volume, 52-week range) — not NLP sentiment analysis
+  </div>
+
+  <!-- Fear & Greed + Overall + Top Stats -->
+  <div class="grid-3">
+    <div class="card" style="display:flex;flex-direction:column;align-items:center">
+      <h2>AI Supply Chain Fear &amp; Greed</h2>
+      <div class="fear-greed">
+        <canvas id="fgGauge" width="220" height="220"></canvas>
+        <div id="fgLabel"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Overall Market Sentiment</h2>
+      <canvas id="overallGauge" width="280" height="160" style="display:block;margin:0 auto"></canvas>
+      <div id="overallLabel" style="text-align:center;margin-top:var(--space-3)"></div>
+      <div id="overallBreakdown" style="margin-top:var(--space-4)"></div>
+    </div>
+    <div class="card">
+      <div class="stat-label">Bullish Tickers</div>
+      <div class="stat-value" style="color:var(--green)" id="bullCount">0</div>
+      <div class="stat-sub" id="bullSub"></div>
+      <div style="margin-top:var(--space-5)">
+        <div class="stat-label">Bearish Tickers</div>
+        <div class="stat-value" style="color:var(--red)" id="bearCount">0</div>
+        <div class="stat-sub" id="bearSub"></div>
+      </div>
+      <div style="margin-top:var(--space-5)">
+        <div class="stat-label">Neutral Tickers</div>
+        <div class="stat-value" style="color:var(--muted)" id="neutCount">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trending Tickers -->
+  <div class="grid-2">
+    <div class="card">
+      <h2>Top 5 Most Bullish</h2>
+      <div class="trending-list" id="topBullish"></div>
+    </div>
+    <div class="card">
+      <h2>Top 5 Most Bearish</h2>
+      <div class="trending-list" id="topBearish"></div>
+    </div>
+  </div>
+
+  <!-- Sentiment Heatmap -->
+  <div class="card">
+    <h2>Sentiment Heatmap — All 36 Tickers</h2>
+    <div class="heat-grid" id="heatGrid"></div>
+  </div>
+
+  <!-- Sector Sentiment + Chart -->
+  <div class="grid-2">
+    <div class="card">
+      <h2>Sector Sentiment Breakdown</h2>
+      <div id="sectorBars"></div>
+    </div>
+    <div class="card">
+      <h2>Sector Sentiment Comparison</h2>
+      <div style="position:relative;height:400px"><canvas id="sectorChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- AI Narrative Tracker -->
+  <div class="card">
+    <h2>AI Narrative Tracker</h2>
+    <p style="font-size:var(--text-xs);color:var(--muted);margin-bottom:var(--space-4)">Key investment themes derived from market signals of related tickers</p>
+    <div id="narratives"></div>
+  </div>
+
+  <!-- Full Sentiment Table -->
+  <div class="card">
+    <h2>Sentiment Score Card — All Tickers</h2>
+    <div class="table-wrap">
+      <table id="sentimentTable">
+        <thead><tr><th>Ticker</th><th>Name</th><th>Price</th><th>Chg %</th><th>Vol Ratio</th><th>52W Position</th><th>Composite Score</th><th>Sentiment</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// Safe storage shim for sandboxed environments
+var _memStore={};
+var safeStorage={getItem:function(k){return _memStore[k]||null},setItem:function(k,v){_memStore[k]=v},removeItem:function(k){delete _memStore[k]}};
+</script>
+<script>
+const QUOTES = {"NVDA": {"name": "NVIDIA Corporation", "price": 197.73, "change": 1.22, "changesPct": 0.62, "volume": 140849087, "avgVolume": 178422101, "marketCap": 4805827644266, "pe": 40.35, "yearLow": 95.04, "yearHigh": 212.19}, "AMD": {"name": "Advanced Micro Devices, Inc.", "price": 255.71, "change": 0.64, "changesPct": 0.25, "volume": 17666486, "avgVolume": 37431775, "marketCap": 416912141100, "pe": 97.6, "yearLow": 83.75, "yearHigh": 267.08}, "ARM": {"name": "Arm Holdings plc American Depositary Shares", "price": 158.98, "change": -2.24, "changesPct": -1.39, "volume": 2872196, "avgVolume": 7025718, "marketCap": 168835139660, "pe": 214.84, "yearLow": 95.32, "yearHigh": 183.16}, "INTC": {"name": "Intel Corporation", "price": 64.64, "change": 0.82, "changesPct": 1.29, "volume": 73660371, "avgVolume": 118651544, "marketCap": 324532981350, "pe": -1077.25, "yearLow": 18.25, "yearHigh": 65.84}, "AVGO": {"name": "Broadcom Inc.", "price": 394.32, "change": 13.54, "changesPct": 3.56, "volume": 20623862, "avgVolume": 26706215, "marketCap": 1869579551057, "pe": 76.87, "yearLow": 161.61, "yearHigh": 414.61}, "MRVL": {"name": "Marvell Technology, Inc.", "price": 133.09, "change": -0.74, "changesPct": -0.55, "volume": 17330974, "avgVolume": 20138613, "marketCap": 116379778858, "pe": 43.35, "yearLow": 48.09, "yearHigh": 138.18}, "ALAB": {"name": "Astera Labs, Inc. Common Stock", "price": 169.31, "change": -1.29, "changesPct": -0.75, "volume": 3510933, "avgVolume": 5351355, "marketCap": 28819800490, "pe": 138.78, "yearLow": 52.56, "yearHigh": 262.9}, "CRDO": {"name": "Credo Technology Group Holding Ltd", "price": 166.53, "change": 7.0, "changesPct": 4.39, "volume": 8252238, "avgVolume": 7342833, "marketCap": 30715526259, "pe": 91.5, "yearLow": 33.04, "yearHigh": 213.8}, "TSM": {"name": "Taiwan Semiconductor Manufacturing Company Limited", "price": 376.4, "change": -3.49, "changesPct": -0.92, "volume": 10659845, "avgVolume": 13330916, "marketCap": 1952202172412, "pe": 36.16, "yearLow": 145.84, "yearHigh": 390.21}, "ASML": {"name": "ASML Holding N.V.", "price": 1444.6, "change": -73.7, "changesPct": -4.85, "volume": 3196056, "avgVolume": 1804964, "marketCap": 556774328755, "pe": 50.07, "yearLow": 614.06, "yearHigh": 1547.22}, "AMAT": {"name": "Applied Materials, Inc.", "price": 388.36, "change": -7.28, "changesPct": -1.84, "volume": 3281491, "avgVolume": 7429048, "marketCap": 308206379600, "pe": 39.83, "yearLow": 132.8, "yearHigh": 407.29}, "LRCX": {"name": "Lam Research Corporation", "price": 261.85, "change": -10.56, "changesPct": -3.88, "volume": 7419046, "avgVolume": 10961991, "marketCap": 326984442495, "pe": 53.88, "yearLow": 61.14, "yearHigh": 273.5}, "KLAC": {"name": "KLA Corporation", "price": 1718.3, "change": -77.61, "changesPct": -4.32, "volume": 790705, "avgVolume": 1091138, "marketCap": 225770793987, "pe": 49.95, "yearLow": 607.7, "yearHigh": 1798.0}, "TER": {"name": "Teradyne, Inc.", "price": 360.77, "change": -4.74, "changesPct": -1.3, "volume": 1287598, "avgVolume": 3508586, "marketCap": 56480692464, "pe": 104.27, "yearLow": 68.24, "yearHigh": 373.0}, "AEIS": {"name": "Advanced Energy Industries, Inc.", "price": 370.68, "change": -15.05, "changesPct": -3.9, "volume": 476546, "avgVolume": 751086, "marketCap": 13993540680, "pe": 95.78, "yearLow": 82.64, "yearHigh": 386.25}, "MU": {"name": "Micron Technology, Inc.", "price": 451.6, "change": -14.06, "changesPct": -3.02, "volume": 33078349, "avgVolume": 44655845, "marketCap": 509282868000, "pe": 21.3, "yearLow": 65.65, "yearHigh": 471.34}, "ANET": {"name": "Arista Networks, Inc.", "price": 154.09, "change": -0.28, "changesPct": -0.18, "volume": 3716997, "avgVolume": 7804525, "marketCap": 194043246606, "pe": 55.83, "yearLow": 66.59, "yearHigh": 164.94}, "LITE": {"name": "Lumentum Holdings Inc.", "price": 816.52, "change": -36.27, "changesPct": -4.25, "volume": 4975105, "avgVolume": 6542642, "marketCap": 58299528000, "pe": 234.63, "yearLow": 49.13, "yearHigh": 960.0}, "APH": {"name": "Amphenol Corporation", "price": 147.66, "change": -1.06, "changesPct": -0.71, "volume": 3887834, "avgVolume": 10217511, "marketCap": 181506625200, "pe": 44.08, "yearLow": 62.55, "yearHigh": 167.04}, "DELL": {"name": "Dell Technologies Inc.", "price": 179.39, "change": -5.12, "changesPct": -2.77, "volume": 5027276, "avgVolume": 8785921, "marketCap": 121088568597, "pe": 20.69, "yearLow": 80.74, "yearHigh": 191.37}, "SMCI": {"name": "Super Micro Computer, Inc.", "price": 27.25, "change": 0.04, "changesPct": 0.17, "volume": 21336238, "avgVolume": 37893328, "marketCap": 16319455305, "pe": 19.89, "yearLow": 19.48, "yearHigh": 62.36}, "HPE": {"name": "Hewlett Packard Enterprise Company", "price": 24.7, "change": 0.23, "changesPct": 0.96, "volume": 5186016, "avgVolume": 18190990, "marketCap": 32828211275, "pe": -145.32, "yearLow": 14.55, "yearHigh": 26.44}, "VRT": {"name": "Vertiv Holdings Co", "price": 300.76, "change": -9.75, "changesPct": -3.14, "volume": 3953784, "avgVolume": 7782065, "marketCap": 115070178216, "pe": 87.94, "yearLow": 65.93, "yearHigh": 312.46}, "ETN": {"name": "Eaton Corporation plc", "price": 394.79, "change": -7.11, "changesPct": -1.77, "volume": 1368434, "avgVolume": 2802966, "marketCap": 153172598150, "pe": 37.82, "yearLow": 255.1, "yearHigh": 408.45}, "GEV": {"name": "GE Vernova Inc.", "price": 988.31, "change": 0.81, "changesPct": 0.08, "volume": 1336388, "avgVolume": 2783090, "marketCap": 266378676426, "pe": 55.81, "yearLow": 306.21, "yearHigh": 1007.38}, "CEG": {"name": "Constellation Energy Corporation", "price": 295.0, "change": -1.6, "changesPct": -0.54, "volume": 1118175, "avgVolume": 3746113, "marketCap": 92127132100, "pe": 39.87, "yearLow": 188.01, "yearHigh": 412.7}, "VST": {"name": "Vistra Corp.", "price": 163.39, "change": -0.58, "changesPct": -0.35, "volume": 2147597, "avgVolume": 5047073, "marketCap": 55315568613, "pe": 74.95, "yearLow": 103.34, "yearHigh": 219.82}, "OKLO": {"name": "Oklo Inc.", "price": 63.52, "change": 4.94, "changesPct": 8.43, "volume": 18218307, "avgVolume": 9295225, "marketCap": 11025089414, "pe": -88.22, "yearLow": 19.89, "yearHigh": 193.84}, "BWXT": {"name": "BWX Technologies, Inc.", "price": 239.08, "change": 0.81, "changesPct": 0.34, "volume": 486433, "avgVolume": 1017006, "marketCap": 21862694508, "pe": 66.78, "yearLow": 99.63, "yearHigh": 240.31}, "DLR": {"name": "Digital Realty Trust, Inc.", "price": 195.16, "change": -0.63, "changesPct": -0.32, "volume": 882842, "avgVolume": 2033426, "marketCap": 67059903400, "pe": 54.36, "yearLow": 143.83, "yearHigh": 196.41}, "EQIX": {"name": "Equinix, Inc.", "price": 1047.49, "change": -9.88, "changesPct": -0.93, "volume": 330135, "avgVolume": 640470, "marketCap": 102921025201, "pe": 76.24, "yearLow": 710.52, "yearHigh": 1060.07}, "IRM": {"name": "Iron Mountain Incorporated", "price": 113.59, "change": -0.44, "changesPct": -0.39, "volume": 487774, "avgVolume": 1770630, "marketCap": 33603897650, "pe": 231.82, "yearLow": 77.77, "yearHigh": 115.24}, "IREN": {"name": "IREN Limited", "price": 47.4, "change": 0.03, "changesPct": 0.06, "volume": 23563744, "avgVolume": 38081391, "marketCap": 15725384990, "pe": 32.92, "yearLow": 5.24, "yearHigh": 76.87}, "CIFR": {"name": "Cipher Mining Inc.", "price": 17.91, "change": -0.55, "changesPct": -2.95, "volume": 16212805, "avgVolume": 29075313, "marketCap": 7253655695, "pe": -7.75, "yearLow": 2.22, "yearHigh": 25.52}, "NBIS": {"name": "Nebius Group N.V.", "price": 164.76, "change": 2.82, "changesPct": 1.74, "volume": 11314356, "avgVolume": 18450575, "marketCap": 39541440000, "pe": 1372.97, "yearLow": 20.25, "yearHigh": 166.1}, "CRWV": {"name": "CoreWeave, Inc. Class A Common Stock", "price": 119.05, "change": 1.85, "changesPct": 1.58, "volume": 35706021, "avgVolume": 27694678, "marketCap": 62583169376, "pe": -42.37, "yearLow": 33.52, "yearHigh": 187.0},"SNDK":{"name":"Sandisk Corporation","price":890.04,"change":-54.42,"changesPct":-5.76,"volume":13962737,"avgVolume":19947901,"marketCap":131370767339,"pe":-118.67,"yearLow":28.94,"yearHigh":965.0}};
+const RATIOS = {"NVDA": {"date": "2026-01-25", "pe": 38.3, "ev_ebitda": 33.8484, "ps": 21.1224, "gross_margin": 71.1, "op_margin": 60.4, "net_margin": 55.6, "roe": 101.5, "de": 0.0701875, "fcf_margin": 44.8}, "AMD": {"date": "2025-12-27", "pe": 81.1283, "ev_ebitda": 51.1876, "ps": 10.1167, "gross_margin": 49.5, "op_margin": 10.7, "net_margin": 12.3, "roe": 7.1, "de": 0.0471912, "fcf_margin": 19.3}, "ARM": {"date": "2025-03-31", "pe": 175.066, "ev_ebitda": 108.197, "ps": 28.17, "gross_margin": 96.9, "op_margin": 20.2, "net_margin": 16.3, "roe": 10.8, "de": 0.0478357, "fcf_margin": -0.9}, "INTC": {"date": "2025-12-27", "pe": -603.333, "ev_ebitda": 21.2843, "ps": 3.42048, "gross_margin": 34.8, "op_margin": -4.2, "net_margin": 0.0, "roe": 0.0, "de": 0.407636, "fcf_margin": -9.4}, "AVGO": {"date": "2025-11-02", "pe": 77.4906, "ev_ebitda": 52.581, "ps": 27.4299, "gross_margin": 67.8, "op_margin": 39.9, "net_margin": 36.2, "roe": 31.0, "de": 0.801309, "fcf_margin": 42.1}, "MRVL": {"date": "2026-01-31", "pe": 25.7068, "ev_ebitda": 26.2869, "ps": 8.16012, "gross_margin": 51.0, "op_margin": 16.1, "net_margin": 32.6, "roe": 19.3, "de": 0.312446, "fcf_margin": 17.0}, "ALAB": {"date": "2025-12-31", "pe": 136.361, "ev_ebitda": 150.474, "ps": 33.2098, "gross_margin": 75.7, "op_margin": 20.3, "net_margin": 25.7, "roe": 18.8, "de": 0.330503, "fcf_margin": 474.8}, "CRDO": {"date": "2025-05-03", "pe": 166.414, "ev_ebitda": 132.775, "ps": 18.9127, "gross_margin": 64.8, "op_margin": 8.5, "net_margin": 11.9, "roe": 8.5, "de": 0.0186229, "fcf_margin": 6.6}, "TSM": {"date": "2025-12-31", "pe": 28.7923, "ev_ebitda": 18.024, "ps": 12.9843, "gross_margin": 59.9, "op_margin": 50.8, "net_margin": 45.0, "roe": 35.1, "de": 0.169876, "fcf_margin": 26.3}, "ASML": {"date": "2025-12-31", "pe": 34.7243, "ev_ebitda": 25.2717, "ps": 10.7584, "gross_margin": 51.8, "op_margin": 36.9, "net_margin": 30.6, "roe": 43.3, "de": 0.112012, "fcf_margin": 37.5}, "AMAT": {"date": "2025-10-26", "pe": 26.4145, "ev_ebitda": 20.5618, "ps": 6.39448, "gross_margin": 48.7, "op_margin": 29.2, "net_margin": 24.7, "roe": 35.5, "de": 0.321087, "fcf_margin": 20.1}, "LRCX": {"date": "2025-06-29", "pe": 23.4217, "ev_ebitda": 19.1914, "ps": 6.68932, "gross_margin": 48.7, "op_margin": 32.0, "net_margin": 29.1, "roe": 58.2, "de": 0.378254, "fcf_margin": 29.4}, "KLAC": {"date": "2025-06-30", "pe": 29.4942, "ev_ebitda": 23.1462, "ps": 9.72826, "gross_margin": 60.9, "op_margin": 39.3, "net_margin": 33.4, "roe": 100.8, "de": 1.25398, "fcf_margin": 30.8}, "TER": {"date": "2025-12-31", "pe": 55.781, "ev_ebitda": 38.7934, "ps": 9.4709, "gross_margin": 58.2, "op_margin": 20.4, "net_margin": 18.0, "roe": 20.4, "de": 0.0943929, "fcf_margin": 14.1}, "AEIS": {"date": "2025-12-31", "pe": 54.5234, "ev_ebitda": 33.8869, "ps": 4.3997, "gross_margin": 37.7, "op_margin": 9.3, "net_margin": 8.3, "roe": 11.6, "de": null, "fcf_margin": 48.7}, "ANET": {"date": "2025-12-31", "pe": 47.6473, "ev_ebitda": 39.1723, "ps": 18.2817, "gross_margin": 64.1, "op_margin": 42.8, "net_margin": 39.0, "roe": 31.4, "de": null, "fcf_margin": 0.0}, "APH": {"date": "2025-12-31", "pe": 40.4611, "ev_ebitda": 24.8844, "ps": 7.17752, "gross_margin": 36.9, "op_margin": 25.4, "net_margin": 18.6, "roe": 36.9, "de": null, "fcf_margin": 107.8}, "BWXT": {"date": "2025-12-31", "pe": 48.2793, "ev_ebitda": 39.4695, "ps": 4.94086, "gross_margin": 22.9, "op_margin": 10.3, "net_margin": 10.3, "roe": 28.5, "de": null, "fcf_margin": 163.5}, "CEG": {"date": "2025-12-31", "pe": 47.7392, "ev_ebitda": 20.3681, "ps": 4.32169, "gross_margin": 18.4, "op_margin": 12.1, "net_margin": 9.1, "roe": 16.4, "de": null, "fcf_margin": 59.9}, "CIFR": {"date": "2025-12-31", "pe": -6.86512, "ev_ebitda": -35.2889, "ps": 26.6911, "gross_margin": 28.4, "op_margin": -188.2, "net_margin": -367.2, "roe": -196.7, "de": null, "fcf_margin": 328.9}, "CRWV": {"date": "2025-12-31", "pe": -25.484, "ev_ebitda": 23.0217, "ps": 7.00608, "gross_margin": 71.7, "op_margin": -0.9, "net_margin": -22.7, "roe": -50.3, "de": null, "fcf_margin": 679.1}, "DELL": {"date": "2026-01-30", "pe": 13.1843, "ev_ebitda": 8.46215, "ps": 0.65718, "gross_margin": 20.0, "op_margin": 7.2, "net_margin": 5.2, "roe": -300.4, "de": null, "fcf_margin": -1275.4}, "DLR": {"date": "2025-12-31", "pe": 43.2151, "ev_ebitda": 21.3481, "ps": 8.6953, "gross_margin": 55.4, "op_margin": 10.8, "net_margin": 21.5, "roe": 5.8, "de": null, "fcf_margin": 9.2}, "EQIX": {"date": "2025-12-31", "pe": 55.6802, "ev_ebitda": 23.7899, "ps": 8.165, "gross_margin": 51.1, "op_margin": 20.0, "net_margin": 14.6, "roe": 9.7, "de": null, "fcf_margin": 149.0}, "ETN": {"date": "2025-12-31", "pe": 30.4794, "ev_ebitda": 21.269, "ps": 4.50124, "gross_margin": 37.6, "op_margin": 19.0, "net_margin": 14.9, "roe": 21.5, "de": null, "fcf_margin": 48.3}, "GEV": {"date": "2025-12-31", "pe": 36.9457, "ev_ebitda": 75.1568, "ps": 4.62741, "gross_margin": 19.8, "op_margin": 3.6, "net_margin": 12.8, "roe": 42.6, "de": null, "fcf_margin": 9.7}, "HPE": {"date": "2025-10-31", "pe": -610.5, "ev_ebitda": 21.2394, "ps": 0.938672, "gross_margin": 100.0, "op_margin": -1.3, "net_margin": 0.2, "roe": 0.2, "de": null, "fcf_margin": 90.3}, "IREN": {"date": "2025-06-30", "pe": 37.359, "ev_ebitda": 24.237, "ps": 7.50577, "gross_margin": 68.3, "op_margin": -1.9, "net_margin": 17.4, "roe": 6.0, "de": null, "fcf_margin": 53.0}, "IRM": {"date": "2015-12-31", "pe": 46.569, "ev_ebitda": 11.7798, "ps": 1.89772, "gross_margin": 57.1, "op_margin": 17.4, "net_margin": 4.2, "roe": 17.9, "de": null, "fcf_margin": 900.0}, "LITE": {"date": "2025-06-28", "pe": 256.081, "ev_ebitda": 108.651, "ps": 4.0204, "gross_margin": 28.0, "op_margin": -10.9, "net_margin": 1.6, "roe": 2.5, "de": 2.27919, "fcf_margin": -6.4}, "MU": {"date": "2025-08-28", "pe": 16.0738, "ev_ebitda": 7.82778, "ps": 3.66215, "gross_margin": 39.8, "op_margin": 26.1, "net_margin": 22.8, "roe": 17.2, "de": 0.282064, "fcf_margin": 4.5}, "NBIS": {"date": "2025-12-31", "pe": 208.248, "ev_ebitda": -157.941, "ps": 39.9751, "gross_margin": 68.6, "op_margin": -112.5, "net_margin": 19.2, "roe": 2.6, "de": 1.0543, "fcf_margin": -694.8}, "OKLO": {"date": "2025-12-31", "pe": -99.6667, "ev_ebitda": -74.1581, "ps": null, "gross_margin": null, "op_margin": null, "net_margin": null, "roe": -12.2, "de": 0.000369866, "fcf_margin": null}, "SMCI": {"date": "2025-06-30", "pe": 29.1726, "ev_ebitda": 21.8911, "ps": 1.32526, "gross_margin": 11.1, "op_margin": 5.7, "net_margin": 4.8, "roe": 17.9, "de": 0.754959, "fcf_margin": 7.0}, "VRT": {"date": "2025-12-31", "pe": 47.5103, "ev_ebitda": 29.5968, "ps": 6.05847, "gross_margin": 36.3, "op_margin": 17.9, "net_margin": 13.0, "roe": 41.8, "de": 0.796006, "fcf_margin": 18.5}, "VST": {"date": "2025-12-31", "pe": 74.0046, "ev_ebitda": 15.1349, "ps": 3.07471, "gross_margin": 23.2, "op_margin": 10.7, "net_margin": 5.3, "roe": 17.7, "de": 3.77906, "fcf_margin": 7.4},"SNDK":{"pe":-4.17,"ev_ebitda":-6.3,"ps":0.94,"gross_margin":30.1,"op_margin":-18.7,"net_margin":-22.3,"roe":-16.2,"de":0.198,"fcf_margin":-1.6}};
+const LAYERS = {"GPU/Accelerators": ["NVDA", "AMD", "INTC"], "Custom ASIC": ["AVGO", "MRVL", "ALAB", "CRDO"], "Foundry": ["TSM", "ASML"], "Semi Equipment": ["AMAT", "KLAC", "LRCX", "TER"], "Memory/HBM": ["MU","SNDK"], "Networking": ["ANET", "APH", "LITE", "CRDO"], "Server OEM": ["DELL", "SMCI", "HPE"], "Power & Cooling": ["VRT", "ETN", "GEV", "AEIS"], "Energy/Nuclear": ["CEG", "VST", "OKLO", "BWXT"], "DC REITs": ["DLR", "EQIX", "IRM"], "Pivot Plays": ["IREN", "CIFR", "NBIS"], "Neoclouds": ["CRWV"]};
+
+function getTheme(){ try{ return safeStorage.getItem('theme')||'dark'; }catch(e){ return 'dark'; } }
+function setTheme(t){ document.documentElement.setAttribute('data-theme',t); safeStorage.setItem('theme',t) }
+function toggleTheme(){ setTheme(getTheme()==='dark'?'light':'dark'); }
+setTheme(getTheme());
+
+const fmtPct = n => (n>=0?'+':'')+n.toFixed(2)+'%';
+const fmt = n => {
+  if(Math.abs(n)>=1e9) return '$'+(n/1e9).toFixed(1)+'B';
+  if(Math.abs(n)>=1e6) return '$'+(n/1e6).toFixed(1)+'M';
+  if(Math.abs(n)>=1e3) return '$'+(n/1e3).toFixed(1)+'K';
+  return '$'+n.toFixed(0);
+};
+
+// Compute sentiment for each ticker
+const tickers = Object.keys(QUOTES).sort();
+const sentimentData = [];
+
+tickers.forEach(ticker => {
+  const q = QUOTES[ticker];
+  const r = RATIOS[ticker] || {};
+  
+  // Factor 1: Price change % (normalized -1 to 1)
+  const chgScore = Math.max(-1, Math.min(1, q.changesPct / 5));
+  
+  // Factor 2: Volume ratio (>1 = higher than avg)
+  const volRatio = q.avgVolume > 0 ? q.volume / q.avgVolume : 1;
+  // High volume + positive price = bullish signal; high vol + negative = bearish
+  const volSignal = (volRatio - 1) * (q.changesPct >= 0 ? 0.3 : -0.3);
+  
+  // Factor 3: 52-week position (0=at low, 1=at high)
+  const range52 = q.yearHigh - q.yearLow;
+  const pos52 = range52 > 0 ? (q.price - q.yearLow) / range52 : 0.5;
+  const posScore = (pos52 - 0.5) * 2; // -1 to 1
+  
+  // Factor 4: Margin health from ratios
+  let marginScore = 0;
+  if(r.op_margin != null) {
+    marginScore = r.op_margin > 20 ? 0.2 : r.op_margin > 0 ? 0.1 : r.op_margin > -10 ? -0.1 : -0.2;
+  }
+  
+  // Composite: weighted combination
+  const composite = chgScore * 0.35 + posScore * 0.3 + volSignal * 0.2 + marginScore * 0.15;
+  // Normalize to 0-100
+  const score = Math.max(0, Math.min(100, 50 + composite * 50));
+  
+  let sentiment = 'Neutral';
+  if(score >= 65) sentiment = 'Bullish';
+  else if(score >= 55) sentiment = 'Leaning Bullish';
+  else if(score <= 35) sentiment = 'Bearish';
+  else if(score <= 45) sentiment = 'Leaning Bearish';
+  
+  sentimentData.push({
+    ticker, name: q.name, price: q.price, change: q.changesPct,
+    volume: q.volume, avgVolume: q.avgVolume, volRatio,
+    pos52, score, sentiment, marketCap: q.marketCap,
+    composite
+  });
+});
+
+// Stats
+const bullish = sentimentData.filter(d => d.score >= 55);
+const bearish = sentimentData.filter(d => d.score <= 45);
+const neutral = sentimentData.filter(d => d.score > 45 && d.score < 55);
+document.getElementById('bullCount').textContent = bullish.length;
+document.getElementById('bullSub').textContent = bullish.slice(0,3).map(d=>d.ticker).join(', ');
+document.getElementById('bearCount').textContent = bearish.length;
+document.getElementById('bearSub').textContent = bearish.sort((a,b)=>a.score-b.score).slice(0,3).map(d=>d.ticker).join(', ');
+document.getElementById('neutCount').textContent = neutral.length;
+
+// Overall Market Sentiment (cap-weighted)
+const totalCap = sentimentData.reduce((s,d) => s + d.marketCap, 0);
+const overallScore = sentimentData.reduce((s,d) => s + d.score * (d.marketCap / totalCap), 0);
+
+// Draw overall gauge
+const overCtx = document.getElementById('overallGauge').getContext('2d');
+(function drawOverallGauge(ctx, score) {
+  const w = 280, h = 160, cx = w/2, cy = h - 10, r = 100;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, Math.PI, 0);
+  ctx.lineWidth = 18;
+  const bg = ctx.createLinearGradient(cx-r, cy, cx+r, cy);
+  bg.addColorStop(0, 'rgba(248,113,113,0.25)');
+  bg.addColorStop(0.5, 'rgba(251,191,36,0.25)');
+  bg.addColorStop(1, 'rgba(52,211,153,0.25)');
+  ctx.strokeStyle = bg;
+  ctx.stroke();
+  
+  const angle = Math.PI + (score/100) * Math.PI;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, Math.PI, angle);
+  ctx.lineWidth = 18;
+  const fg = ctx.createLinearGradient(cx-r, cy, cx+r, cy);
+  fg.addColorStop(0, '#f87171');
+  fg.addColorStop(0.5, '#fbbf24');
+  fg.addColorStop(1, '#34d399');
+  ctx.strokeStyle = fg;
+  ctx.stroke();
+  
+  // Needle
+  const na = Math.PI + (score/100) * Math.PI;
+  const nx = cx + Math.cos(na) * (r-25);
+  const ny = cy + Math.sin(na) * (r-25);
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(nx,ny);
+  ctx.strokeStyle = '#dde0f0'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,4,0,2*Math.PI); ctx.fillStyle='#dde0f0'; ctx.fill();
+  
+  ctx.font = '11px Inter'; ctx.fillStyle = '#7a7f98';
+  ctx.textAlign = 'left'; ctx.fillText('BEARISH', cx-r+5, cy+18);
+  ctx.textAlign = 'right'; ctx.fillText('BULLISH', cx+r-5, cy+18);
+})(overCtx, overallScore);
+
+const overLabel = overallScore >= 60 ? 'Bullish' : overallScore <= 40 ? 'Bearish' : 'Neutral';
+const overColor = overallScore >= 60 ? 'var(--green)' : overallScore <= 40 ? 'var(--red)' : 'var(--yellow)';
+document.getElementById('overallLabel').innerHTML = `<span class="mono" style="font-size:var(--text-2xl);font-weight:700;color:${overColor}">${overallScore.toFixed(1)}</span><br><span style="font-size:var(--text-xs);color:var(--muted)">Market-Cap Weighted: ${overLabel}</span>`;
+document.getElementById('overallBreakdown').innerHTML = `
+  <div style="display:flex;gap:var(--space-4);justify-content:center">
+    <div style="text-align:center"><div class="mono" style="color:var(--green);font-weight:600">${bullish.length}</div><div style="font-size:10px;color:var(--muted)">Bullish</div></div>
+    <div style="text-align:center"><div class="mono" style="color:var(--muted);font-weight:600">${neutral.length}</div><div style="font-size:10px;color:var(--muted)">Neutral</div></div>
+    <div style="text-align:center"><div class="mono" style="color:var(--red);font-weight:600">${bearish.length}</div><div style="font-size:10px;color:var(--muted)">Bearish</div></div>
+  </div>`;
+
+// Fear & Greed Index
+// Combines: market momentum, volume strength, 52w range position, breadth
+const momentum = sentimentData.reduce((s,d)=>s+d.change,0) / sentimentData.length;
+const breadth = (bullish.length - bearish.length) / sentimentData.length;
+const avgPos52 = sentimentData.reduce((s,d)=>s+d.pos52,0) / sentimentData.length;
+const volStrength = sentimentData.reduce((s,d)=>s+(d.volRatio>1&&d.change>0?1:d.volRatio>1&&d.change<0?-1:0),0) / sentimentData.length;
+
+const fgScore = Math.max(0, Math.min(100, 
+  50 + momentum * 8 + breadth * 25 + (avgPos52-0.5) * 30 + volStrength * 15
+));
+
+// Draw F&G ring
+const fgCtx = document.getElementById('fgGauge').getContext('2d');
+(function drawFG(ctx, score) {
+  const cx=110, cy=110, r=90;
+  // Background ring
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI);
+  ctx.lineWidth=16; ctx.strokeStyle='rgba(30,34,48,0.6)'; ctx.stroke();
+  // Value ring
+  const endAngle = -Math.PI/2 + (score/100) * 2 * Math.PI;
+  ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2, endAngle);
+  ctx.lineWidth=16; ctx.lineCap='round';
+  const grad = ctx.createConicGradient(-Math.PI/2, cx, cy);
+  grad.addColorStop(0, '#f87171');
+  grad.addColorStop(0.25, '#fb923c');
+  grad.addColorStop(0.5, '#fbbf24');
+  grad.addColorStop(0.75, '#34d399');
+  grad.addColorStop(1, '#34d399');
+  ctx.strokeStyle = grad;
+  ctx.stroke();
+  // Center text
+  ctx.font = 'bold 42px JetBrains Mono';
+  ctx.fillStyle = score >= 60 ? '#34d399' : score <= 40 ? '#f87171' : '#fbbf24';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(Math.round(score), cx, cy);
+})(fgCtx, fgScore);
+
+const fgLabel = fgScore >= 75 ? 'Extreme Greed' : fgScore >= 55 ? 'Greed' : fgScore >= 45 ? 'Neutral' : fgScore >= 25 ? 'Fear' : 'Extreme Fear';
+const fgColor = fgScore >= 55 ? 'var(--green)' : fgScore <= 45 ? 'var(--red)' : 'var(--yellow)';
+document.getElementById('fgLabel').innerHTML = `<div class="fg-label" style="color:${fgColor}">${fgLabel}</div><div class="fg-desc">0 = Extreme Fear, 100 = Extreme Greed</div>`;
+
+// Trending bullish/bearish
+const sortedBull = [...sentimentData].sort((a,b)=>b.score-a.score);
+const sortedBear = [...sentimentData].sort((a,b)=>a.score-b.score);
+
+function renderTrending(container, items, isBull) {
+  const el = document.getElementById(container);
+  items.slice(0,5).forEach((d,i) => {
+    const barWidth = isBull ? d.score : (100 - d.score);
+    const barColor = isBull ? 'var(--green)' : 'var(--red)';
+    const scoreColor = isBull ? 'var(--green)' : 'var(--red)';
+    el.innerHTML += `<div class="trending-item">
+      <div class="rank">#${i+1}</div>
+      <div class="ticker">${d.ticker}</div>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${barWidth}%;background:${barColor}"></div></div>
+      <div class="score" style="color:${scoreColor}">${d.score.toFixed(0)}</div>
+    </div>`;
+  });
+}
+renderTrending('topBullish', sortedBull, true);
+renderTrending('topBearish', sortedBear, false);
+
+// Heatmap
+const heatGrid = document.getElementById('heatGrid');
+[...sentimentData].sort((a,b)=>a.ticker.localeCompare(b.ticker)).forEach(d => {
+  // HSL: 0=red(bearish), 60=yellow(neutral), 140=green(bullish)
+  const hue = (d.score / 100) * 140;
+  const sat = 50 + Math.abs(d.score - 50) * 0.6;
+  const light = 15 + (1 - Math.abs(d.score - 50) / 50) * 8;
+  heatGrid.innerHTML += `<div class="heat-cell" style="background:hsl(${hue},${sat}%,${light}%)" title="${d.name}: Score ${d.score.toFixed(1)}">
+    <div class="ht">${d.ticker}</div>
+    <div class="hs">${d.score.toFixed(0)}</div>
+  </div>`;
+});
+
+// Sector sentiment
+const sectorData = {};
+Object.entries(LAYERS).forEach(([layer, tickers]) => {
+  const layerItems = tickers.map(t => sentimentData.find(d => d.ticker === t)).filter(Boolean);
+  if(layerItems.length === 0) return;
+  const avgScore = layerItems.reduce((s,d) => s + d.score, 0) / layerItems.length;
+  const totalCap = layerItems.reduce((s,d) => s + d.marketCap, 0);
+  sectorData[layer] = { avgScore, count: layerItems.length, totalCap, tickers: layerItems.map(d=>d.ticker) };
+});
+
+const sortedSectors = Object.entries(sectorData).sort((a,b)=>b[1].avgScore - a[1].avgScore);
+
+// Sector bars
+const sectorBarsEl = document.getElementById('sectorBars');
+sortedSectors.forEach(([name, data]) => {
+  const barColor = data.avgScore >= 55 ? 'var(--green)' : data.avgScore <= 45 ? 'var(--red)' : 'var(--yellow)';
+  sectorBarsEl.innerHTML += `<div class="sector-bar-wrap">
+    <div class="sector-bar-label"><span>${name}</span><span style="color:${barColor}">${data.avgScore.toFixed(1)}</span></div>
+    <div class="sector-bar"><div class="sector-bar-inner" style="width:${data.avgScore}%;background:${barColor}"></div></div>
+  </div>`;
+});
+
+// Sector chart
+try { new Chart(document.getElementById('sectorChart'), {
+  type: 'bar',
+  data: {
+    labels: sortedSectors.map(([n]) => n),
+    datasets: [{
+      label: 'Sentiment Score',
+      data: sortedSectors.map(([,d]) => d.avgScore),
+      backgroundColor: sortedSectors.map(([,d]) => 
+        d.avgScore >= 55 ? 'rgba(52,211,153,0.6)' : d.avgScore <= 45 ? 'rgba(248,113,113,0.6)' : 'rgba(251,191,36,0.6)'
+      ),
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { min: 0, max: 100, ticks: { color: '#7a7f98' }, grid: { color: 'rgba(30,34,48,0.5)' } },
+      y: { ticks: { color: '#7a7f98', font: { size: 11 } }, grid: { display: false } }
+    }
+  }
+}); } catch(e) { console.warn("Chart render failed:", e); }
+
+// AI Narrative Tracker
+const narratives = [
+  {
+    theme: 'HBM Demand Surge',
+    desc: 'High-bandwidth memory demand driven by AI accelerator scaling',
+    tickers: ['MU','NVDA','AMD'],
+    signal: () => {
+      const items = ['MU','NVDA','AMD'].map(t=>sentimentData.find(d=>d.ticker===t)).filter(Boolean);
+      return items.reduce((s,d)=>s+d.score,0)/items.length;
+    }
+  },
+  {
+    theme: 'Power Infrastructure Buildout',
+    desc: 'Data center power capacity expansion and nuclear renaissance',
+    tickers: ['CEG','VST','GEV','ETN','VRT','OKLO','BWXT'],
+    signal: () => {
+      const items = ['CEG','VST','GEV','ETN','VRT','OKLO','BWXT'].map(t=>sentimentData.find(d=>d.ticker===t)).filter(Boolean);
+      return items.reduce((s,d)=>s+d.score,0)/items.length;
+    }
+  },
+  {
+    theme: 'Custom ASIC Momentum',
+    desc: 'Hyperscaler shift from GPUs to custom silicon (TPUs, Trainium, etc.)',
+    tickers: ['AVGO','MRVL','ALAB','CRDO'],
+    signal: () => {
+      const items = ['AVGO','MRVL','ALAB','CRDO'].map(t=>sentimentData.find(d=>d.ticker===t)).filter(Boolean);
+      return items.reduce((s,d)=>s+d.score,0)/items.length;
+    }
+  },
+  {
+    theme: 'Networking Backbone Expansion',
+    desc: 'Ethernet/InfiniBand upgrades for AI cluster interconnects',
+    tickers: ['ANET','APH','LITE'],
+    signal: () => {
+      const items = ['ANET','APH','LITE'].map(t=>sentimentData.find(d=>d.ticker===t)).filter(Boolean);
+      return items.reduce((s,d)=>s+d.score,0)/items.length;
+    }
+  },
+  {
+    theme: 'Neocloud & Infra Scaling',
+    desc: 'GPU cloud providers and infrastructure-as-a-service for AI',
+    tickers: ['CRWV','NBIS','IREN','CIFR'],
+    signal: () => {
+      const items = ['CRWV','NBIS','IREN','CIFR'].map(t=>sentimentData.find(d=>d.ticker===t)).filter(Boolean);
+      return items.reduce((s,d)=>s+d.score,0)/items.length;
+    }
+  },
+  {
+    theme: 'Semi Equipment Cycle',
+    desc: 'Semiconductor manufacturing equipment capex cycle',
+    tickers: ['AMAT','KLAC','LRCX','TER','ASML'],
+    signal: () => {
+      const items = ['AMAT','KLAC','LRCX','TER','ASML'].map(t=>sentimentData.find(d=>d.ticker===t)).filter(Boolean);
+      return items.reduce((s,d)=>s+d.score,0)/items.length;
+    }
+  },
+  {
+    theme: 'Data Center REIT Demand',
+    desc: 'Physical DC capacity constraints driving REIT premiums',
+    tickers: ['DLR','EQIX','IRM'],
+    signal: () => {
+      const items = ['DLR','EQIX','IRM'].map(t=>sentimentData.find(d=>d.ticker===t)).filter(Boolean);
+      return items.reduce((s,d)=>s+d.score,0)/items.length;
+    }
+  },
+  {
+    theme: 'Server OEM Capex Surge',
+    desc: 'Enterprise and hyperscaler server refresh cycle',
+    tickers: ['DELL','SMCI','HPE'],
+    signal: () => {
+      const items = ['DELL','SMCI','HPE'].map(t=>sentimentData.find(d=>d.ticker===t)).filter(Boolean);
+      return items.reduce((s,d)=>s+d.score,0)/items.length;
+    }
+  }
+];
+
+const narrativeEl = document.getElementById('narratives');
+narratives.sort((a,b)=>b.signal()-a.signal()).forEach(n => {
+  const score = n.signal();
+  const label = score >= 55 ? 'Bullish' : score <= 45 ? 'Bearish' : 'Neutral';
+  const badgeClass = score >= 55 ? 'badge-bullish' : score <= 45 ? 'badge-bearish' : 'badge-neutral';
+  const scoreColor = score >= 55 ? 'var(--green)' : score <= 45 ? 'var(--red)' : 'var(--yellow)';
+  narrativeEl.innerHTML += `<div class="narrative-card">
+    <div>
+      <div class="theme">${n.theme}</div>
+      <div class="desc">${n.desc} &mdash; ${n.tickers.join(', ')}</div>
+    </div>
+    <span class="badge ${badgeClass}">${label}</span>
+    <span class="mono" style="color:${scoreColor};font-weight:700;font-size:var(--text-lg)">${score.toFixed(0)}</span>
+  </div>`;
+});
+
+// Full table
+const tbody = document.querySelector('#sentimentTable tbody');
+[...sentimentData].sort((a,b)=>b.score-a.score).forEach(d => {
+  const chgColor = d.change >= 0 ? 'var(--green)' : 'var(--red)';
+  const volColor = d.volRatio > 1.2 ? 'var(--yellow)' : 'var(--text)';
+  const scoreColor = d.score >= 55 ? 'var(--green)' : d.score <= 45 ? 'var(--red)' : 'var(--yellow)';
+  const sentClass = d.score >= 55 ? 'badge-bullish' : d.score <= 45 ? 'badge-bearish' : 'badge-neutral';
+  tbody.innerHTML += `<tr>
+    <td style="color:var(--primary);font-weight:600">${d.ticker}</td>
+    <td style="font-family:Inter,sans-serif">${d.name.length>30?d.name.slice(0,30)+'...':d.name}</td>
+    <td>$${d.price.toFixed(2)}</td>
+    <td style="color:${chgColor}">${fmtPct(d.change)}</td>
+    <td style="color:${volColor}">${d.volRatio.toFixed(2)}x</td>
+    <td>${(d.pos52*100).toFixed(0)}%</td>
+    <td style="color:${scoreColor};font-weight:700">${d.score.toFixed(1)}</td>
+    <td><span class="badge ${sentClass}">${d.sentiment}</span></td>
+  </tr>`;
+});
+</script>
+</body>
+</html>
