@@ -1104,7 +1104,7 @@ let spSparkChart = null;
 async function fetchLiveQuote(ticker) {
   if(ticker.includes('.KS')) return null;
   try {
-    const r = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/'+ticker+'?range=1d&interval=5m');
+    const r = await fetch('/api/quote/'+encodeURIComponent(ticker)+'?range=1d&interval=5m');
     const d = await r.json();
     const meta = d.chart.result[0].meta;
     const closes = d.chart.result[0].indicators.quote[0].close.filter(v=>v!==null);
