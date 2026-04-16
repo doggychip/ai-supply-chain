@@ -10,6 +10,8 @@ var i18nStorage = (typeof safeStorage !== 'undefined') ? safeStorage : {
   // ── Cross-Dashboard Nav ──
   "AI Hardware":            { zh: "AI硬件" },
   "Software Stack":         { zh: "软件生态" },
+  "Semi Equipment":         { zh: "半导体设备" },
+  "News Feed":              { zh: "新闻动态" },
 };
 
 var I18N_LANG = i18nStorage.getItem('lang') || 'en';
@@ -43,6 +45,7 @@ var I18N = {
   "Foundry":                    { zh: "代工厂" },
   "Foundry + Packaging":        { zh: "代工厂 + 封装" },
   "Semi Equipment":             { zh: "半导体设备" },
+  "News Feed":              { zh: "新闻动态" },
   "Memory (HBM)":               { zh: "内存 (HBM)" },
   "Memory/HBM":                 { zh: "内存 / HBM" },
   "Memory / HBM":               { zh: "内存 / HBM" },

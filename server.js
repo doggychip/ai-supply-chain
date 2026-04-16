@@ -33,6 +33,12 @@ app.get('/api/quote/:ticker', async (req, res) => {
   }
 });
 
+// News API endpoint
+const NEWS_DATA = require('./news_data.json');
+app.get('/api/news', (req, res) => {
+  res.json(NEWS_DATA);
+});
+
 // Fallback to index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
