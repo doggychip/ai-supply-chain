@@ -4,7 +4,8 @@
   "description": "AI Infrastructure Supply Chain Research Dashboard",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "update-prices": "node scripts/update_prices.js"
   },
   "dependencies": {
     "express": "^4.21.0"
