@@ -488,7 +488,7 @@ img,svg{display:block;max-width:100%}
 </div>
 
 <div class="sb-footer">
-  <span style="font-size:10px;color:var(--faint)">~55 companies tracked</span>
+  <span style="font-size:10px;color:var(--faint)"><span class="ticker-count">…</span> companies tracked</span>
   <button class="theme-btn" id="toggleTheme" title="Toggle theme">☀</button>
 </div>
 </aside>
@@ -500,7 +500,7 @@ img,svg{display:block;max-width:100%}
   <div class="topbar-pills">
     <span class="pill live">● LIVE DATA</span>
     <span class="pill">14 Layers</span>
-    <span class="pill">~55 Companies</span>
+    <span class="pill"><span class="ticker-count">…</span> Companies</span>
     <span class="pill">Apr 16, 2026</span>
   </div>
 </div>
@@ -1934,6 +1934,8 @@ const TICKER_DATA = {
   'DXYZ': { name:'Destiny Tech100 Inc.', price:68.86, chg:44.80, chgPct:186.22, mcap:'—', pe:'—', hi52:'$69.85', lo52:'$19.71', layers:['MSX L7: Application · Physical AI'], thesis:'太空·国防·卫星·映射工具', tags:['msx-2026','front_loaded','defense-mapping'] },
   'VCX': { name:'Fundrise Growth Tech Fund, LLC', price:254.50, chg:223.25, chgPct:714.40, mcap:'—', pe:'—', hi52:'$575.00', lo52:'$31.21', layers:['MSX L7: Application · Physical AI'], thesis:'太空·国防·卫星·映射工具', tags:['msx-2026','front_loaded','defense-mapping'] },
 };
+
+document.querySelectorAll('.ticker-count').forEach(el => { el.textContent = Object.keys(TICKER_DATA).length; });
 
 /* ── SIDE PANEL LOGIC ── */
 let spSparkChart = null;
