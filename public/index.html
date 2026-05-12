@@ -406,6 +406,21 @@ img,svg{display:block;max-width:100%}
 .dash-nav button.active{color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent)}
 .dash-nav-link{padding:4px 14px;font-size:10px;font-weight:700;color:var(--muted);border-radius:var(--radius-sm);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;margin-left:auto}
 .dash-nav-link:hover{color:var(--text);background:var(--s3)}
+
+/* ── MSX ROTATION ── */
+.msx-layers{display:flex;flex-direction:column;gap:var(--space-2)}
+.msx-layer{display:grid;grid-template-columns:240px 1fr;gap:var(--space-3);align-items:start;background:var(--s2);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-3)}
+.msx-layer-meta{display:flex;flex-direction:column;gap:6px}
+.msx-layer-head{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+.msx-layer-id{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:var(--radius-sm);background:var(--s4);color:var(--muted)}
+.msx-layer-name{font-size:var(--text-xs);font-weight:700;line-height:1.3}
+.msx-layer-thesis{font-size:11px;color:var(--muted);margin:0;line-height:1.4}
+.msx-layer-body{display:flex;flex-direction:column;gap:var(--space-2)}
+.msx-sub-bucket-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;font-weight:600}
+@media (max-width:720px){.msx-layer{grid-template-columns:1fr}}
+
+/* Refreshing indicator on side panel price (live fetch in flight) */
+#spPrice.refreshing{opacity:.55;transition:opacity .18s ease}
 </style>
 </head>
 <body>
@@ -445,6 +460,7 @@ img,svg{display:block;max-width:100%}
 <button class="sb-item active" onclick="nav(this,'s-macro')"><span class="dot" style="background:var(--primary)"></span>Macro Dashboard</button>
 <button class="sb-item" onclick="nav(this,'s-map')"><span class="dot" style="background:var(--teal)"></span>Value Chain Map</button>
 <button class="sb-item" onclick="nav(this,'s-bottleneck')"><span class="dot" style="background:var(--red)"></span>Bottleneck Radar</button>
+<button class="sb-item" onclick="nav(this,'s-msx-rotation')"><span class="dot" style="background:var(--orange)"></span>MSX Rotation</button>
 </div>
 
 <div class="sb-section">
@@ -591,6 +607,14 @@ img,svg{display:block;max-width:100%}
   <div class="layer-row"><div class="layer-name"><span class="layer-num">13</span>Data Center REITs</div><div class="layer-tickers"><span class="lticker">EQIX</span><span class="lticker">DLR</span><span class="lticker">IRM</span></div></div>
   <div class="layer-row"><div class="layer-name"><span class="layer-num">14</span>AI Cloud / Neoclouds</div><div class="layer-tickers"><span class="lticker">CRWV</span><span class="lticker">NBIS</span><span class="lticker">IREN</span><span class="lticker">CIFR</span></div></div>
 </div>
+</div>
+
+<!-- ════ MSX 2026 ROTATION MAP ════ -->
+<div id="s-msx-rotation" class="section">
+<div class="section-header">
+  <div><div class="section-title">🔄 MSX 2026 Rotation Map</div><div class="section-desc">Capital rotation across the 7-layer AI supply chain — order reflects rotation flow, not numerical layer order</div></div>
+</div>
+<div class="msx-layers"><!-- rendered by renderMsxRotation() --></div>
 </div>
 
 <!-- ════ BOTTLENECK RADAR ════ -->
@@ -1937,6 +1961,74 @@ const TICKER_DATA = {
 
 document.querySelectorAll('.ticker-count').forEach(el => { el.textContent = Object.keys(TICKER_DATA).length; });
 
+/* ── MSX ROTATION VIEW ── */
+const MSX_LAYERS_ORDERED = [
+  { id: 'L3', status: 'rotated',      thesis: '算力定价权 · 第一轮收益' },
+  { id: 'L4', status: 'rotated',      thesis: 'HBM供给瓶颈 · 存储超级周期' },
+  { id: 'L5', status: 'rotated',      thesis: '数据中心高速公路 · 800G/1.6T需求爆发' },
+  { id: 'L6', status: 'attacking',    thesis: '资金当前最集中战场 · 电力/算力/散热' },
+  { id: 'L1', status: 'heating_up',   thesis: '核电/清洁能源 · 10年级别长线' },
+  { id: 'L2', status: 'pending',      thesis: '供给瓶颈 · 最难被替代' },
+  { id: 'L7', status: 'front_loaded', thesis: '太空·国防·卫星·映射工具',
+    sub_buckets: [
+      { tag: 'commercial-space', label: '商业航天 · Commercial Space' },
+      { tag: 'satellite-intel',  label: '卫星情报 · Satellite Intel'   },
+      { tag: 'defense-mapping',  label: '国防制图 · Defense Mapping'   },
+    ]
+  },
+];
+const MSX_STATUS_CLASS = { rotated:'b-green', attacking:'b-orange', heating_up:'b-gold', pending:'b-muted', front_loaded:'b-blue' };
+const MSX_STATUS_LABEL = { rotated:'已轮动 · Rotated', attacking:'正在猛攻 · Attacking', heating_up:'升温中 · Heating up', pending:'待轮动 · Pending', front_loaded:'提前蹲好 · Front-loaded' };
+
+function renderMsxRotation() {
+  const container = document.querySelector('#s-msx-rotation .msx-layers');
+  if (!container) return;
+  // textContent-based escape (defensive for `&` in layer names like "Compute Infra & Data Centers")
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Bucket MSX-tagged tickers by their MSX layer id, capturing the layer's display name from the data
+  const byLayer = {};
+  Object.entries(TICKER_DATA).forEach(([sym, t]) => {
+    if (!t.tags || !t.tags.includes('msx-2026')) return;
+    const msxLayer = (t.layers || []).find(l => typeof l === 'string' && l.startsWith('MSX L'));
+    if (!msxLayer) return;
+    const m = msxLayer.match(/^MSX (L\d+):\s*(.+)$/);
+    if (!m) return;
+    const id = m[1];
+    if (!byLayer[id]) byLayer[id] = { name: m[2], symbols: [] };
+    byLayer[id].symbols.push(sym);
+  });
+  const html = MSX_LAYERS_ORDERED.map(layer => {
+    const data = byLayer[layer.id];
+    if (!data || !data.symbols.length) return '';
+    let body;
+    if (layer.sub_buckets) {
+      body = layer.sub_buckets.map(sub => {
+        const syms = data.symbols.filter(s => TICKER_DATA[s].tags.includes(sub.tag));
+        if (!syms.length) return '';
+        return '<div class="msx-sub-bucket">'
+          + '<div class="msx-sub-bucket-label">' + esc(sub.label) + '</div>'
+          + '<div class="layer-tickers">' + syms.map(s => '<span class="lticker">' + esc(s) + '</span>').join('') + '</div>'
+          + '</div>';
+      }).join('');
+    } else {
+      body = '<div class="layer-tickers">' + data.symbols.map(s => '<span class="lticker">' + esc(s) + '</span>').join('') + '</div>';
+    }
+    return '<div class="msx-layer" data-status="' + layer.status + '">'
+      + '<div class="msx-layer-meta">'
+      +   '<div class="msx-layer-head">'
+      +     '<span class="msx-layer-id">' + esc(layer.id) + '</span>'
+      +     '<span class="badge ' + MSX_STATUS_CLASS[layer.status] + '">' + esc(MSX_STATUS_LABEL[layer.status]) + '</span>'
+      +   '</div>'
+      +   '<div class="msx-layer-name">' + esc(data.name) + '</div>'
+      +   '<p class="msx-layer-thesis">' + esc(layer.thesis) + '</p>'
+      + '</div>'
+      + '<div class="msx-layer-body">' + body + '</div>'
+      + '</div>';
+  }).join('');
+  container.innerHTML = html;
+}
+renderMsxRotation();
+
 /* ── SIDE PANEL LOGIC ── */
 let spSparkChart = null;
 
@@ -1990,7 +2082,10 @@ function openPanel(ticker) {
   overlay.classList.add('open');
 
   // Try live fetch
+  const spPriceEl = document.getElementById('spPrice');
+  spPriceEl.classList.add('refreshing');
   fetchLiveQuote(ticker).then(live => {
+    spPriceEl.classList.remove('refreshing');
     if(live && live.price) {
       const chg = live.price - live.prevClose;
       const chgPct = (chg / live.prevClose) * 100;
