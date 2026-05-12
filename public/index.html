@@ -2039,7 +2039,10 @@ async function fetchLiveQuote(ticker) {
     const d = await r.json();
     const meta = d.chart.result[0].meta;
     const closes = d.chart.result[0].indicators.quote[0].close.filter(v=>v!==null);
-    return { price: meta.regularMarketPrice, prevClose: meta.previousClose, closes };
+    // Yahoo /v8/finance/chart returns chartPreviousClose; only quoteSummary returns previousClose.
+    // Cascade defensively so future shape drift is absorbed instead of producing NaN downstream.
+    const prevClose = meta.previousClose ?? meta.chartPreviousClose ?? meta.regularMarketPreviousClose;
+    return { price: meta.regularMarketPrice, prevClose, closes };
   } catch(e) { return null; }
 }
 
@@ -2087,9 +2090,14 @@ function openPanel(ticker) {
   fetchLiveQuote(ticker).then(live => {
     spPriceEl.classList.remove('refreshing');
     if(live && live.price) {
-      const chg = live.price - live.prevClose;
-      const chgPct = (chg / live.prevClose) * 100;
-      showPrice(live.price, chg, chgPct, live.closes, ticker);
+      if(Number.isFinite(live.prevClose) && live.prevClose > 0) {
+        const chg = live.price - live.prevClose;
+        const chgPct = (chg / live.prevClose) * 100;
+        showPrice(live.price, chg, chgPct, live.closes, ticker);
+      } else {
+        console.warn(`[live-price] ${ticker}: no usable previousClose, keeping seed day-change`);
+        showPrice(live.price, data.chg, data.chgPct, live.closes, ticker);
+      }
     } else {
       // Show fallback message
       const unavailEl = document.getElementById('spUnavail');
