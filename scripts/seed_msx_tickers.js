@@ -127,7 +127,18 @@ function buildLine(symbol, data, meta) {
 
   const today = new Date().toISOString().slice(0, 10);
   const block = `\n  // ---- MSX 2026 AI supply chain seed (${today}) ----\n${newLines.join('\n')}`;
-  fs.writeFileSync(INDEX_HTML, html.slice(0, closeIdx) + block + html.slice(closeIdx));
+
+  // Defensive: ensure the previously-last entry has a trailing comma. JS object
+  // literals make the last entry's trailing comma optional, so historical "last"
+  // entries often lack one. Inserting new entries after a missing-comma line
+  // produces `} '<KEY>':` adjacency → SyntaxError. See ai-supply-chain#7 — this
+  // exact bug shipped to main once before (PR #4 → fixed by PR #8).
+  const before = html.slice(0, closeIdx);
+  const lastChar = before.replace(/\s+$/, '').slice(-1);
+  const needsComma = lastChar !== ',' && lastChar !== '{';
+  if (needsComma) console.log(`  (inserting defensive comma — previously-last entry lacked one)`);
+  const safeBlock = needsComma ? ',' + block : block;
+  fs.writeFileSync(INDEX_HTML, before + safeBlock + html.slice(closeIdx));
 
   console.log(`\n✓ Inserted ${newLines.length} entries into TICKER_DATA.`);
   if (failed.length) {
