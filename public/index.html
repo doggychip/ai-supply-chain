@@ -452,7 +452,7 @@ img,svg{display:block;max-width:100%}
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     AI Value Chain
   </div>
-  <div class="sub">Full Ecosystem Research · Apr 2026</div>
+  <div class="sub">Full Ecosystem Research · <span data-dynamic-date="month-year">Apr 2026</span></div>
 </div>
 
 <div class="sb-section">
@@ -1155,7 +1155,7 @@ img,svg{display:block;max-width:100%}
 <div class="section-header">
   <div>
     <div class="section-title">🎯 Conviction List — Top Picks by Signal Strength</div>
-    <div class="section-desc">Ranked by fundamentals, analyst consensus, options flow, volume, and technicals · Updated Apr 16, 2026</div>
+    <div class="section-desc">Ranked by fundamentals, analyst consensus, options flow, volume, and technicals · Updated <span data-dynamic-date="full">Apr 16, 2026</span></div>
   </div>
 </div>
 
@@ -2711,6 +2711,26 @@ function goDash(target) {
   }
   // Register so live-prices.js re-runs us when fresh quotes arrive.
   (window.dashboardRenderers = window.dashboardRenderers || []).push(syncConvictionCardPrices);
+})();
+</script>
+
+<!-- Auto-update any element with data-dynamic-date so "Apr 2026" / "Apr 16, 2026"
+     strings stay current without manual edits. Pure presentation; SEO/Open
+     Graph headlines (if any) are unaffected because they read from server-rendered HTML. -->
+<script>
+(function () {
+  function refreshDynamicDates() {
+    var now = new Date();
+    var full = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var monthYear = now.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    document.querySelectorAll('[data-dynamic-date="full"]').forEach(function (el) { el.textContent = full; });
+    document.querySelectorAll('[data-dynamic-date="month-year"]').forEach(function (el) { el.textContent = monthYear; });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', refreshDynamicDates);
+  } else {
+    refreshDynamicDates();
+  }
 })();
 </script>
 <script src="/live-prices.js"></script>
