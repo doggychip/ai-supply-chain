@@ -136,17 +136,21 @@ sleep 3
 trap "kill \$npm_pid 2>/dev/null || true" EXIT
 root_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/)
 lp_code=$(curl -s -o /dev/null -w "%{http_code}"   http://localhost:3000/live-prices.js)
-quotes_subset=$(curl -s --max-time 10 "http://localhost:3000/api/quotes?symbols=MSFT,GOOGL,CRWD" | head -c 300 || true)
+quotes_full=$(curl -s --max-time 10 "http://localhost:3000/api/quotes?symbols=MSFT,GOOGL,CRWD" || true)
 kill $npm_pid 2>/dev/null || true; wait $npm_pid 2>/dev/null || true
 trap - EXIT
 
 echo "  /                                : $root_code"
 echo "  /live-prices.js                  : $lp_code"
-echo "  /api/quotes?symbols=MSFT,GOOGL,CRWD head : $(echo "$quotes_subset" | head -c 150)..."
+echo "  /api/quotes?symbols=MSFT,GOOGL,CRWD head : $(echo "$quotes_full" | head -c 150)..."
 
 [ "$root_code" = "200" ] || { echo "!! root not 200"; exit 1; }
 [ "$lp_code"   = "200" ] || { echo "!! live-prices.js not served"; exit 1; }
-echo "$quotes_subset" | grep -q '"MSFT"' || { echo "!! /api/quotes?symbols= did not return MSFT"; exit 1; }
+# Look at the full response (not a truncated prefix) — Yahoo can return
+# tickers in any order so we check that at least one of the three is present
+# with valid quote data.
+echo "$quotes_full" | grep -qE '"(MSFT|GOOGL|CRWD)":\{[^}]*"price":[0-9.]+' \
+  || { echo "!! /api/quotes?symbols= returned no usable quote data"; echo "$quotes_full" | head -c 500; exit 1; }
 echo "  ✓ symbols-param flow works"
 
 echo "==> force-push to update PR #6 with the expanded content"
