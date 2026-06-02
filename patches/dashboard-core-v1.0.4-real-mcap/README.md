@@ -121,3 +121,55 @@ npm run update-prices     # output now includes 'N real / M scaled' summary
 For ai-supply-chain specifically, the held PR #20 (`chore/price-refresh-v2`)
 should be amended with this re-run before merging — that's the branch the
 Codex review was made against.
+
+## Two recommended guards (catch silent-failure modes)
+
+Both of these address the failure we just hit: `npm run update-prices`
+"succeeds" but `public/index.html` is unchanged because the new fetch
+returned null for every ticker (bad tag, geo-block, etc.) and silently
+fell back to ratio scaling.
+
+### 1. Pre-flight: `verify-installed.sh` (in this directory)
+
+Confirms the installed `dashboard-core` actually contains the fix. Run it
+right after `npm install`, before `npm run update-prices`:
+
+```bash
+bash patches/dashboard-core-v1.0.4-real-mcap/verify-installed.sh
+```
+
+Exits non-zero with a diagnosis if any of the three patch markers
+(`fetchMcapAndShares`, `resolveNewMcap`, `extra.marketCap`) is missing —
+which is exactly what would have caught the v1.0.4 tagging mistake on
+PR #20 in 1 second.
+
+### 2. Runtime: extend `refresh-prices.sh` with a "real-mcap" gate
+
+Append after the existing `|chgPct| > 50%` gate. Captures the
+`update-prices` log to a tempfile, then asserts the summary line shows
+real mcap fetches actually happened:
+
+```bash
+echo "==> Sanity gate: real marketCap actually fetched"
+log="$(mktemp)"
+trap "rm -f \"$log\"" EXIT
+# Re-run capturing output (or refactor the earlier call to tee into $log)
+npm run update-prices --silent | tee "$log"
+
+# Summary line format: "mcap: N real / M scaled"
+real=$(grep -oE "mcap: [0-9]+ real" "$log" | tail -1 | grep -oE "[0-9]+" || echo 0)
+total_updates=$(grep -cE "^  ✓ " "$log" || echo 0)
+
+if [ "${total_updates}" -ge 10 ] && [ "${real}" -eq 0 ]; then
+  echo "!! ${total_updates} tickers updated but mcap fetched from Yahoo for 0 of them."
+  echo "   This means every mcap silently fell back to ratio scaling — the AMD"
+  echo "   drift bug Codex flagged on PR #20 is being perpetuated. Likely cause:"
+  echo "   bad v1.0.4 tag, Yahoo crumb-dance blocked, or quoteSummary blocked."
+  exit 1
+fi
+echo "   OK — real mcap on ${real}/${total_updates} tickers."
+```
+
+Two-layer defense: `verify-installed.sh` catches "the code isn't even
+deployed", the runtime gate catches "the code is deployed but Yahoo is
+saying no". Either failure is loud, no longer silent.
