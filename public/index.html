@@ -2673,5 +2673,46 @@ function goDash(target) {
 <!-- Dashboard Enhancements: Search, Watchlist, Dark Mode, Compare -->
 <link rel="stylesheet" href="dashboard_enhancements.css">
 <script src="dashboard_enhancements.js"></script>
+
+<!-- Conviction-card price sync: mirrors TICKER_DATA into hand-curated cards
+     on initial load and on every /api/quotes refresh, parallel to the side
+     panel's own live fetch. Only price/chg/chgPct are touched; analyst
+     ratings, signal tags, theses, and dot scores remain hand-curated. -->
+<script>
+(function () {
+  function syncConvictionCardPrices() {
+    if (typeof TICKER_DATA === 'undefined') return;
+    document.querySelectorAll('.cv-card').forEach(function (card) {
+      var tEl = card.querySelector('.cv-card-ticker');
+      if (!tEl) return;
+      var ticker = (tEl.textContent || '').trim();
+      var d = TICKER_DATA[ticker];
+      if (!d) return;
+
+      var priceEl = card.querySelector('.cv-price');
+      if (priceEl && typeof d.price === 'number' && d.price > 0) {
+        priceEl.textContent = '$' + d.price.toFixed(2);
+      }
+      var chgEl = card.querySelector('.cv-price-chg');
+      if (chgEl && typeof d.chg === 'number' && typeof d.chgPct === 'number') {
+        var up = d.chg >= 0;
+        chgEl.className = 'cv-price-chg ' + (up ? 'up' : 'dn');
+        var sign = up ? '+' : '';
+        chgEl.textContent =
+          sign + d.chg.toFixed(2) + ' (' + sign + d.chgPct.toFixed(2) + '%)';
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncConvictionCardPrices);
+  } else {
+    syncConvictionCardPrices();
+  }
+  // Register so live-prices.js re-runs us when fresh quotes arrive.
+  (window.dashboardRenderers = window.dashboardRenderers || []).push(syncConvictionCardPrices);
+})();
+</script>
+<script src="/live-prices.js"></script>
 </body>
 </html>
