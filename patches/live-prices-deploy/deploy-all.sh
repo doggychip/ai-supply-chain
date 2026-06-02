@@ -44,24 +44,25 @@ for d in "$DC_REPO" "$SW_REPO" "$AI_REPO"; do
   [ -d "$d/.git" ] || { echo "!! not a git repo: $d"; exit 1; }
 done
 
-# Source of truth for all the artifacts we'll be applying.
+# Source of truth for all the artifacts. Prefer the local checkout if
+# patches/ already exists there; otherwise materialize from the handoff
+# branch tip via git archive so the script works regardless of which
+# branch the user has checked out.
 PATCHES="$AI_REPO/patches"
-[ -d "$PATCHES" ] || { echo "!! missing $PATCHES — fetch claude/update-share-price-dashboard-HCLqD first"; exit 1; }
-
 DC_PATCH_DIR="$PATCHES/dashboard-core-v1.0.5-live-prices"
 SW_PATCH_DIR="$PATCHES/software-supply-chain-live-prices"
 
-# Make sure ai-supply-chain has the handoff branch fetched so we can read
-# the patches directory even if the user is on a different branch.
-if [ ! -f "$DC_PATCH_DIR/live-prices.js" ]; then
-  echo "==> fetching handoff branch in ai-supply-chain"
+if [ ! -f "$DC_PATCH_DIR/live-prices.js" ] || [ ! -f "$SW_PATCH_DIR/wire-live-prices.patch" ]; then
+  echo "==> patches/ not in working tree on this branch — materializing from origin/claude/update-share-price-dashboard-HCLqD"
   git -C "$AI_REPO" fetch origin claude/update-share-price-dashboard-HCLqD
-  # Materialize the patches dir into a temp dir from the branch tip
   TMP_PATCHES="$(mktemp -d)"
   git -C "$AI_REPO" archive origin/claude/update-share-price-dashboard-HCLqD patches/ | tar -x -C "$TMP_PATCHES"
   DC_PATCH_DIR="$TMP_PATCHES/patches/dashboard-core-v1.0.5-live-prices"
   SW_PATCH_DIR="$TMP_PATCHES/patches/software-supply-chain-live-prices"
+  [ -f "$DC_PATCH_DIR/live-prices.js" ] || { echo "!! still can't find dashboard-core patch dir at $DC_PATCH_DIR"; exit 1; }
+  [ -f "$SW_PATCH_DIR/wire-live-prices.patch" ] || { echo "!! still can't find SW patch at $SW_PATCH_DIR"; exit 1; }
 fi
+echo "==> patches sourced from: $DC_PATCH_DIR"
 
 # ============================================================================
 # Step 1: dashboard-core v1.0.5
