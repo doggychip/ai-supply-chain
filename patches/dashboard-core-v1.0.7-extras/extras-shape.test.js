@@ -1,4 +1,6 @@
-const { quoteSummaryToExtras } = require('/tmp/dc-v107/server/yahoo');
+// Run from dashboard-core root:
+//   node lib/live-prices/extras-shape.test.js
+const { quoteSummaryToExtras } = require('../../server/yahoo');
 const assert = require('assert');
 
 let n = 0;
