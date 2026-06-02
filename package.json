@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "update-prices": "update-prices ./public/index.html",
-    "update-prices:dry": "update-prices ./public/index.html --dry-run"
+    "update-prices:dry": "update-prices ./public/index.html --dry-run",
+    "apply-prices": "node scripts/apply_prices.js",
+    "apply-prices:dry": "node scripts/apply_prices.js --dry-run"
   },
   "dependencies": {
     "dashboard-core": "git+https://github.com/doggychip/dashboard-core.git#v1.0.2",
