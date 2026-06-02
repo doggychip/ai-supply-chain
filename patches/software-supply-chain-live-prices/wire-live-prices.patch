@@ -1,0 +1,64 @@
+diff --git a/package.json b/package.json
+index f0ab5f9..cad6b15 100644
+--- a/package.json
++++ b/package.json
+@@ -10,7 +10,7 @@
+     "update-prices:dry": "update-prices ./public/sw_data.json --dry-run && update-prices ./public/index.html --dry-run"
+   },
+   "dependencies": {
+-    "dashboard-core": "git+https://github.com/doggychip/dashboard-core.git#v1.0.4",
++    "dashboard-core": "git+https://github.com/doggychip/dashboard-core.git#v1.0.5",
+     "express": "^4.21.0"
+   },
+   "engines": {
+diff --git a/public/index.html b/public/index.html
+index 78d7d98..b5e45ec 100644
+--- a/public/index.html
++++ b/public/index.html
+@@ -2388,13 +2388,16 @@ window.addEventListener('load',function(){
+    FEATURE: VALUATION TABLE
+    ══════════════════════════════════════════════════════════════ */
+ (function(){
+-  const tickers = SW_DATA.tickers;
+   const layers = SW_DATA.layers;
+ 
+-  // Build data
+-  let data = Object.entries(tickers).map(([tk,d])=>({
+-    ticker:tk, name:d.name, layer:d.layer, price:d.price, mcap:d.marketCap/1e9, pe:d.pe, eps:d.eps, divYield:d.divYield, yearLow:d.yearLow, yearHigh:d.yearHigh
+-  }));
++  // Live-prices integration: read SW_DATA.tickers on every build (not a
++  // snapshot) so the table picks up fresh prices from /api/quotes polling.
++  function buildData() {
++    return Object.entries(SW_DATA.tickers).map(([tk,d])=>({
++      ticker:tk, name:d.name, layer:d.layer, price:d.price, mcap:d.marketCap/1e9, pe:d.pe, eps:d.eps, divYield:d.divYield, yearLow:d.yearLow, yearHigh:d.yearHigh
++    }));
++  }
++  let data = buildData();
+ 
+   // Populate layer filter
+   const filterEl = document.getElementById('valLayerFilter');
+@@ -2416,6 +2419,7 @@ window.addEventListener('load',function(){
+   }
+ 
+   function renderTable(){
++    data = buildData(); // pick up any live-prices mutations to SW_DATA.tickers
+     const filter = filterEl.value;
+     let rows = filter==='all' ? data : data.filter(r=>r.layer===filter);
+ 
+@@ -2460,6 +2464,8 @@ window.addEventListener('load',function(){
+ 
+   filterEl.addEventListener('change', renderTable);
+   renderTable();
++  // Live-prices: re-render whenever fresh quotes arrive from /api/quotes
++  (window.dashboardRenderers = window.dashboardRenderers || []).push(renderTable);
+ })();
+ 
+ /* ══════════════════════════════════════════════════════════════
+@@ -2637,6 +2643,7 @@ function goDash(target) {
+ <!-- Dashboard Enhancements: Search, Watchlist, Dark Mode, Compare -->
+ <link rel="stylesheet" href="dashboard_enhancements.css">
+ <script src="dashboard_enhancements.js"></script>
++<script src="/live-prices.js"></script>
+ <script src="bootstrap-quotes.js"></script>
+ </body>
+ </html>
