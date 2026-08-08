@@ -2042,8 +2042,18 @@ async function fetchLiveQuote(ticker) {
     const closes = d.chart.result[0].indicators.quote[0].close.filter(v=>v!==null);
     // Yahoo /v8/finance/chart returns chartPreviousClose; only quoteSummary returns previousClose.
     // Cascade defensively so future shape drift is absorbed instead of producing NaN downstream.
-    const prevClose = meta.previousClose ?? meta.chartPreviousClose ?? meta.regularMarketPreviousClose;
-    return { price: meta.regularMarketPrice, prevClose, closes };
+    let prevClose = meta.previousClose ?? meta.chartPreviousClose ?? meta.regularMarketPreviousClose;
+    // Sanity gate: if the server ignores the range param (pre-v1.0.9) the
+    // chartPreviousClose on a long-range response is the window-START close
+    // (months ago), not yesterday's — an implied "daily" move over ±50% means
+    // the value is bogus. Drop it so the caller keeps the seed day-change.
+    const px = meta.regularMarketPrice;
+    if (typeof prevClose === 'number' && prevClose > 0 &&
+        typeof px === 'number' && Math.abs(px / prevClose - 1) > 0.5) {
+      console.warn(`[live-price] ${ticker}: prevClose ${prevClose} implies a ${((px/prevClose-1)*100).toFixed(0)}% daily move — discarding`);
+      prevClose = null;
+    }
+    return { price: px, prevClose, closes };
   } catch(e) { return null; }
 }
 
