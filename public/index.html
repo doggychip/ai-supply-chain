@@ -607,7 +607,7 @@ img,svg{display:block;max-width:100%}
   <div class="layer-row"><div class="layer-name"><span class="layer-num">13</span>Data Center REITs</div><div class="layer-tickers"><span class="lticker">EQIX</span><span class="lticker">DLR</span><span class="lticker">IRM</span></div></div>
   <div class="layer-row"><div class="layer-name"><span class="layer-num">14</span>AI Cloud / Neoclouds</div><div class="layer-tickers"><span class="lticker">CRWV</span><span class="lticker">NBIS</span><span class="lticker">IREN</span><span class="lticker">CIFR</span></div></div>
 </div>
-<div class="section-desc" style="margin-top:var(--space-4);line-height:1.6">Layer utilization composite combines pricing power, capacity utilization, and bottleneck severity. Higher = tighter supply / stronger pricing power. Last updated: 2026-05-19. Note: L11 (Materials) elevated by Hormuz blockade-driven photoresist solvent disruption; would normalize to ~70% if Strait reopens. Sources: TSMC/SK Hynix/Micron Q1 2026 earnings, TrendForce Q1–Q2 26 memory pricing surveys, McKinsey transceiver supply forecast, Sedaily/Asia Business Outlook (Hormuz materials disruption), public filings.</div>
+<div class="section-desc" style="margin-top:var(--space-4);line-height:1.6">Layer utilization composite combines pricing power, capacity utilization, and bottleneck severity. Higher = tighter supply / stronger pricing power. Last updated: <span id="utilAsOf" data-as-of="2026-05-19">2026-05-19</span>. Note: L11 (Materials) elevated by Hormuz blockade-driven photoresist solvent disruption; would normalize to ~70% if Strait reopens. Sources: TSMC/SK Hynix/Micron Q1 2026 earnings, TrendForce Q1–Q2 26 memory pricing surveys, McKinsey transceiver supply forecast, Sedaily/Asia Business Outlook (Hormuz materials disruption), public filings.</div>
 </div>
 
 <!-- ════ MSX 2026 ROTATION MAP ════ -->
@@ -2744,6 +2744,56 @@ function goDash(target) {
 })();
 </script>
 <script src="/live-prices.js"></script>
+
+<!-- Editorial-freshness stamps: age the hand-curated utilization panel and
+     thesis text visibly, so editorial staleness is never silent. Prices are
+     auto-refreshed daily; this narrative layer is not. -->
+<script>
+(function () {
+  'use strict';
+  var EDITORIAL_AS_OF = '2026-06-02'; // update when theses are re-reviewed
+
+  function ageDays(iso) {
+    var ms = Date.parse(iso);
+    return isNaN(ms) ? null : Math.floor((Date.now() - ms) / 86400000);
+  }
+
+  // Utilization panel: append an amber age warning when > 30 days old.
+  function stampUtilization() {
+    var el = document.getElementById('utilAsOf');
+    if (!el || el.dataset.stamped) return;
+    var days = ageDays(el.dataset.asOf);
+    if (days == null) return;
+    el.dataset.stamped = '1';
+    if (days > 30) {
+      var warn = document.createElement('span');
+      warn.style.cssText = 'color:var(--warn,#f0ad4e);font-weight:600;';
+      warn.textContent = ' ⚠ ' + days + ' days old — utilization figures and the Hormuz note may be outdated.';
+      el.parentNode.insertBefore(warn, el.nextSibling);
+    }
+  }
+
+  // Side panel: faint "commentary as of" stamp under the thesis.
+  function stampThesis() {
+    var thesisEl = document.getElementById('spThesis');
+    if (!thesisEl || document.getElementById('spEditorialStamp')) return;
+    var days = ageDays(EDITORIAL_AS_OF);
+    var stale = days != null && days > 60;
+    var el = document.createElement('div');
+    el.id = 'spEditorialStamp';
+    el.style.cssText = 'margin-top:6px;font-size:10px;color:' +
+      (stale ? 'var(--warn,#f0ad4e)' : 'var(--faint,#888)') + ';';
+    el.textContent = (stale ? '⚠ ' : '') + 'Editorial commentary as of ' + EDITORIAL_AS_OF +
+      (days != null ? ' (' + days + ' days ago)' : '') +
+      ' — thesis text is hand-written and not auto-updated.';
+    thesisEl.parentNode.insertBefore(el, thesisEl.nextSibling);
+  }
+
+  function run() { stampUtilization(); stampThesis(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+})();
+</script>
 <script src="/signals.js"></script>
 <script src="/signals-ui.js"></script>
 </body>
