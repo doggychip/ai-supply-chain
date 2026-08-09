@@ -1,0 +1,25 @@
+{
+  "name": "dashboard-core",
+  "version": "1.0.12",
+  "description": "Shared core for the value-chain research dashboards (software-supply-chain, ai-supply-chain, semi-equipment). Express + Yahoo proxy, client assets, price-refresh CLI.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "server/",
+    "README.md",
+    "VENDORED_SOURCE.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doggychip/dashboard-core.git"
+  },
+  "author": "Ryan Cheung",
+  "license": "MIT"
+}
