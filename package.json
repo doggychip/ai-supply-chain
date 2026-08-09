@@ -8,7 +8,7 @@
     "test": "node --test"
   },
   "dependencies": {
-    "dashboard-core": "git+https://github.com/doggychip/dashboard-core.git#v1.0.12",
+    "dashboard-core": "https://github.com/doggychip/dashboard-core/archive/refs/tags/v1.0.12.tar.gz",
     "express": "^4.21.0"
   },
   "engines": {
