@@ -19,6 +19,14 @@ test('all inline page scripts parse', () => {
   }
 });
 
+test('main page renders a taxonomy-only value-chain map from the universe', () => {
+  const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  assert.match(html, /id="valueChainMap"/);
+  assert.match(html, /renderValueChain\(universe\)/);
+  assert.match(html, /Taxonomy only/);
+  assert.doesNotMatch(html, /data-score|price target|bottleneck score/i);
+});
+
 test('public universe contains taxonomy only and excludes unsupported instruments', () => {
   const universe = JSON.parse(fs.readFileSync(path.join(publicDir, 'universe.json'), 'utf8'));
   const symbols = Object.keys(universe.tickers).sort();
