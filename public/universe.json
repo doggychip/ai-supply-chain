@@ -1,0 +1,630 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-08-09",
+  "sourceNote": "Curated coverage taxonomy only. Issuer-filed fundamentals and Yahoo reconciliation data are fetched live at runtime. Funds, unsupported foreign exchange symbols, and symbols without current SEC mapping are excluded.",
+  "layers": {
+    "1 GPU / Accelerators": {
+      "color": "#5b9cf6",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "NVDA",
+        "AMD",
+        "ARM",
+        "INTC"
+      ]
+    },
+    "2 Custom ASIC + NIC": {
+      "color": "#f07070",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "AVGO",
+        "MRVL",
+        "ALAB",
+        "CRDO"
+      ]
+    },
+    "3 Foundry + Packaging": {
+      "color": "#56d4e8",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "TSM"
+      ]
+    },
+    "4 Semi Equipment": {
+      "color": "#a87ef0",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "ASML",
+        "AMAT",
+        "LRCX",
+        "KLAC",
+        "TER",
+        "AEIS"
+      ]
+    },
+    "5 Memory (HBM)": {
+      "color": "#56cc84",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "MU"
+      ]
+    },
+    "6 Networking": {
+      "color": "#f5a454",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "ANET"
+      ]
+    },
+    "7 Optics / Photonics": {
+      "color": "#e8c44a",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "LITE",
+        "COHR"
+      ]
+    },
+    "8 Interconnect": {
+      "color": "#4fc4cf",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "APH"
+      ]
+    },
+    "9 Server OEM": {
+      "color": "#f0ad4e",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "SMCI",
+        "DELL",
+        "HPE"
+      ]
+    },
+    "10 Power Delivery + Cooling": {
+      "color": "#7a7e96",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "VRT",
+        "ETN"
+      ]
+    },
+    "11 Power Generation": {
+      "color": "#c06ef0",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "GEV"
+      ]
+    },
+    "12 Energy / Nuclear": {
+      "color": "#ef6cae",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "CEG",
+        "VST",
+        "OKLO",
+        "BWXT"
+      ]
+    },
+    "13 DC REITs": {
+      "color": "#68b0ab",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "EQIX",
+        "DLR",
+        "IRM"
+      ]
+    },
+    "14 AI Cloud / Neoclouds": {
+      "color": "#c8a96a",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "CRWV",
+        "NBIS",
+        "IREN",
+        "CIFR"
+      ]
+    },
+    "MSX L3: Chip Architecture & Semi Equipment": {
+      "color": "#7289da",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "MKSI",
+        "TSEM",
+        "AXTI",
+        "VECO",
+        "FORM",
+        "COHU",
+        "AEHR",
+        "CLS"
+      ]
+    },
+    "MSX L4: Storage & Memory": {
+      "color": "#e67e22",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "SNDK",
+        "WDC",
+        "STX"
+      ]
+    },
+    "MSX L5: Optical Comms & Networking": {
+      "color": "#16a085",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "AAOI",
+        "CIEN",
+        "FN",
+        "LWLG",
+        "NOK",
+        "GLW",
+        "VIAV",
+        "MXL",
+        "POET",
+        "LASR",
+        "LPTH"
+      ]
+    },
+    "MSX L6: Compute Infra & Data Centers": {
+      "color": "#8e44ad",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "BE",
+        "FLNC",
+        "EOSE",
+        "POWL",
+        "AMSC",
+        "WOLF",
+        "D"
+      ]
+    },
+    "MSX L1: Energy & Power Base": {
+      "color": "#2e86de",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "NEE",
+        "CCJ",
+        "XE"
+      ]
+    },
+    "MSX L2: Raw Materials & Rare Earths": {
+      "color": "#c0392b",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "FCX",
+        "ALB",
+        "USAR",
+        "UUUU",
+        "AA",
+        "LAC",
+        "SGML"
+      ]
+    },
+    "MSX L7: Application · Physical AI": {
+      "color": "#27ae60",
+      "desc": "Curated AI supply-chain taxonomy",
+      "tickers": [
+        "RKLB",
+        "LUNR",
+        "YSS",
+        "RDW",
+        "VOYG",
+        "VELO",
+        "ASTS",
+        "PL",
+        "BKSY",
+        "SATL",
+        "MNTS",
+        "SIDU",
+        "IRDM",
+        "VSAT",
+        "GSAT",
+        "LMT",
+        "NOC",
+        "RTX",
+        "HII",
+        "KTOS",
+        "AVAV",
+        "ONDS",
+        "SWMR"
+      ]
+    }
+  },
+  "tickers": {
+    "NVDA": {
+      "name": "NVIDIA CORP",
+      "layer": "1 GPU / Accelerators"
+    },
+    "AMD": {
+      "name": "ADVANCED MICRO DEVICES INC",
+      "layer": "1 GPU / Accelerators"
+    },
+    "ARM": {
+      "name": "ARM HOLDINGS PLC /UK",
+      "layer": "1 GPU / Accelerators"
+    },
+    "INTC": {
+      "name": "INTEL CORP",
+      "layer": "1 GPU / Accelerators"
+    },
+    "AVGO": {
+      "name": "Broadcom Inc.",
+      "layer": "2 Custom ASIC + NIC"
+    },
+    "MRVL": {
+      "name": "Marvell Technology, Inc.",
+      "layer": "2 Custom ASIC + NIC"
+    },
+    "ALAB": {
+      "name": "Astera Labs, Inc.",
+      "layer": "2 Custom ASIC + NIC"
+    },
+    "CRDO": {
+      "name": "Credo Technology Group Holding Ltd",
+      "layer": "2 Custom ASIC + NIC"
+    },
+    "TSM": {
+      "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+      "layer": "3 Foundry + Packaging"
+    },
+    "ASML": {
+      "name": "ASML HOLDING NV",
+      "layer": "4 Semi Equipment"
+    },
+    "AMAT": {
+      "name": "APPLIED MATERIALS INC /DE",
+      "layer": "4 Semi Equipment"
+    },
+    "LRCX": {
+      "name": "LAM RESEARCH CORP",
+      "layer": "4 Semi Equipment"
+    },
+    "KLAC": {
+      "name": "KLA CORP",
+      "layer": "4 Semi Equipment"
+    },
+    "TER": {
+      "name": "TERADYNE, INC",
+      "layer": "4 Semi Equipment"
+    },
+    "AEIS": {
+      "name": "ADVANCED ENERGY INDUSTRIES INC",
+      "layer": "4 Semi Equipment"
+    },
+    "MU": {
+      "name": "MICRON TECHNOLOGY INC",
+      "layer": "5 Memory (HBM)"
+    },
+    "ANET": {
+      "name": "Arista Networks, Inc.",
+      "layer": "6 Networking"
+    },
+    "LITE": {
+      "name": "Lumentum Holdings Inc.",
+      "layer": "7 Optics / Photonics"
+    },
+    "COHR": {
+      "name": "COHERENT CORP.",
+      "layer": "7 Optics / Photonics"
+    },
+    "APH": {
+      "name": "AMPHENOL CORP /DE/",
+      "layer": "8 Interconnect"
+    },
+    "SMCI": {
+      "name": "Super Micro Computer, Inc.",
+      "layer": "9 Server OEM"
+    },
+    "DELL": {
+      "name": "Dell Technologies Inc.",
+      "layer": "9 Server OEM"
+    },
+    "HPE": {
+      "name": "Hewlett Packard Enterprise Co",
+      "layer": "9 Server OEM"
+    },
+    "VRT": {
+      "name": "Vertiv Holdings Co",
+      "layer": "10 Power Delivery + Cooling"
+    },
+    "ETN": {
+      "name": "Eaton Corp plc",
+      "layer": "10 Power Delivery + Cooling"
+    },
+    "GEV": {
+      "name": "GE Vernova Inc.",
+      "layer": "11 Power Generation"
+    },
+    "CEG": {
+      "name": "Constellation Energy Corp",
+      "layer": "12 Energy / Nuclear"
+    },
+    "VST": {
+      "name": "Vistra Corp.",
+      "layer": "12 Energy / Nuclear"
+    },
+    "OKLO": {
+      "name": "Oklo Inc.",
+      "layer": "12 Energy / Nuclear"
+    },
+    "BWXT": {
+      "name": "BWX Technologies, Inc.",
+      "layer": "12 Energy / Nuclear"
+    },
+    "EQIX": {
+      "name": "EQUINIX INC",
+      "layer": "13 DC REITs"
+    },
+    "DLR": {
+      "name": "DIGITAL REALTY TRUST, INC.",
+      "layer": "13 DC REITs"
+    },
+    "IRM": {
+      "name": "IRON MOUNTAIN INC",
+      "layer": "13 DC REITs"
+    },
+    "CRWV": {
+      "name": "CoreWeave, Inc.",
+      "layer": "14 AI Cloud / Neoclouds"
+    },
+    "NBIS": {
+      "name": "Nebius Group N.V.",
+      "layer": "14 AI Cloud / Neoclouds"
+    },
+    "IREN": {
+      "name": "IREN Ltd",
+      "layer": "14 AI Cloud / Neoclouds"
+    },
+    "CIFR": {
+      "name": "Cipher Digital Inc.",
+      "layer": "14 AI Cloud / Neoclouds"
+    },
+    "MKSI": {
+      "name": "MKS INC",
+      "layer": "MSX L3: Chip Architecture & Semi Equipment"
+    },
+    "TSEM": {
+      "name": "TOWER SEMICONDUCTOR LTD",
+      "layer": "MSX L3: Chip Architecture & Semi Equipment"
+    },
+    "AXTI": {
+      "name": "AXT INC",
+      "layer": "MSX L3: Chip Architecture & Semi Equipment"
+    },
+    "VECO": {
+      "name": "VEECO INSTRUMENTS INC",
+      "layer": "MSX L3: Chip Architecture & Semi Equipment"
+    },
+    "FORM": {
+      "name": "FORMFACTOR INC",
+      "layer": "MSX L3: Chip Architecture & Semi Equipment"
+    },
+    "COHU": {
+      "name": "COHU INC",
+      "layer": "MSX L3: Chip Architecture & Semi Equipment"
+    },
+    "AEHR": {
+      "name": "AEHR TEST SYSTEMS",
+      "layer": "MSX L3: Chip Architecture & Semi Equipment"
+    },
+    "CLS": {
+      "name": "CELESTICA INC",
+      "layer": "MSX L3: Chip Architecture & Semi Equipment"
+    },
+    "SNDK": {
+      "name": "Sandisk Corp",
+      "layer": "MSX L4: Storage & Memory"
+    },
+    "WDC": {
+      "name": "WESTERN DIGITAL CORP",
+      "layer": "MSX L4: Storage & Memory"
+    },
+    "STX": {
+      "name": "Seagate Technology Holdings plc",
+      "layer": "MSX L4: Storage & Memory"
+    },
+    "AAOI": {
+      "name": "APPLIED OPTOELECTRONICS, INC.",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "CIEN": {
+      "name": "CIENA CORP",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "FN": {
+      "name": "Fabrinet",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "LWLG": {
+      "name": "Lightwave Logic, Inc.",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "NOK": {
+      "name": "NOKIA CORP",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "GLW": {
+      "name": "CORNING INC /NY",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "VIAV": {
+      "name": "VIAVI SOLUTIONS INC.",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "MXL": {
+      "name": "MAXLINEAR, INC",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "POET": {
+      "name": "POET TECHNOLOGIES INC.",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "LASR": {
+      "name": "NLIGHT, INC.",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "LPTH": {
+      "name": "LIGHTPATH TECHNOLOGIES INC",
+      "layer": "MSX L5: Optical Comms & Networking"
+    },
+    "BE": {
+      "name": "Bloom Energy Corp",
+      "layer": "MSX L6: Compute Infra & Data Centers"
+    },
+    "FLNC": {
+      "name": "Fluence Energy, Inc.",
+      "layer": "MSX L6: Compute Infra & Data Centers"
+    },
+    "EOSE": {
+      "name": "Eos Energy Enterprises, Inc.",
+      "layer": "MSX L6: Compute Infra & Data Centers"
+    },
+    "POWL": {
+      "name": "POWELL INDUSTRIES INC",
+      "layer": "MSX L6: Compute Infra & Data Centers"
+    },
+    "AMSC": {
+      "name": "AMERICAN SUPERCONDUCTOR CORP /DE/",
+      "layer": "MSX L6: Compute Infra & Data Centers"
+    },
+    "WOLF": {
+      "name": "WOLFSPEED, INC.",
+      "layer": "MSX L6: Compute Infra & Data Centers"
+    },
+    "D": {
+      "name": "DOMINION ENERGY, INC",
+      "layer": "MSX L6: Compute Infra & Data Centers"
+    },
+    "NEE": {
+      "name": "NEXTERA ENERGY INC",
+      "layer": "MSX L1: Energy & Power Base"
+    },
+    "CCJ": {
+      "name": "CAMECO CORP",
+      "layer": "MSX L1: Energy & Power Base"
+    },
+    "XE": {
+      "name": "X-Energy, Inc.",
+      "layer": "MSX L1: Energy & Power Base"
+    },
+    "FCX": {
+      "name": "FREEPORT-MCMORAN INC",
+      "layer": "MSX L2: Raw Materials & Rare Earths"
+    },
+    "ALB": {
+      "name": "ALBEMARLE CORP",
+      "layer": "MSX L2: Raw Materials & Rare Earths"
+    },
+    "USAR": {
+      "name": "USA Rare Earth, Inc.",
+      "layer": "MSX L2: Raw Materials & Rare Earths"
+    },
+    "UUUU": {
+      "name": "ENERGY FUELS INC",
+      "layer": "MSX L2: Raw Materials & Rare Earths"
+    },
+    "AA": {
+      "name": "Alcoa Corp",
+      "layer": "MSX L2: Raw Materials & Rare Earths"
+    },
+    "LAC": {
+      "name": "LITHIUM AMERICAS CORP.",
+      "layer": "MSX L2: Raw Materials & Rare Earths"
+    },
+    "SGML": {
+      "name": "Sigma Lithium Corp",
+      "layer": "MSX L2: Raw Materials & Rare Earths"
+    },
+    "RKLB": {
+      "name": "Rocket Lab Corp",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "LUNR": {
+      "name": "Intuitive Machines, Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "YSS": {
+      "name": "York Space Systems Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "RDW": {
+      "name": "Redwire Corp",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "VOYG": {
+      "name": "Voyager Technologies, Inc./TX",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "VELO": {
+      "name": "Velo3D, Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "ASTS": {
+      "name": "AST SpaceMobile, Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "PL": {
+      "name": "Planet Labs PBC",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "BKSY": {
+      "name": "BlackSky Technology Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "SATL": {
+      "name": "Satellogic Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "MNTS": {
+      "name": "Momentus Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "SIDU": {
+      "name": "Sidus Space Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "IRDM": {
+      "name": "Iridium Communications Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "VSAT": {
+      "name": "VIASAT INC",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "GSAT": {
+      "name": "Globalstar, Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "LMT": {
+      "name": "LOCKHEED MARTIN CORP",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "NOC": {
+      "name": "NORTHROP GRUMMAN CORP /DE/",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "RTX": {
+      "name": "RTX Corp",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "HII": {
+      "name": "HUNTINGTON INGALLS INDUSTRIES, INC.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "KTOS": {
+      "name": "KRATOS DEFENSE & SECURITY SOLUTIONS, INC.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "AVAV": {
+      "name": "AeroVironment Inc",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "ONDS": {
+      "name": "Ondas Inc.",
+      "layer": "MSX L7: Application · Physical AI"
+    },
+    "SWMR": {
+      "name": "Swarmer, Inc",
+      "layer": "MSX L7: Application · Physical AI"
+    }
+  }
+}
