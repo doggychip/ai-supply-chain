@@ -13,5 +13,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Run syntax + sanity checks
-        run: node scripts/ci-check.js
+      - run: npm ci
+      - name: Run trust, source-policy, and page smoke tests
+        run: npm test
