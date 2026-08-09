@@ -37,6 +37,15 @@
     </ul>
   </section>
 
+  <section id="valueChainCard" class="card value-chain-card" hidden>
+    <div class="section-heading">
+      <div><h2>AI value chain map</h2><div class="muted">Curated company coverage from upstream inputs through physical-AI applications</div></div>
+      <span class="status">Taxonomy only</span>
+    </div>
+    <div id="valueChainMap"></div>
+    <div class="method">This map contains company classifications only. It does not encode market size, bottlenecks, utilization, valuation, conviction, expected returns, or investment recommendations. Reported financial evidence remains in the tables below.</div>
+  </section>
+
   <section id="issuerCard" class="card" hidden>
     <h2>Primary — issuer-filed fundamentals</h2>
     <div class="table-wrap"><table>
@@ -67,6 +76,33 @@ function compact(v){if(!finite(v))return '—';var a=Math.abs(v);if(a>=1e12)retu
 function factValue(fact){if(!fact)return '—';var unit=fact.unit||'';var suffix=unit.endsWith('/shares')?' / share':'';var base=unit.replace('/shares','');return esc(base+' '+compact(fact.value)+suffix)}
 function factCell(fact){if(!fact)return '—';var title=esc(fact.taxonomy+':'+fact.concept);return '<span title="'+title+'">'+factValue(fact)+'</span><div class="cell-meta">'+esc(fact.periodType+' through '+fact.end+' · '+fact.form)+'</div>'}
 function safeSecUrl(value){return typeof value==='string'&&value.indexOf('https://www.sec.gov/')===0?value:null}
+function layerNumber(name,pattern){var m=String(name).match(pattern);return m?Number(m[1]):Number.MAX_SAFE_INTEGER}
+function renderLayerGroup(title,layers,className){
+  var section=document.createElement('section');section.className='value-chain-section';
+  var heading=document.createElement('h3');heading.textContent=title;section.appendChild(heading);
+  var track=document.createElement('div');track.className='value-chain-track '+className;
+  layers.forEach(function(entry){
+    var name=entry[0],meta=entry[1]||{},symbols=Array.isArray(meta.tickers)?meta.tickers:[];
+    var layer=document.createElement('article');layer.className='value-layer';
+    var color=/^#[0-9a-f]{6}$/i.test(meta.color||'')?meta.color:'#5b9cf6';layer.style.setProperty('--layer-color',color);
+    var label=document.createElement('div');label.className='value-layer-label';label.textContent=name;
+    var count=document.createElement('div');count.className='value-layer-count';count.textContent=symbols.length+' '+(symbols.length===1?'company':'companies');
+    var chips=document.createElement('div');chips.className='ticker-chips';
+    symbols.forEach(function(symbol){var chip=document.createElement('span');chip.className='ticker-chip';chip.textContent=symbol;chips.appendChild(chip)});
+    layer.appendChild(label);layer.appendChild(count);layer.appendChild(chips);track.appendChild(layer);
+  });
+  section.appendChild(track);return section;
+}
+function renderValueChain(universe){
+  var entries=Object.entries(universe.layers||{}),core=[],extended=[];
+  entries.forEach(function(entry){if(/^\d+\s/.test(entry[0]))core.push(entry);else if(/^MSX L\d+:/.test(entry[0]))extended.push(entry)});
+  core.sort(function(a,b){return layerNumber(a[0],/^(\d+)\s/)-layerNumber(b[0],/^(\d+)\s/)});
+  extended.sort(function(a,b){return layerNumber(a[0],/^MSX L(\d+):/)-layerNumber(b[0],/^MSX L(\d+):/)});
+  var map=document.getElementById('valueChainMap');map.innerHTML='';
+  if(core.length)map.appendChild(renderLayerGroup('Core AI infrastructure — layers 1 to 14',core,'core'));
+  if(extended.length)map.appendChild(renderLayerGroup('Extended supply chain — MSX layers 1 to 7',extended,'extended'));
+  document.getElementById('valueChainCard').hidden=!(core.length||extended.length);
+}
 function checkCell(check,primary,secondary){
   if(!check)return '—';
   if(check.status==='issuer_unavailable')return '<span class="status">Issuer fact unavailable</span>';
@@ -81,6 +117,7 @@ function json(url){return fetch(url).then(function(r){if(!r.ok)throw new Error(u
 var universePromise=json('/universe.json');
 var issuerPromise=json('/api/issuer-data');
 var yahooPromise=Promise.all([json('/api/quotes'),json('/api/fundamentals')]).then(function(parts){return {quotes:parts[0],fundamentals:parts[1]}}).catch(function(error){return {error:error}});
+universePromise.then(renderValueChain).catch(function(){document.getElementById('valueChainCard').hidden=true});
 
 Promise.all([universePromise,issuerPromise,yahooPromise]).then(function(parts){
   var universe=parts[0],issuerPayload=parts[1],yahoo=parts[2];
